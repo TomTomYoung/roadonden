@@ -13,7 +13,7 @@ await mkdir('test-results', { recursive: true });
 const context = await browser.newContext({ viewport: { width: 1280, height: 1000 }, acceptDownloads: true });
 const page = await context.newPage(); const errors = [], requests = [];
 page.on('pageerror', e => errors.push(String(e))); page.on('request', r => requests.push(r.url()));
-const url = pathToFileURL(path.resolve('index.html')).href;
+const url = pathToFileURL(path.resolve('inspector.html')).href;
 let checks = 0;
 const checked = title => { checks++; console.log(`PASS ${title}`); };
 const tick = async n => { for (let i = 0; i < n; i++) await page.click('#step'); };

@@ -1,5 +1,7 @@
 # 実行基盤の実装状況
 
+> この文書はPhase 1時点の記録です。現在の夕食編、保存形式2、通常画面の状況は [dinner-status.md](dinner-status.md) を参照してください。検査画面は現在 `inspector.html` へ分離されています。
+
 更新日: 2026-10-17 JST。対象: Phase 1初版、コンテンツ版 `foundation-0.1.0`。
 
 ## 現在できること

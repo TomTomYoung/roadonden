@@ -1,0 +1,1641 @@
+<!doctype html>
+<html lang="ja">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>ロードンデン — 実行基盤の検査</title><style>:root{font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif;color:#253432;background:#f4f4ed;font-size:15px;line-height:1.6}*{box-sizing:border-box}body{margin:0}header,main,.notice,footer{max-width:1360px;margin-inline:auto}header{display:flex;align-items:center;justify-content:space-between;padding:32px 28px 20px;border-bottom:1px solid #d4d9ce}.eyebrow{font-size:11px;letter-spacing:.18em;color:#637c70}h1{font-size:26px;margin:4px 0;font-weight:650;letter-spacing:.03em}.badge{background:#dce7dc;color:#315a47;padding:6px 14px;border-radius:20px;font-size:12px}.notice{padding:14px 28px;color:#6c5c3c;font-size:13px}main{padding:0 28px 28px}.toolbar{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:10px 0 20px}.toolbar output{font-variant-numeric:tabular-nums;margin-left:6px;font-size:13px}.toolbar #reset{margin-left:auto}.layout{display:grid;grid-template-columns:1.45fr 1fr;gap:18px}.panel{border:1px solid #d8ded3;background:#fffef8;border-radius:12px;padding:20px;margin-bottom:18px;min-width:0}.layout .panel{margin-bottom:0}h2{font-size:16px;margin:0 0 15px;font-weight:650}h3{font-size:13px;margin:18px 0 9px;color:#58665c}.section-title{display:flex;justify-content:space-between;align-items:center}.section-title span{font-size:11px;color:#68786d}.section-title h2{margin:0}.map-panel canvas{width:100%;height:auto;margin-top:18px;display:block}.positions{display:flex;flex-wrap:wrap;gap:8px;font-size:12px}.positions span{background:#eef1e8;padding:4px 8px;border-radius:5px}.hint{font-size:12px;color:#66746c;margin:10px 0}.operations label{display:block;font-size:12px;color:#58665c;margin:12px 0 4px}select,button{font:inherit;font-size:13px;border:1px solid #b8c6b6;border-radius:6px;min-height:36px;padding:6px 10px}select{background:#fffefb;max-width:100%;width:100%;color:#253432}button{background:#315d49;border-color:#315d49;color:white;cursor:pointer;white-space:nowrap}button:hover{filter:brightness(1.08)}button:disabled{opacity:.45;cursor:default}button.subtle{background:transparent;color:#315d49;border-color:#bcc8b8}.button-row,.input-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:9px}.input-row{flex-wrap:nowrap}.input-row select{flex:1;min-width:0}.stack>div{padding:9px 0;border-bottom:1px solid #e9ece1;font-size:13px;overflow-wrap:anywhere}.stack>div:last-child{border-bottom:0}.stack .meta{display:block;font-size:11px;color:#718074}.empty{color:#849184;font-size:13px}details{margin-top:16px}summary{cursor:pointer;font-size:13px;color:#365a48}details p{font-size:13px}.layout+.panel{margin-top:18px}.events{padding-left:24px;max-height:280px;overflow:auto;font-size:12px;line-height:1.8;font-family:ui-monospace,monospace}.events li{padding:3px 0;overflow-wrap:anywhere}#status{background:#edf1e6;border-radius:6px;padding:10px 12px;font-size:13px;white-space:pre-wrap}#status.error{background:#ffede5;color:#933d25}.save-panel select{width:70px}footer{padding:0 28px 30px;font-size:11px;color:#718074}progress{width:100%;height:8px;accent-color:#49755a}button:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid #d5a94d;outline-offset:2px}@media(max-width:800px){header{padding:20px;gap:12px}h1{font-size:20px}.badge{white-space:nowrap}.notice{padding:12px 20px}main{padding:0 16px 20px}.layout{grid-template-columns:1fr}.toolbar #reset{margin-left:0}.panel{padding:16px}.events{max-height:220px}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+</style></head>
+<body>
+  <header><div><span class="eyebrow">ROADONDEN · DEVELOPMENT</span><h1>ロードンデン街の人々</h1></div><span class="badge">Phase 1 · 実行基盤</span></header>
+  <p class="notice">開発用の検査画面です。ここにいる3人は検査役で、本編100人には含まれません。夕食シナリオ・街歩きゲーム・最終素材は未実装です。</p>
+  <main>
+    <section class="toolbar" aria-label="時計の操作"><button id="run">▶ 進める</button><button id="step">1更新</button><button id="ten">10更新</button><button id="hundred">100更新</button><output id="time" aria-live="off"></output><button id="reset" class="subtle">検査を初期化</button></section>
+    <div class="layout">
+      <section class="panel map-panel"><div class="section-title"><h2>場所と移動</h2><span>1更新 = 0.1秒</span></div><canvas id="map" width="840" height="500" aria-label="中庭・受取所・作業所・返却口の接続と人物の位置"></canvas><div id="positions" class="positions"></div><p class="hint">場所間の移動も時間を使う行為です。画面に表示していなくても同じ時計で進みます。</p></section>
+      <section class="panel operations"><h2>介入・動作の検査</h2><label for="actor">操作する主体</label><select id="actor"></select><label for="action">行為</label><select id="action"></select><div class="button-row"><button id="start">行為を開始</button><button id="cancel" class="subtle">中断を申し出る</button></div><label for="clue">その場で調べる</label><div class="input-row"><select id="clue"></select><button id="inspect">調べる</button></div><label for="recipient">話す相手</label><select id="recipient"></select><label for="information">取得済みの情報</label><div class="input-row"><select id="information"></select><button id="say">知らせる</button></div><div class="button-row"><button id="offer" class="subtle">手順を提案</button><button id="accept" class="subtle">手順を受諾</button><button id="ask" class="subtle">達成を尋ねる</button></div><p class="hint">操作は次の更新で処理します。「提案を聞いた」と「受諾した」は別です。開始できない理由は出来事欄に残ります。</p></section>
+      <section class="panel"><h2>実行中の行為と予約</h2><div id="active" class="stack"></div><h3>現物の所在・数量</h3><div id="objects" class="stack"></div></section>
+      <section class="panel"><h2>認識と達成確認</h2><p class="hint">選択した主体が得た情報だけを表示します。</p><div id="beliefs" class="stack"></div><h3>主人公が確認した達成</h3><div id="known" class="stack"></div><details><summary>開発用：世界の真実を見る</summary><div id="truth" class="stack"></div></details></section>
+    </div>
+    <section class="panel"><h2>出来事と理由</h2><ol id="events" class="events"></ol><p id="status" role="status">停止中です。1更新ずつ検査できます。</p></section>
+    <section class="panel save-panel"><h2>保存・再開</h2><p class="hint">手動3枠と自動2世代。保存失敗は明示し、読込失敗では現在の状態を維持します。</p><div class="button-row"><label for="slot">手動枠</label><select id="slot"><option value="1">1</option><option value="2">2</option><option value="3">3</option></select><button id="save">保存</button><button id="load">読込</button><button id="auto" class="subtle">自動保存を読込</button><button id="previous" class="subtle">前の自動保存を読込</button><button id="export" class="subtle">JSONを書出し</button><button id="import" class="subtle">JSONを読込</button><input id="file" type="file" accept=".json,application/json" hidden></div></section>
+    <details class="panel"><summary>検査の例</summary><p>中庭で主人公が依頼札を調べ、2更新進めると情報が記録されます。作業所へ歩き、作業者に知らせてください。聞いた作業者は自分で加工を始めます。開始だけでは達成せず、加工終了で記録されます。</p><p>作業中に設備を停止すると中断します。復旧中は作業台と必要な手を保持し、復旧完了後に解放します。主人公を別の場所へ移すと、画面外の達成は主人公の記録に入りません。後で本人に尋ねると確認できます。</p><p>中庭の包みを主人公と運び手の両方で同じ更新に受け取ろうとすると、一方だけが確保します。包みを受取所へ運んで渡しても、遠くの相手に情報が自動共有されることはありません。</p></details>
+  </main><footer>仕様・未実装範囲は doc/foundation-status.md / doc/handoff.md を参照してください。</footer>
+  <script>"use strict";
+(() => {
+  // src/core/validation.ts
+  function requireThat(ok, message2) {
+    if (!ok) throw new Error(message2);
+  }
+  function record(x, path) {
+    requireThat(x !== null && typeof x === "object" && !Array.isArray(x), `${path}: \u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u304C\u5FC5\u8981\u3067\u3059`);
+  }
+  function array(x, path) {
+    requireThat(Array.isArray(x), `${path}: \u914D\u5217\u304C\u5FC5\u8981\u3067\u3059`);
+  }
+  function str(x, path) {
+    requireThat(typeof x === "string" && x.length > 0 && !["__proto__", "constructor", "prototype"].includes(x), `${path}: \u6587\u5B57\u5217\u304C\u4E0D\u6B63\u3067\u3059`);
+  }
+  function int(x, path, min = 0) {
+    requireThat(Number.isSafeInteger(x) && x >= min, `${path}: ${min}\u4EE5\u4E0A\u306E\u6574\u6570\u304C\u5FC5\u8981\u3067\u3059`);
+  }
+  function val(x, path) {
+    requireThat(typeof x === "string" || typeof x === "boolean" || typeof x === "number" && Number.isFinite(x), `${path}: \u5024\u304C\u4E0D\u6B63\u3067\u3059`);
+  }
+  function stance(x) {
+    requireThat(["believe", "deny", "uncertain"].includes(x), "\u8A8D\u8B58\u306E stance \u304C\u4E0D\u6B63\u3067\u3059");
+  }
+  function strings(x, path) {
+    array(x, path);
+    x.forEach((v) => str(v, path));
+  }
+  function unique(xs, label) {
+    requireThat(new Set(xs).size === xs.length, `${label}: ID\u304C\u91CD\u8907\u3057\u3066\u3044\u307E\u3059`);
+  }
+  function ref(id, xs, label) {
+    str(id, label);
+    requireThat(xs.some((x) => x.id === id), `${label}: \u672A\u5B9A\u7FA9\u306E\u53C2\u7167 ${id}`);
+  }
+  function bool(x, label) {
+    requireThat(typeof x === "boolean", `${label}: \u771F\u507D\u5024\u304C\u5FC5\u8981\u3067\u3059`);
+  }
+  function sameKeys(x, keys, label) {
+    requireThat(Object.keys(x).sort().join("|") === [...keys].sort().join("|"), `${label}: \u30D5\u30A3\u30FC\u30EB\u30C9\u304C\u4E0D\u8DB3\u307E\u305F\u306F\u672A\u77E5\u3067\u3059`);
+  }
+  function sameCustody(a, b) {
+    return a.kind === b.kind && (a.kind === "consumed" || b.kind !== "consumed" && a.id === b.id);
+  }
+  function custody(x, c2) {
+    record(x, "custody");
+    switch (x.kind) {
+      case "actor":
+        ref(x.id, c2.actors, "custody.actor");
+        break;
+      case "place":
+        ref(x.id, c2.places, "custody.place");
+        break;
+      case "object":
+        ref(x.id, c2.objects, "custody.object");
+        break;
+      case "consumed":
+        break;
+      default:
+        throw new Error(`custody: \u672A\u77E5\u306E\u7A2E\u5225 ${String(x.kind)}`);
+    }
+    sameKeys(x, x.kind === "consumed" ? ["kind"] : ["kind", "id"], "custody");
+  }
+  function guard(x, c2, choice = false, depth = 0) {
+    requireThat(depth < 32, "\u6761\u4EF6\u306E\u5165\u308C\u5B50\u304C\u6DF1\u3059\u304E\u307E\u3059");
+    record(x, "condition");
+    const actor2 = (id) => ref(id, c2.actors, "condition.actor");
+    switch (x.op) {
+      case "always":
+        return;
+      case "all":
+      case "any":
+        array(x.conditions, "conditions");
+        x.conditions.forEach((y) => guard(y, c2, choice, depth + 1));
+        return;
+      case "not":
+        guard(x.condition, c2, choice, depth + 1);
+        return;
+      case "belief":
+        ref(x.propositionId, c2.propositions, "condition.proposition");
+        stance(x.stance);
+        if (!choice) actor2(x.actorId);
+        return;
+      case "here":
+        requireThat(choice, "here\u306F\u5224\u65AD\u5C02\u7528\u3067\u3059");
+        ref(x.locationId, c2.places, "condition.place");
+        return;
+      case "accepted":
+        requireThat(choice, "accepted\u306F\u5224\u65AD\u5C02\u7528\u3067\u3059");
+        ref(x.agreementId, c2.agreements, "condition.agreement");
+        int(x.version, "version", 1);
+        return;
+      case "offered":
+        ref(x.agreementId, c2.agreements, "condition.agreement");
+        int(x.version, "version", 1);
+        if (!choice) actor2(x.actorId);
+        return;
+    }
+    requireThat(!choice, `\u5224\u65AD\u898F\u5247\u304B\u3089\u4E16\u754C\u72B6\u614B\u306F\u8AAD\u3081\u307E\u305B\u3093: ${String(x.op)}`);
+    switch (x.op) {
+      case "fact":
+        ref(x.propositionId, c2.propositions, "condition.proposition");
+        val(x.value, "condition.value");
+        break;
+      case "at":
+        actor2(x.actorId);
+        ref(x.locationId, c2.places, "condition.place");
+        break;
+      case "together":
+        strings(x.actorIds, "together.actors");
+        requireThat(x.actorIds.length > 0, "\u540C\u5E2D\u8005\u304C\u5FC5\u8981\u3067\u3059");
+        x.actorIds.forEach(actor2);
+        break;
+      case "custody":
+        ref(x.objectId, c2.objects, "condition.object");
+        custody(x.custody, c2);
+        break;
+      case "quantity":
+        ref(x.objectId, c2.objects, "condition.object");
+        int(x.minimum, "minimum");
+        break;
+      case "agreement":
+        ref(x.agreementId, c2.agreements, "condition.agreement");
+        int(x.version, "version", 1);
+        strings(x.actorIds, "actorIds");
+        x.actorIds.forEach(actor2);
+        break;
+      case "loan":
+        ref(x.loanId, c2.loans ?? [], "condition.loan");
+        requireThat(["available", "borrowed", "returned"].includes(x.status), "\u8CB8\u501F\u72B6\u614B\u304C\u4E0D\u6B63\u3067\u3059");
+        break;
+      case "during":
+        int(x.from, "from");
+        int(x.until, "until", 1);
+        requireThat(x.until > x.from, "\u6642\u9593\u533A\u9593\u304C\u9006\u8EE2\u3057\u3066\u3044\u307E\u3059");
+        break;
+      case "event":
+        str(x.type, "event.type");
+        actor2(x.actorId);
+        break;
+      case "active":
+        ref(x.actionId, c2.actions, "condition.action");
+        break;
+      case "reserved":
+        str(x.resourceId, "resourceId");
+        requireThat(allResources(c2).includes(x.resourceId), "\u672A\u5B9A\u7FA9\u306E\u4E88\u7D04\u8CC7\u6E90");
+        break;
+      default:
+        throw new Error(`\u672A\u77E5\u306E\u6761\u4EF6\u6F14\u7B97\u5B50: ${String(x.op)}`);
+    }
+  }
+  function effect(x, c2) {
+    record(x, "effect");
+    switch (x.op) {
+      case "move":
+        ref(x.actorId, c2.actors, "effect.actor");
+        ref(x.to, c2.places, "effect.place");
+        break;
+      case "transfer":
+        ref(x.objectId, c2.objects, "effect.object");
+        custody(x.from, c2);
+        custody(x.to, c2);
+        requireThat(x.to.kind !== "consumed", "\u6D88\u8CBB\u306B\u306Fconsume\u3092\u4F7F\u3063\u3066\u304F\u3060\u3055\u3044");
+        break;
+      case "consume": {
+        ref(x.objectId, c2.objects, "effect.object");
+        int(x.quantity, "quantity", 1);
+        str(x.unit, "unit");
+        const o = c2.objects.find((o2) => o2.id === x.objectId);
+        requireThat(o.consumable && o.unit === x.unit, "\u6D88\u8CBB\u3067\u304D\u306A\u3044\u7269\u307E\u305F\u306F\u5358\u4F4D\u306E\u4E0D\u4E00\u81F4");
+        break;
+      }
+      case "fact":
+        ref(x.propositionId, c2.propositions, "effect.proposition");
+        val(x.value, "effect.value");
+        requireThat(!c2.propositions.find((p) => p.id === x.propositionId).derived, "\u89B3\u6E2C\u7528\u306E\u5C0E\u51FA\u547D\u984C\u306F\u76F4\u63A5\u66F8\u304D\u63DB\u3048\u3089\u308C\u307E\u305B\u3093");
+        break;
+      case "emit":
+        strings(x.actorIds, "event.actorIds");
+        x.actorIds.forEach((id) => ref(id, c2.actors, "event.actor"));
+        strings(x.subjectIds, "event.subjectIds");
+        str(x.type, "event.type");
+        requireThat(!x.type.startsWith("engine."), "engine.*\u306F\u4E88\u7D04\u3055\u308C\u305F\u51FA\u6765\u4E8B\u540D\u3067\u3059");
+        ref(x.locationId, c2.places, "event.place");
+        break;
+      case "service":
+        str(x.serviceId, "serviceId");
+        requireThat(c2.services.includes(x.serviceId), "\u672A\u5B9A\u7FA9\u306E\u30B5\u30FC\u30D3\u30B9");
+        bool(x.active, "active");
+        break;
+      case "inform":
+        ref(x.speakerId, c2.actors, "speaker");
+        ref(x.recipientId, c2.actors, "recipient");
+        ref(x.propositionId, c2.propositions, "proposition");
+        break;
+      case "observe":
+        strings(x.actorIds, "observers");
+        x.actorIds.forEach((id) => ref(id, c2.actors, "observer"));
+        ref(x.propositionId, c2.propositions, "proposition");
+        ref(x.locationId, c2.places, "observation.place");
+        str(x.sourceId, "source");
+        break;
+      case "offer":
+        ref(x.speakerId, c2.actors, "speaker");
+        ref(x.recipientId, c2.actors, "recipient");
+        ref(x.agreementId, c2.agreements, "agreement");
+        break;
+      case "accept":
+        ref(x.actorId, c2.actors, "actor");
+        ref(x.agreementId, c2.agreements, "agreement");
+        int(x.version, "version", 1);
+        break;
+      case "loan":
+        ref(x.loanId, c2.loans ?? [], "loan");
+        requireThat(["borrowed", "returned"].includes(x.status), "\u8CB8\u501F\u306E\u52B9\u679C\u304C\u4E0D\u6B63\u3067\u3059");
+        break;
+      default:
+        throw new Error(`\u672A\u77E5\u306E\u52B9\u679C: ${String(x.op)}`);
+    }
+  }
+  function effectResources(e) {
+    switch (e.op) {
+      case "move":
+        return [`actor:${e.actorId}`];
+      case "transfer":
+        return [`object:${e.objectId}`, ...[e.from, e.to].filter((x) => x.kind === "actor").map((x) => `actor:${x.id}`)];
+      case "consume":
+        return [`object:${e.objectId}`];
+      case "fact":
+        return [`fact:${e.propositionId}`];
+      case "service":
+        return [`service:${e.serviceId}`];
+      case "emit":
+        return [];
+      case "observe":
+      case "inform":
+      case "offer":
+      case "accept":
+        return [];
+      case "loan":
+        return [`loan:${e.loanId}`];
+    }
+  }
+  function actionResources(a) {
+    return [.../* @__PURE__ */ new Set([
+      ...a.concurrent ? [] : a.actorIds.map((id) => `actor:${id}`),
+      ...a.resources,
+      ...[...a.onSuccess, ...a.onAbort, ...a.recovery?.onSuccess ?? []].flatMap(effectResources)
+    ])].sort();
+  }
+  function recoveryResources(a) {
+    return [.../* @__PURE__ */ new Set([...a.actorIds.map((id) => `actor:${id}`), ...a.recovery?.retainResources ?? [], ...a.recovery?.onSuccess.flatMap(effectResources) ?? []])].sort();
+  }
+  function allResources(c2) {
+    return [
+      ...c2.resources,
+      ...c2.actors.flatMap((a) => [`actor:${a.id}`, `hand:${a.id}:left`, `hand:${a.id}:right`]),
+      ...c2.objects.map((o) => `object:${o.id}`),
+      ...c2.propositions.map((p) => `fact:${p.id}`),
+      ...c2.services.map((id) => `service:${id}`),
+      ...(c2.loans ?? []).map((l) => `loan:${l.id}`)
+    ];
+  }
+  function validateContent(input) {
+    record(input, "content");
+    const c2 = input;
+    requireThat(c2.namespace === "redesign-v1" && c2.tickMs === 100, "\u540D\u524D\u7A7A\u9593\u307E\u305F\u306F\u56FA\u5B9A\u6642\u8A08\u304C\u4E0D\u6B63\u3067\u3059");
+    str(c2.version, "content.version");
+    int(c2.ticksPerDay, "ticksPerDay", 1);
+    for (const key of ["places", "propositions", "actors", "objects", "clues", "agreements", "actions"]) {
+      array(c2[key], key);
+      c2[key].forEach((x) => {
+        record(x, key);
+        str(x.id, `${key}.id`);
+      });
+      unique(c2[key].map((x) => x.id), key);
+    }
+    strings(c2.resources, "resources");
+    strings(c2.services, "services");
+    unique(allResources(c2), "resources");
+    requireThat(c2.actors.filter((a) => a.kind === "player" && a.id === "player").length === 1, "player\u304C\u4E00\u4EBA\u5FC5\u8981\u3067\u3059");
+    for (const p of c2.places) {
+      str(p.name, "place.name");
+      requireThat(Number.isFinite(p.x) && Number.isFinite(p.y), "\u4E8C\u6B21\u5143\u5EA7\u6A19\u304C\u4E0D\u6B63\u3067\u3059");
+      strings(p.links, "place.links");
+      p.links.forEach((id) => {
+        ref(id, c2.places, "place.link");
+        requireThat(c2.places.find((q) => q.id === id).links.includes(p.id), "\u5834\u6240\u306E\u63A5\u7D9A\u306F\u53CC\u65B9\u5411\u306B\u3057\u3066\u304F\u3060\u3055\u3044");
+      });
+    }
+    c2.propositions.forEach((p) => {
+      str(p.description, "proposition.description");
+      val(p.initialValue, "proposition.initialValue");
+      if (p.derived) {
+        guard(p.derived, c2);
+        const independent = (g) => {
+          if (g.op === "all" || g.op === "any") return g.conditions.every(independent);
+          if (g.op === "not") return independent(g.condition);
+          return g.op !== "fact" || !c2.propositions.find((p2) => p2.id === g.propositionId).derived;
+        };
+        requireThat(independent(p.derived), "\u5C0E\u51FA\u547D\u984C\u540C\u58EB\u306E\u9023\u9396\u30FB\u5FAA\u74B0\u306F\u672A\u5BFE\u5FDC\u3067\u3059");
+      }
+    });
+    for (const a of c2.actors) {
+      str(a.displayName, "actor.name");
+      ref(a.locationId, c2.places, "actor.place");
+      str(a.sourceRef, "sourceRef");
+      str(a.normalLife, "normalLife");
+      str(a.goal, "goal");
+      requireThat(["player", "resident", "fixture", "animal"].includes(a.kind), "\u4EBA\u7269\u7A2E\u5225\u304C\u4E0D\u6B63\u3067\u3059");
+      if (a.kind === "resident") requireThat(/^C(00[1-9]|0[1-9]\d|100)$/.test(a.id), "\u4F4F\u6C11ID\u304C\u4E0D\u6B63\u3067\u3059");
+      array(a.initialBeliefs, "initialBeliefs");
+      a.initialBeliefs.forEach((b) => {
+        record(b, "belief");
+        ref(b.propositionId, c2.propositions, "belief");
+        stance(b.stance);
+        str(b.reason, "memory.reason");
+      });
+      array(a.rules, "rules");
+      unique(a.rules.map((r) => r.id), "rules");
+      a.rules.forEach((r) => {
+        str(r.id, "rule.id");
+        int(r.priority, "priority");
+        int(r.retryTicks, "retryTicks", 1);
+        requireThat(r.mode === void 0 || ["problem", "ordinary", "always"].includes(r.mode), "\u898F\u5247\u306E\u751F\u6D3B\u30E2\u30FC\u30C9\u304C\u4E0D\u6B63\u3067\u3059");
+        ref(r.actionId, c2.actions, "rule.action");
+        requireThat(c2.actions.find((x) => x.id === r.actionId).actorIds.includes(a.id), "\u4ED6\u4EBA\u3060\u3051\u306E\u884C\u70BA\u3092\u898F\u5247\u3067\u9078\u629E\u3067\u304D\u307E\u305B\u3093");
+        guard(r.choiceGuard, c2, true);
+      });
+      strings(a.goalEvidence, "goalEvidence");
+      requireThat(a.goalEvidence.every((t) => !t.startsWith("engine.")), "\u5185\u90E8\u30A4\u30D9\u30F3\u30C8\u3092\u751F\u6D3B\u306E\u9054\u6210\u306B\u4F7F\u3048\u307E\u305B\u3093");
+      record(a.postGoalContract, "postGoalContract");
+      int(a.postGoalContract.version, "postGoalContract.version", 1);
+      strings(a.postGoalContract.serviceIds, "postGoalContract.serviceIds");
+      a.postGoalContract.serviceIds.forEach((id) => requireThat(c2.services.includes(id), "\u672A\u5B9A\u7FA9\u306E\u9054\u6210\u5F8C\u30B5\u30FC\u30D3\u30B9"));
+    }
+    for (const o of c2.objects) {
+      str(o.name, "object.name");
+      ref(o.ownerId, c2.actors, "object.owner");
+      custody(o.custody, c2);
+      int(o.quantity, "quantity");
+      str(o.unit, "unit");
+      bool(o.portable, "portable");
+      bool(o.consumable, "consumable");
+    }
+    for (const a of c2.agreements) {
+      int(a.version, "agreement.version", 1);
+      ref(a.proposerId, c2.actors, "proposer");
+      strings(a.participantIds, "participants");
+      unique(a.participantIds, "participants");
+      a.participantIds.forEach((id) => ref(id, c2.actors, "participant"));
+      requireThat(a.participantIds.includes(a.proposerId), "\u63D0\u6848\u8005\u306F\u53C2\u52A0\u8005\u3067\u3042\u308B\u5FC5\u8981\u304C\u3042\u308A\u307E\u3059");
+      str(a.terms, "terms");
+    }
+    for (const clue of c2.clues) {
+      ref(clue.locationId, c2.places, "clue.place");
+      ref(clue.propositionId, c2.propositions, "clue.proposition");
+      str(clue.description, "clue.description");
+      guard(clue.visible, c2);
+      if (clue.observerIds) clue.observerIds.forEach((id) => ref(id, c2.actors, "clue.observer"));
+    }
+    if (c2.loans) {
+      array(c2.loans, "loans");
+      unique(c2.loans.map((l) => l.id), "loans");
+      for (const l of c2.loans) {
+        ref(l.objectId, c2.objects, "loan.object");
+        ref(l.lenderId, c2.actors, "loan.lender");
+        ref(l.borrowerId, c2.actors, "loan.borrower");
+        ref(l.returnLocationId, c2.places, "loan.return");
+        str(l.policy, "loan.policy");
+        requireThat(c2.objects.find((o) => o.id === l.objectId).ownerId === l.lenderId, "\u8CB8\u4E3B\u3068\u6240\u6709\u8005\u304C\u4E00\u81F4\u3057\u307E\u305B\u3093");
+      }
+    }
+    for (const a of c2.actions) {
+      str(a.label, "action.label");
+      strings(a.actorIds, "action.actors");
+      requireThat(a.actorIds.length > 0, "\u5B9F\u884C\u8005\u304C\u5FC5\u8981\u3067\u3059");
+      unique(a.actorIds, "action.actors");
+      a.actorIds.forEach((id) => ref(id, c2.actors, "action.actor"));
+      int(a.durationTicks, "durationTicks", 1);
+      strings(a.resources, "action.resources");
+      a.resources.forEach((r) => requireThat(allResources(c2).includes(r), `\u672A\u5B9A\u7FA9\u306E\u8CC7\u6E90 ${r}`));
+      [a.startGuard, a.maintainGuard, a.finishGuard].forEach((g) => guard(g, c2));
+      for (const effects of [a.onSuccess, a.onAbort]) {
+        array(effects, "effects");
+        effects.forEach((e) => effect(e, c2));
+      }
+      if (a.concurrent) requireThat(!a.movement && !a.recovery && a.resources.length === 0 && [...a.onSuccess, ...a.onAbort].every((e) => !["move", "transfer", "consume", "loan"].includes(e.op)), "\u540C\u6642\u4F1A\u8A71\u3067\u7269\u7406\u4F5C\u696D\u3092\u884C\u3048\u307E\u305B\u3093");
+      requireThat(a.designStatus === "provisional", "\u8A66\u4F5C\u5024\u306E\u51FA\u5178\u3092\u6307\u5B9A\u3057\u3066\u304F\u3060\u3055\u3044");
+      str(a.rationale, "rationale");
+      str(a.presentationId, "presentationId");
+      if (a.recovery !== null) {
+        record(a.recovery, "recovery");
+        int(a.recovery.durationTicks, "recovery.durationTicks", 1);
+        strings(a.recovery.retainResources, "retainResources");
+        array(a.recovery.onSuccess, "recovery.effects");
+        a.recovery.onSuccess.forEach((e) => effect(e, c2));
+        a.recovery.retainResources.forEach((r) => requireThat(actionResources(a).includes(r), "\u672A\u78BA\u4FDD\u306E\u8CC7\u6E90\u3092\u5FA9\u65E7\u6642\u306B\u4FDD\u6301\u3067\u304D\u307E\u305B\u3093"));
+      }
+      if (a.movement !== null) {
+        record(a.movement, "movement");
+        ref(a.movement.actorId, c2.actors, "movement.actor");
+        requireThat(a.actorIds.includes(a.movement.actorId), "\u79FB\u52D5\u8005\u304C\u5B9F\u884C\u8005\u306B\u542B\u307E\u308C\u3066\u3044\u307E\u305B\u3093");
+        ref(a.movement.from, c2.places, "movement.from");
+        ref(a.movement.to, c2.places, "movement.to");
+        requireThat(c2.places.find((p) => p.id === a.movement.from).links.includes(a.movement.to), "\u79FB\u52D5\u7D4C\u8DEF\u304C\u63A5\u7D9A\u3055\u308C\u3066\u3044\u307E\u305B\u3093");
+        requireThat(a.onSuccess.some((e) => e.op === "move" && e.actorId === a.movement.actorId && e.to === a.movement.to), "\u79FB\u52D5\u7D42\u4E86\u52B9\u679C\u304C\u5FC5\u8981\u3067\u3059");
+      }
+    }
+  }
+  function validateCommand(x, c2) {
+    record(x, "command");
+    ref(x.actorId, c2.actors, "command.actor");
+    switch (x.kind) {
+      case "start":
+        ref(x.actionId, c2.actions, "command.action");
+        break;
+      case "cancel":
+        int(x.instanceId, "instanceId", 1);
+        break;
+      case "inspect":
+        ref(x.clueId, c2.clues, "command.clue");
+        break;
+      case "say":
+        ref(x.recipientId, c2.actors, "recipient");
+        ref(x.propositionId, c2.propositions, "proposition");
+        break;
+      case "askCompletion":
+        ref(x.recipientId, c2.actors, "recipient");
+        break;
+      case "offer":
+        ref(x.recipientId, c2.actors, "recipient");
+        ref(x.agreementId, c2.agreements, "agreement");
+        break;
+      case "accept":
+        ref(x.agreementId, c2.agreements, "agreement");
+        int(x.version, "version", 1);
+        break;
+      default:
+        throw new Error(`\u672A\u77E5\u306E\u30B3\u30DE\u30F3\u30C9: ${String(x.kind)}`);
+    }
+  }
+  function validateState(input, c2) {
+    record(input, "state");
+    const s = input;
+    sameKeys(input, ["tick", "randomState", "nextEventId", "nextActionId", "nextCommandId", "actors", "objects", "facts", "services", "actions", "reservations", "deliveries", "events", "completions", "knownCompletions", "commandLog", "pending", "loans"], "state");
+    for (const k of ["tick", "randomState", "nextEventId", "nextActionId", "nextCommandId"]) int(s[k], k, k.startsWith("next") ? 1 : 0);
+    for (const k of ["actors", "objects", "facts", "services", "reservations", "completions", "knownCompletions", "loans"]) record(s[k], k);
+    for (const k of ["actions", "deliveries", "events", "commandLog", "pending"]) array(s[k], k);
+    sameKeys(s.actors, c2.actors.map((a) => a.id), "actors");
+    sameKeys(s.objects, c2.objects.map((o) => o.id), "objects");
+    sameKeys(s.facts, c2.propositions.map((p) => p.id), "facts");
+    sameKeys(s.services, c2.services, "services");
+    Object.values(s.facts).forEach((v) => val(v, "fact"));
+    Object.values(s.services).forEach((v) => bool(v, "service"));
+    sameKeys(s.loans, (c2.loans ?? []).map((l) => l.id), "loans");
+    for (const [id, l] of Object.entries(s.loans)) {
+      record(l, "loan");
+      requireThat(["available", "borrowed", "returned"].includes(l.status), "\u8CB8\u501F\u72B6\u614B\u304C\u4E0D\u6B63\u3067\u3059");
+      if (l.borrowedAt !== null) {
+        int(l.borrowedAt, "borrowedAt");
+        requireThat(l.borrowedAt <= s.tick, "\u672A\u6765\u306E\u8CB8\u501F");
+      }
+      if (l.returnedAt !== null) {
+        int(l.returnedAt, "returnedAt");
+        requireThat(l.borrowedAt !== null && l.returnedAt >= l.borrowedAt && l.returnedAt <= s.tick, "\u8FD4\u5374\u6642\u523B\u304C\u4E0D\u6B63\u3067\u3059");
+      }
+      requireThat(l.status === "available" === (l.borrowedAt === null) && l.status === "returned" === (l.returnedAt !== null), "\u8CB8\u501F\u8A18\u9332\u304C\u4E00\u81F4\u3057\u307E\u305B\u3093");
+      const d = c2.loans.find((x) => x.id === id);
+      if (l.status === "returned") requireThat(sameCustody(s.objects[d.objectId].custody, { kind: "place", id: d.returnLocationId }) || sameCustody(s.objects[d.objectId].custody, { kind: "actor", id: d.lenderId }), "\u8FD4\u5374\u5148\u304C\u4E00\u81F4\u3057\u307E\u305B\u3093");
+    }
+    let previousId = 0;
+    let previousTick = 0;
+    for (const e of s.events) {
+      record(e, "event");
+      int(e.id, "event.id", previousId + 1);
+      int(e.tick, "event.tick", previousTick);
+      requireThat(e.tick <= s.tick, "\u672A\u6765\u306E\u30A4\u30D9\u30F3\u30C8");
+      previousId = e.id;
+      previousTick = e.tick;
+      str(e.type, "event.type");
+      strings(e.actorIds, "event.actors");
+      e.actorIds.forEach((id) => ref(id, c2.actors, "event.actor"));
+      strings(e.subjectIds, "event.subjects");
+      ref(e.locationId, c2.places, "event.place");
+      record(e.payload, "payload");
+      Object.values(e.payload).forEach((v) => val(v, "payload"));
+      array(e.causalEventIds, "event.causes");
+      e.causalEventIds.forEach((id) => requireThat(s.events.some((p) => p.id === id && p.id < e.id), "\u56E0\u679C\u5143\u306E\u51FA\u6765\u4E8B\u304C\u3042\u308A\u307E\u305B\u3093"));
+    }
+    requireThat(s.nextEventId > previousId, "\u6B21\u306E\u30A4\u30D9\u30F3\u30C8\u756A\u53F7\u304C\u91CD\u8907\u3057\u307E\u3059");
+    const startedInstances = s.events.filter((e) => e.type === "engine.action.started");
+    const startIds = startedInstances.map((e) => {
+      int(e.payload.instanceId, "started.instanceId", 1);
+      return e.payload.instanceId;
+    });
+    requireThat(new Set(startIds).size === startIds.length, "\u958B\u59CB\u3057\u305F\u884C\u70BA\u756A\u53F7\u304C\u91CD\u8907\u3057\u3066\u3044\u307E\u3059");
+    requireThat(s.nextActionId === Math.max(0, ...startIds) + 1, "\u6B21\u306E\u884C\u70BA\u756A\u53F7\u304C\u5C65\u6B74\u3068\u4E00\u81F4\u3057\u307E\u305B\u3093");
+    for (const [id, a] of Object.entries(s.actors)) {
+      record(a, "actor");
+      ref(a.locationId, c2.places, "actor.place");
+      requireThat(["problem", "ordinary"].includes(a.routineMode), "\u751F\u6D3B\u72B6\u614B\u304C\u4E0D\u6B63\u3067\u3059");
+      for (const k of ["beliefs", "accepted", "offered", "retryAt"]) record(a[k], `actor.${k}`);
+      for (const [pid, b] of Object.entries(a.beliefs)) {
+        record(b, "belief");
+        ref(pid, c2.propositions, "belief.proposition");
+        requireThat(b.propositionId === pid, "\u8A8D\u8B58ID\u304C\u4E00\u81F4\u3057\u307E\u305B\u3093");
+        stance(b.stance);
+        int(b.acquiredAt, "acquiredAt");
+        requireThat(b.acquiredAt <= s.tick, "\u672A\u6765\u306E\u8A8D\u8B58");
+        requireThat(["memory", "observation", "testimony", "inference"].includes(b.sourceKind), "\u8A8D\u8B58\u306E\u51FA\u5178\u304C\u4E0D\u6B63\u3067\u3059");
+        str(b.sourceId, "belief.source");
+        str(b.revisionReason, "revisionReason");
+        array(b.evidenceEventIds, "evidence");
+        b.evidenceEventIds.forEach((eid) => requireThat(s.events.some((e) => e.id === eid && e.tick <= b.acquiredAt), "\u8A8D\u8B58\u306E\u8A3C\u62E0\u30A4\u30D9\u30F3\u30C8\u304C\u3042\u308A\u307E\u305B\u3093"));
+        if (b.sourceKind !== "memory") {
+          const evidence = b.evidenceEventIds.map((eid) => s.events.find((e) => e.id === eid));
+          const source = evidence.find((e) => b.sourceKind === "observation" ? e.type === "engine.observed" && e.actorIds.includes(id) && e.payload.clueId === b.sourceId && e.payload.propositionId === pid && (e.payload.value ? "believe" : "deny") === b.stance : e.type === "engine.spoken" && e.actorIds.includes(b.sourceId) && e.payload.recipientId === id && e.payload.propositionId === pid && e.payload.stance === b.stance);
+          requireThat(source && evidence.some((e) => e.type === "engine.information.received" && e.actorIds.includes(id) && e.tick === b.acquiredAt && e.payload.sourceEventId === source.id), "\u8A8D\u8B58\u306E\u53D6\u5F97\u7D4C\u8DEF\u304C\u3042\u308A\u307E\u305B\u3093");
+          requireThat(b.sourceKind !== "inference", "\u63A8\u8AD6\u306B\u3088\u308B\u8A8D\u8B58\u751F\u6210\u306F\u307E\u3060\u672A\u5BFE\u5FDC\u3067\u3059");
+        } else requireThat(b.sourceId === id && b.acquiredAt === 0 && c2.actors.find((x) => x.id === id).initialBeliefs.some((x) => x.propositionId === pid && x.stance === b.stance), "\u521D\u671F\u8A18\u61B6\u304C\u5B9A\u7FA9\u3068\u4E00\u81F4\u3057\u307E\u305B\u3093");
+      }
+      for (const k of ["accepted", "offered"]) for (const [aid, version] of Object.entries(a[k])) {
+        ref(aid, c2.agreements, k);
+        int(version, "agreement.version", 1);
+        requireThat(version <= c2.agreements.find((x) => x.id === aid).version, "\u672A\u77E5\u306E\u7D04\u675F\u7248");
+      }
+      for (const [aid, version] of Object.entries(a.accepted)) requireThat(a.offered[aid] === version, "\u77E5\u3089\u306A\u3044\u7D04\u675F\u3092\u53D7\u8AFE\u3057\u3066\u3044\u307E\u3059");
+      for (const [aid, version] of Object.entries(a.accepted)) requireThat(s.events.some((e) => e.type === "engine.agreement.accepted" && e.actorIds.includes(id) && e.payload.agreementId === aid && e.payload.version === version), "\u53D7\u8AFE\u306E\u51FA\u6765\u4E8B\u304C\u3042\u308A\u307E\u305B\u3093");
+      for (const [aid, version] of Object.entries(a.offered)) requireThat(s.events.some((e) => e.type === "engine.information.received" && e.actorIds.includes(id) && s.events.some((source) => source.id === e.payload.sourceEventId && source.type === "engine.agreement.offered" && source.payload.agreementId === aid && source.payload.version === version)), "\u63D0\u6848\u3092\u53D7\u3051\u53D6\u3063\u305F\u51FA\u6765\u4E8B\u304C\u3042\u308A\u307E\u305B\u3093");
+      for (const [rid, retry] of Object.entries(a.retryAt)) {
+        requireThat(c2.actors.find((x) => x.id === id).rules.some((r) => r.id === rid), "\u672A\u77E5\u306E\u518D\u8A66\u884C\u898F\u5247");
+        int(retry, "retryAt");
+      }
+    }
+    for (const [id, o] of Object.entries(s.objects)) {
+      record(o, "object");
+      requireThat(o.ownerId === c2.objects.find((x) => x.id === id).ownerId, "\u6240\u6709\u8005\u304C\u4E0D\u6B63\u3067\u3059");
+      custody(o.custody, c2);
+      int(o.quantity, "object.quantity");
+      requireThat(o.quantity === 0 === (o.custody.kind === "consumed"), "\u6570\u91CF\u3068\u6D88\u8CBB\u72B6\u614B\u304C\u4E00\u81F4\u3057\u307E\u305B\u3093");
+      const seen = /* @__PURE__ */ new Set([id]);
+      let at2 = o.custody;
+      while (at2.kind === "object") {
+        requireThat(!seen.has(at2.id), "\u7269\u306E\u53CE\u7D0D\u5148\u304C\u5FAA\u74B0\u3057\u3066\u3044\u307E\u3059");
+        seen.add(at2.id);
+        const parent = s.objects[at2.id];
+        requireThat(parent && parent.custody.kind !== "consumed", "\u53CE\u7D0D\u5148\u304C\u6D88\u8CBB\u6E08\u307F\u3067\u3059");
+        at2 = parent.custody;
+      }
+    }
+    const locked = {};
+    const instanceIds = /* @__PURE__ */ new Set();
+    for (const a of s.actions) {
+      record(a, "action");
+      int(a.id, "instance.id", 1);
+      requireThat(!instanceIds.has(a.id) && a.id < s.nextActionId, "\u884C\u70BA\u306E\u63A1\u756A\u304C\u4E0D\u6B63\u3067\u3059");
+      instanceIds.add(a.id);
+      ref(a.definitionId, c2.actions, "action.definition");
+      const d = c2.actions.find((x) => x.id === a.definitionId);
+      requireThat(a.phase === "running" || a.phase === "recovering" && d.recovery, "\u884C\u70BA\u306E\u6BB5\u968E\u304C\u4E0D\u6B63\u3067\u3059");
+      int(a.startedAt, "startedAt");
+      requireThat(a.startedAt <= s.tick, "\u672A\u6765\u306E\u884C\u70BA");
+      int(a.elapsedTicks, "elapsedTicks");
+      requireThat(a.elapsedTicks < (a.phase === "running" ? d.durationTicks : d.recovery.durationTicks), "\u7D42\u4E86\u6E08\u307F\u884C\u70BA\u304C\u6B8B\u3063\u3066\u3044\u307E\u3059");
+      strings(a.resources, "action.resources");
+      unique(a.resources, "action.resources");
+      requireThat([...a.resources].sort().join("|") === (a.phase === "running" ? actionResources(d) : recoveryResources(d)).join("|"), "\u4E88\u7D04\u304C\u884C\u70BA\u5B9A\u7FA9\u3068\u4E00\u81F4\u3057\u307E\u305B\u3093");
+      requireThat(s.events.some((e) => e.id === a.startEventId && e.tick === a.startedAt && e.type === "engine.action.started" && e.payload.instanceId === a.id && e.payload.actionId === a.definitionId), "\u884C\u70BA\u958B\u59CB\u306E\u8A3C\u62E0\u304C\u3042\u308A\u307E\u305B\u3093");
+      strings(a.appliedEffectIds, "appliedEffectIds");
+      requireThat(a.abortReason === null || typeof a.abortReason === "string", "\u4E2D\u65AD\u7406\u7531\u304C\u4E0D\u6B63\u3067\u3059");
+      if (a.phase === "running") requireThat(a.abortReason === null && a.appliedEffectIds.length === 0 && a.elapsedTicks === s.tick - a.startedAt, "\u5B9F\u884C\u4E2D\u884C\u70BA\u306E\u9032\u884C\u304C\u4E0D\u6B63\u3067\u3059");
+      else requireThat(typeof a.abortReason === "string" && JSON.stringify(a.appliedEffectIds) === JSON.stringify(d.onAbort.map((_, i) => `${a.id}:running:abort:${i}`)) && s.events.some((e) => e.type === "engine.action.aborted" && e.payload.instanceId === a.id && Math.min(s.tick - e.tick, d.recovery.durationTicks - 1) === a.elapsedTicks), "\u5FA9\u65E7\u306E\u9032\u884C\u307E\u305F\u306F\u9069\u7528\u6E08\u307F\u52B9\u679C\u304C\u4E0D\u6B63\u3067\u3059");
+      for (const r of a.resources) {
+        requireThat(locked[r] === void 0, `\u8CC7\u6E90\u306E\u4E8C\u91CD\u4E88\u7D04: ${r}`);
+        locked[r] = a.id;
+      }
+    }
+    requireThat(JSON.stringify(Object.entries(locked).sort()) === JSON.stringify(Object.entries(s.reservations).sort()), "\u4E88\u7D04\u53F0\u5E33\u304C\u5B9F\u884C\u4E2D\u884C\u70BA\u3068\u4E00\u81F4\u3057\u307E\u305B\u3093");
+    for (const [id, completion] of Object.entries(s.completions)) {
+      ref(id, c2.actors, "completion.actor");
+      record(completion, "completion");
+      const actor2 = c2.actors.find((a) => a.id === id);
+      const e = s.events.find((e2) => e2.id === completion.eventId);
+      requireThat(e?.type === "engine.goal.completed" && e.actorIds.includes(id) && e.tick === completion.achievedAt, "\u9054\u6210\u306E\u51FA\u6765\u4E8B\u304C\u3042\u308A\u307E\u305B\u3093");
+      requireThat(completion.goalVersion === 1 && completion.postGoalContractVersion === actor2.postGoalContract.version, "\u9054\u6210\u306E\u7248\u304C\u4E0D\u6B63\u3067\u3059");
+      array(completion.evidenceEventIds, "completion.evidence");
+      requireThat(completion.evidenceEventIds.length > 0, "\u751F\u6D3B\u5B9F\u884C\u306E\u8A3C\u62E0\u304C\u3042\u308A\u307E\u305B\u3093");
+      completion.evidenceEventIds.forEach((eid) => requireThat(s.events.some((e2) => e2.id === eid && e2.actorIds.includes(id) && actor2.goalEvidence.includes(e2.type) && e2.tick <= completion.achievedAt), "\u751F\u6D3B\u5B9F\u884C\u306E\u8A3C\u62E0\u304C\u4E0D\u6B63\u3067\u3059"));
+      requireThat(s.actors[id].routineMode === "ordinary", "\u9054\u6210\u5F8C\u306E\u901A\u5E38\u751F\u6D3B\u3078\u79FB\u884C\u3057\u3066\u3044\u307E\u305B\u3093");
+    }
+    for (const [id, eid] of Object.entries(s.knownCompletions)) requireThat(s.completions[id]?.eventId === eid && s.events.some((e) => e.type === "engine.information.received" && e.actorIds.includes("player") && e.payload.sourceEventId === eid), "\u4E3B\u4EBA\u516C\u306E\u9054\u6210\u78BA\u8A8D\u306B\u53D6\u5F97\u7D4C\u8DEF\u304C\u3042\u308A\u307E\u305B\u3093");
+    for (const d of s.deliveries) {
+      record(d, "delivery");
+      int(d.dueAt, "delivery.dueAt", s.tick + 1);
+      ref(d.recipientId, c2.actors, "delivery.recipient");
+      requireThat(s.events.some((e) => e.id === d.eventId), "\u914D\u9001\u5143\u30A4\u30D9\u30F3\u30C8\u304C\u3042\u308A\u307E\u305B\u3093");
+      str(d.sourceId, "delivery.source");
+      switch (d.kind) {
+        case "observation":
+        case "testimony":
+          ref(d.propositionId, c2.propositions, "delivery.proposition");
+          stance(d.stance);
+          break;
+        case "agreement":
+          ref(d.agreementId, c2.agreements, "delivery.agreement");
+          int(d.version, "delivery.version", 1);
+          requireThat(d.version === c2.agreements.find((a) => a.id === d.agreementId).version, "\u914D\u9001\u3059\u308B\u7D04\u675F\u306E\u7248\u304C\u4E0D\u6B63\u3067\u3059");
+          break;
+        case "completion":
+          requireThat(s.completions[d.completionActorId ?? ""]?.eventId === d.eventId, "\u9054\u6210\u901A\u77E5\u304C\u4E0D\u6B63\u3067\u3059");
+          break;
+        default:
+          throw new Error("\u914D\u9001\u7A2E\u5225\u304C\u4E0D\u6B63\u3067\u3059");
+      }
+    }
+    let lastCommand = 0;
+    let lastCommandTick = 0;
+    for (const entry of s.commandLog) {
+      record(entry, "commandLog");
+      int(entry.id, "command.id", lastCommand + 1);
+      int(entry.tick, "command.tick", lastCommandTick);
+      requireThat(entry.tick <= s.tick + 1, "\u672A\u6765\u306E\u30B3\u30DE\u30F3\u30C9");
+      validateCommand(entry.command, c2);
+      lastCommand = entry.id;
+      lastCommandTick = entry.tick;
+    }
+    requireThat(s.nextCommandId > lastCommand, "\u30B3\u30DE\u30F3\u30C9\u756A\u53F7\u304C\u91CD\u8907\u3057\u307E\u3059");
+    const pendingIds = /* @__PURE__ */ new Set();
+    for (const entry of s.pending) {
+      record(entry, "pending");
+      requireThat(!pendingIds.has(entry.id), "\u4FDD\u7559\u30B3\u30DE\u30F3\u30C9\u304C\u91CD\u8907\u3057\u3066\u3044\u307E\u3059");
+      pendingIds.add(entry.id);
+      requireThat(entry.tick === s.tick + 1 && JSON.stringify(s.commandLog.find((x) => x.id === entry.id)) === JSON.stringify(entry), "\u4FDD\u7559\u30B3\u30DE\u30F3\u30C9\u304C\u5C65\u6B74\u3068\u4E00\u81F4\u3057\u307E\u305B\u3093");
+    }
+  }
+  function validateSave(input, c2) {
+    record(input, "save");
+    sameKeys(input, ["schemaVersion", "contentVersion", "designNamespace", "state"], "save");
+    requireThat(input.schemaVersion === 2, "\u672A\u5BFE\u5FDC\u306E\u30BB\u30FC\u30D6\u5F62\u5F0F\u3067\u3059\u3002\u73FE\u5728\u306E\u72B6\u614B\u306F\u5909\u66F4\u3057\u3066\u3044\u307E\u305B\u3093");
+    requireThat(input.contentVersion === c2.version && input.designNamespace === c2.namespace, "\u5225\u306E\u30B3\u30F3\u30C6\u30F3\u30C4\u7248\u30FB\u4EBA\u7269\u4F53\u7CFB\u306E\u30BB\u30FC\u30D6\u306F\u8AAD\u307F\u8FBC\u3081\u307E\u305B\u3093");
+    validateState(input.state, c2);
+  }
+
+  // src/core/conditions.ts
+  function choose(g, self) {
+    switch (g.op) {
+      case "always":
+        return true;
+      case "belief":
+        return self.beliefs[g.propositionId]?.stance === g.stance;
+      case "here":
+        return self.locationId === g.locationId;
+      case "accepted":
+        return self.accepted[g.agreementId] === g.version;
+      case "offered":
+        return self.offered[g.agreementId] === g.version;
+      case "all":
+        return g.conditions.every((c2) => choose(c2, self));
+      case "any":
+        return g.conditions.some((c2) => choose(c2, self));
+      case "not":
+        return !choose(g.condition, self);
+    }
+  }
+  function check(g, s) {
+    switch (g.op) {
+      case "always":
+        return true;
+      case "all":
+        return g.conditions.every((c2) => check(c2, s));
+      case "any":
+        return g.conditions.some((c2) => check(c2, s));
+      case "not":
+        return !check(g.condition, s);
+      case "fact":
+        return s.facts[g.propositionId] === g.value;
+      case "at":
+        return s.actors[g.actorId]?.locationId === g.locationId;
+      case "together":
+        return g.actorIds.length > 0 && g.actorIds.every((id) => s.actors[id]?.locationId === s.actors[g.actorIds[0]].locationId);
+      case "custody":
+        return !!s.objects[g.objectId] && sameCustody(s.objects[g.objectId].custody, g.custody);
+      case "quantity":
+        return (s.objects[g.objectId]?.quantity ?? -1) >= g.minimum;
+      case "belief":
+        return s.actors[g.actorId]?.beliefs[g.propositionId]?.stance === g.stance;
+      case "agreement":
+        return g.actorIds.every((id) => s.actors[id]?.accepted[g.agreementId] === g.version);
+      case "offered":
+        return s.actors[g.actorId]?.offered[g.agreementId] === g.version;
+      case "loan":
+        return s.loans[g.loanId]?.status === g.status;
+      case "during":
+        return s.tick >= g.from && s.tick < g.until;
+      case "event":
+        return s.events.some((e) => e.type === g.type && e.actorIds.includes(g.actorId));
+      case "active":
+        return s.actions.some((a) => a.definitionId === g.actionId && a.phase === "running");
+      case "reserved":
+        return s.reservations[g.resourceId] !== void 0;
+    }
+  }
+
+  // src/core/engine.ts
+  var clone = (x) => structuredClone(x);
+  function freeze(value) {
+    if (value !== null && typeof value === "object") {
+      Object.values(value).forEach(freeze);
+      Object.freeze(value);
+    }
+    return value;
+  }
+  var Simulation = class {
+    content;
+    state;
+    constructor(input, seed = 1) {
+      validateContent(input);
+      this.content = freeze(clone(input));
+      requireThat(Number.isSafeInteger(seed) && seed >= 0, "\u4E71\u6570\u30B7\u30FC\u30C9\u304C\u4E0D\u6B63\u3067\u3059");
+      this.state = {
+        tick: 0,
+        randomState: seed,
+        nextEventId: 1,
+        nextActionId: 1,
+        nextCommandId: 1,
+        actors: Object.fromEntries(input.actors.map((a) => [a.id, {
+          locationId: a.locationId,
+          beliefs: Object.fromEntries(a.initialBeliefs.map((b) => [b.propositionId, {
+            propositionId: b.propositionId,
+            stance: b.stance,
+            sourceKind: "memory",
+            sourceId: a.id,
+            evidenceEventIds: [],
+            acquiredAt: 0,
+            revisionReason: b.reason
+          }])),
+          accepted: {},
+          offered: {},
+          retryAt: {},
+          routineMode: "problem"
+        }])),
+        objects: Object.fromEntries(input.objects.map((o) => [o.id, { ownerId: o.ownerId, custody: clone(o.custody), quantity: o.quantity }])),
+        facts: Object.fromEntries(input.propositions.map((p) => [p.id, p.initialValue])),
+        services: Object.fromEntries(input.services.map((id) => [id, false])),
+        actions: [],
+        reservations: {},
+        deliveries: [],
+        events: [],
+        completions: {},
+        knownCompletions: {},
+        commandLog: [],
+        pending: [],
+        loans: Object.fromEntries((input.loans ?? []).map((l) => [l.id, { status: l.initiallyBorrowed ? "borrowed" : "available", borrowedAt: l.initiallyBorrowed ? 0 : null, returnedAt: null }]))
+      };
+      this.refreshDerived();
+      validateState(this.state, this.content);
+    }
+    snapshot() {
+      return clone(this.state);
+    }
+    save() {
+      return { schemaVersion: 2, contentVersion: this.content.version, designNamespace: this.content.namespace, state: this.snapshot() };
+    }
+    load(input) {
+      const candidate = clone(input);
+      if (candidate && typeof candidate === "object" && "schemaVersion" in candidate && candidate.schemaVersion === 1 && "contentVersion" in candidate && candidate.contentVersion === "foundation-0.1.0" && "state" in candidate && candidate.state && typeof candidate.state === "object" && !("loans" in candidate.state)) {
+        candidate.schemaVersion = 2;
+        Object.assign(candidate.state, { loans: {} });
+      }
+      validateSave(candidate, this.content);
+      this.state = clone(candidate.state);
+    }
+    enqueue(command2) {
+      validateCommand(command2, this.content);
+      const entry = { id: this.state.nextCommandId++, tick: this.state.tick + 1, command: clone(command2) };
+      this.state.commandLog.push(entry);
+      this.state.pending.push(entry);
+      return entry.id;
+    }
+    step(count = 1) {
+      requireThat(Number.isSafeInteger(count) && count >= 0, "\u66F4\u65B0\u56DE\u6570\u306F\u975E\u8CA0\u6574\u6570\u306B\u3057\u3066\u304F\u3060\u3055\u3044");
+      for (let i = 0; i < count; i++) this.update();
+    }
+    definition(id) {
+      return this.content.actions.find((a) => a.id === id);
+    }
+    event(type, actorIds, locationId, payload = {}, causalEventIds = [], subjectIds = []) {
+      const e = { id: this.state.nextEventId++, tick: this.state.tick, type, actorIds: [...actorIds], subjectIds: [...subjectIds], locationId, payload, causalEventIds: [...causalEventIds] };
+      this.state.events.push(e);
+      return e;
+    }
+    moving(actorId2, s = this.state) {
+      return s.actions.some((a) => a.phase === "running" && this.definition(a.definitionId).movement?.actorId === actorId2);
+    }
+    together(a, b) {
+      return !this.moving(a) && !this.moving(b) && this.state.actors[a].locationId === this.state.actors[b].locationId;
+    }
+    queue(eventId, recipientId, fields) {
+      this.state.deliveries.push({
+        dueAt: this.state.tick + 1,
+        recipientId,
+        eventId,
+        kind: "observation",
+        sourceId: recipientId,
+        propositionId: null,
+        stance: null,
+        agreementId: null,
+        version: null,
+        completionActorId: null,
+        ...fields
+      });
+    }
+    deliver() {
+      const due = this.state.deliveries.filter((d) => d.dueAt <= this.state.tick);
+      this.state.deliveries = this.state.deliveries.filter((d) => d.dueAt > this.state.tick);
+      for (const d of due) {
+        const actor2 = this.state.actors[d.recipientId];
+        const receipt = this.event(
+          "engine.information.received",
+          [d.recipientId],
+          actor2.locationId,
+          { sourceEventId: d.eventId, channel: d.kind, sourceId: d.sourceId },
+          [d.eventId]
+        );
+        if (d.kind === "observation" || d.kind === "testimony") {
+          actor2.beliefs[d.propositionId] = {
+            propositionId: d.propositionId,
+            stance: d.stance,
+            sourceKind: d.kind,
+            sourceId: d.sourceId,
+            evidenceEventIds: [d.eventId, receipt.id],
+            acquiredAt: this.state.tick,
+            revisionReason: d.kind === "observation" ? "\u305D\u306E\u5834\u3067\u78BA\u304B\u3081\u305F" : "\u767A\u8A00\u3092\u805E\u3044\u305F\uFF08\u540C\u610F\u3068\u306F\u5225\uFF09"
+          };
+        } else if (d.kind === "agreement") actor2.offered[d.agreementId] = d.version;
+        else if (d.kind === "completion" && d.recipientId === "player") this.state.knownCompletions[d.completionActorId] = d.eventId;
+      }
+    }
+    perceive() {
+      for (const clue of this.content.clues.filter((x) => x.automatic)) {
+        if (!check(clue.visible, this.state)) continue;
+        const value = this.state.facts[clue.propositionId];
+        if (typeof value !== "boolean") continue;
+        const stance2 = value ? "believe" : "deny";
+        for (const id of clue.observerIds ?? this.content.actors.map((a) => a.id)) {
+          const actor2 = this.state.actors[id];
+          if (actor2.locationId !== clue.locationId || this.moving(id) || actor2.beliefs[clue.propositionId]?.stance === stance2 || this.state.deliveries.some((d) => d.recipientId === id && d.propositionId === clue.propositionId && d.stance === stance2)) continue;
+          const e = this.event("engine.observed", [id], actor2.locationId, { clueId: clue.id, propositionId: clue.propositionId, value });
+          this.queue(e.id, id, { propositionId: clue.propositionId, stance: stance2, sourceId: clue.id });
+        }
+      }
+    }
+    refreshDerived() {
+      for (const p of this.content.propositions) if (p.derived) this.state.facts[p.id] = check(p.derived, this.state);
+    }
+    process(command2, order, proposals, cancellations) {
+      const c2 = command2;
+      const a = this.state.actors[c2.actorId];
+      if (c2.kind === "start") {
+        requireThat(this.definition(c2.actionId).actorIds.includes(c2.actorId), "\u305D\u306E\u884C\u70BA\u306E\u5B9F\u884C\u8005\u3067\u306F\u3042\u308A\u307E\u305B\u3093");
+        proposals.push({ actionId: c2.actionId, actorId: c2.actorId, order, ruleId: null, retryTicks: 1 });
+        return;
+      }
+      if (c2.kind === "cancel") {
+        const action2 = this.state.actions.find((x) => x.id === c2.instanceId);
+        requireThat(action2 && this.definition(action2.definitionId).actorIds.includes(c2.actorId), "\u81EA\u5206\u306E\u5B9F\u884C\u4E2D\u884C\u70BA\u3060\u3051\u4E2D\u65AD\u3067\u304D\u307E\u3059");
+        requireThat(action2.phase === "running", "\u5B89\u5168\u306A\u5FA9\u65E7\u304C\u7D42\u308F\u308B\u307E\u3067\u5F85\u3063\u3066\u304F\u3060\u3055\u3044");
+        cancellations.add(action2.id);
+        return;
+      }
+      requireThat(!this.moving(c2.actorId), "\u79FB\u52D5\u4E2D\u3067\u3059\u3002\u5230\u7740\u3057\u3066\u304B\u3089\u64CD\u4F5C\u3057\u3066\u304F\u3060\u3055\u3044");
+      if (c2.kind === "inspect") {
+        const clue = this.content.clues.find((x) => x.id === c2.clueId);
+        requireThat(a.locationId === clue.locationId && check(clue.visible, this.state), "\u3053\u3053\u304B\u3089\u306F\u78BA\u304B\u3081\u3089\u308C\u307E\u305B\u3093");
+        const observed = this.state.facts[clue.propositionId];
+        requireThat(typeof observed === "boolean", "\u3053\u306E\u691C\u67FB\u306E\u547D\u984C\u306F\u771F\u507D\u5024\u3067\u3042\u308B\u5FC5\u8981\u304C\u3042\u308A\u307E\u3059");
+        const e = this.event("engine.observed", [c2.actorId], a.locationId, { clueId: clue.id, propositionId: clue.propositionId, value: observed });
+        this.queue(e.id, c2.actorId, { propositionId: clue.propositionId, stance: observed ? "believe" : "deny", sourceId: clue.id });
+      } else if (c2.kind === "say") {
+        requireThat(this.together(c2.actorId, c2.recipientId), "\u76F8\u624B\u306B\u5C4A\u304F\u5834\u6240\u3067\u8A71\u3057\u3066\u304F\u3060\u3055\u3044");
+        const belief = a.beliefs[c2.propositionId];
+        requireThat(belief, "\u307E\u3060\u53D6\u5F97\u3057\u3066\u3044\u306A\u3044\u60C5\u5831\u3067\u3059");
+        const e = this.event("engine.spoken", [c2.actorId], a.locationId, { recipientId: c2.recipientId, propositionId: c2.propositionId, stance: belief.stance }, belief.evidenceEventIds);
+        this.queue(e.id, c2.recipientId, { kind: "testimony", propositionId: c2.propositionId, stance: belief.stance, sourceId: c2.actorId });
+      } else if (c2.kind === "askCompletion") {
+        requireThat(this.together(c2.actorId, c2.recipientId), "\u76F8\u624B\u306B\u5C4A\u304F\u5834\u6240\u3067\u5C0B\u306D\u3066\u304F\u3060\u3055\u3044");
+        const completion = this.state.completions[c2.recipientId];
+        requireThat(completion, "\u76F8\u624B\u306F\u307E\u3060\u751F\u6D3B\u306E\u76EE\u7684\u3092\u7D42\u3048\u3066\u3044\u307E\u305B\u3093");
+        this.event("engine.completion.reported", [c2.recipientId], a.locationId, { recipientId: c2.actorId }, [completion.eventId]);
+        this.queue(completion.eventId, c2.actorId, { kind: "completion", completionActorId: c2.recipientId, sourceId: c2.recipientId });
+      } else if (c2.kind === "offer") {
+        const agreement = this.content.agreements.find((x) => x.id === c2.agreementId);
+        requireThat(agreement.proposerId === c2.actorId && agreement.participantIds.includes(c2.recipientId), "\u3053\u306E\u7D04\u675F\u3092\u63D0\u6848\u3067\u304D\u308B\u76F8\u624B\u3067\u306F\u3042\u308A\u307E\u305B\u3093");
+        requireThat(this.together(c2.actorId, c2.recipientId), "\u76F8\u624B\u306B\u5C4A\u304F\u5834\u6240\u3067\u63D0\u6848\u3057\u3066\u304F\u3060\u3055\u3044");
+        const e = this.event("engine.agreement.offered", [c2.actorId], a.locationId, { agreementId: agreement.id, version: agreement.version, recipientId: c2.recipientId });
+        for (const recipientId of /* @__PURE__ */ new Set([c2.actorId, c2.recipientId])) this.queue(e.id, recipientId, { kind: "agreement", agreementId: agreement.id, version: agreement.version, sourceId: c2.actorId });
+      } else if (c2.kind === "accept") {
+        const agreement = this.content.agreements.find((x) => x.id === c2.agreementId);
+        requireThat(agreement.participantIds.includes(c2.actorId) && a.offered[c2.agreementId] === c2.version && agreement.version === c2.version, "\u305D\u306E\u7248\u306E\u63D0\u6848\u3092\u53D7\u3051\u53D6\u3063\u3066\u3044\u307E\u305B\u3093");
+        a.accepted[c2.agreementId] = c2.version;
+        this.event("engine.agreement.accepted", [c2.actorId], a.locationId, { agreementId: c2.agreementId, version: c2.version });
+      }
+    }
+    release(a, retain = []) {
+      for (const r of a.resources) if (!retain.includes(r)) delete this.state.reservations[r];
+      a.resources = retain;
+    }
+    custodyPlace(custody2, s) {
+      const seen = /* @__PURE__ */ new Set();
+      let at2 = custody2;
+      while (at2.kind === "object") {
+        requireThat(!seen.has(at2.id), "\u5BB9\u5668\u306E\u5FAA\u74B0\u3067\u3059");
+        seen.add(at2.id);
+        at2 = s.objects[at2.id].custody;
+      }
+      if (at2.kind === "actor") return s.actors[at2.id].locationId;
+      return at2.kind === "place" ? at2.id : null;
+    }
+    /** Mutate a private candidate only. A failed effect cannot leak a partial transfer or consumption. */
+    physical(s, effects) {
+      for (const e of effects) {
+        switch (e.op) {
+          case "move":
+            s.actors[e.actorId].locationId = e.to;
+            break;
+          case "fact":
+            s.facts[e.propositionId] = e.value;
+            break;
+          case "service":
+            s.services[e.serviceId] = e.active;
+            break;
+          case "emit":
+            break;
+          case "observe":
+            requireThat(e.actorIds.every((id) => s.actors[id].locationId === e.locationId) && typeof s.facts[e.propositionId] === "boolean", "\u89B3\u6E2C\u8005\u304C\u305D\u306E\u5834\u306B\u3044\u307E\u305B\u3093");
+            break;
+          case "inform":
+            requireThat(s.actors[e.speakerId].locationId === s.actors[e.recipientId].locationId && !this.moving(e.speakerId, s) && !this.moving(e.recipientId, s) && s.actors[e.speakerId].beliefs[e.propositionId], "\u4F1D\u3048\u308B\u60C5\u5831\u3092\u77E5\u3089\u306A\u3044\u304B\u3001\u76F8\u624B\u306B\u5C4A\u304D\u307E\u305B\u3093");
+            break;
+          case "offer": {
+            const agreement = this.content.agreements.find((a) => a.id === e.agreementId);
+            requireThat(agreement.proposerId === e.speakerId && agreement.participantIds.includes(e.recipientId) && s.actors[e.speakerId].locationId === s.actors[e.recipientId].locationId && !this.moving(e.speakerId, s) && !this.moving(e.recipientId, s), "\u63D0\u6848\u304C\u76F8\u624B\u306B\u5C4A\u304D\u307E\u305B\u3093");
+            break;
+          }
+          case "accept": {
+            const agreement = this.content.agreements.find((a) => a.id === e.agreementId);
+            requireThat(agreement.participantIds.includes(e.actorId) && s.actors[e.actorId].offered[e.agreementId] === e.version && agreement.version === e.version, "\u3053\u306E\u7248\u306E\u63D0\u6848\u3092\u53D7\u3051\u53D6\u3063\u3066\u3044\u307E\u305B\u3093");
+            s.actors[e.actorId].accepted[e.agreementId] = e.version;
+            break;
+          }
+          case "loan": {
+            const d = this.content.loans.find((l2) => l2.id === e.loanId);
+            const l = s.loans[e.loanId];
+            if (e.status === "borrowed") {
+              requireThat(l.status !== "borrowed", "\u65E2\u306B\u501F\u7528\u3055\u308C\u3066\u3044\u307E\u3059");
+              l.borrowedAt = s.tick;
+              l.returnedAt = null;
+            } else {
+              requireThat(l.status === "borrowed" && (sameCustody(s.objects[d.objectId].custody, { kind: "place", id: d.returnLocationId }) || sameCustody(s.objects[d.objectId].custody, { kind: "actor", id: d.lenderId })), "\u5408\u610F\u3057\u305F\u8FD4\u5374\u5148\u306B\u73FE\u7269\u304C\u3042\u308A\u307E\u305B\u3093");
+              l.returnedAt = s.tick;
+            }
+            l.status = e.status;
+            break;
+          }
+          case "consume": {
+            const o = s.objects[e.objectId];
+            requireThat(o.quantity >= e.quantity, "\u5FC5\u8981\u306A\u6570\u91CF\u304C\u8DB3\u308A\u307E\u305B\u3093");
+            requireThat(!Object.values(s.objects).some((child) => child.custody.kind === "object" && child.custody.id === e.objectId), "\u4E2D\u8EAB\u304C\u5165\u3063\u305F\u5BB9\u5668\u306F\u6D88\u8CBB\u3067\u304D\u307E\u305B\u3093");
+            o.quantity -= e.quantity;
+            if (o.quantity === 0) o.custody = { kind: "consumed" };
+            break;
+          }
+          case "transfer": {
+            const o = s.objects[e.objectId];
+            requireThat(sameCustody(o.custody, e.from), "\u54C1\u7269\u306F\u3082\u3046\u305D\u306E\u5834\u6240\u306B\u3042\u308A\u307E\u305B\u3093");
+            requireThat(this.content.objects.find((x) => x.id === e.objectId).portable, "\u904B\u3079\u306A\u3044\u7269\u3067\u3059");
+            requireThat(o.quantity > 0 && this.custodyPlace(e.from, s) === this.custodyPlace(e.to, s), "\u53D7\u6E21\u3057\u76F8\u624B\u3068\u54C1\u7269\u304C\u540C\u3058\u5834\u6240\u306B\u3044\u307E\u305B\u3093");
+            o.custody = clone(e.to);
+            this.custodyPlace(o.custody, s);
+            break;
+          }
+        }
+      }
+    }
+    apply(effects, a) {
+      const candidate = clone(this.state);
+      this.physical(candidate, effects);
+      this.state.actors = candidate.actors;
+      this.state.objects = candidate.objects;
+      this.state.facts = candidate.facts;
+      this.state.services = candidate.services;
+      this.state.loans = candidate.loans;
+      const definition = this.definition(a.definitionId);
+      effects.forEach((e, index) => {
+        const effectId = `${a.id}:${a.phase}:${a.abortReason ? "abort" : "success"}:${index}`;
+        requireThat(!a.appliedEffectIds.includes(effectId), "\u52B9\u679C\u306E\u4E8C\u91CD\u9069\u7528\u3067\u3059");
+        a.appliedEffectIds.push(effectId);
+        if (e.op === "inform") {
+          const belief = this.state.actors[e.speakerId].beliefs[e.propositionId];
+          const spoken = this.event("engine.spoken", [e.speakerId], this.state.actors[e.speakerId].locationId, { recipientId: e.recipientId, propositionId: e.propositionId, stance: belief.stance }, [...belief.evidenceEventIds, a.startEventId]);
+          this.queue(spoken.id, e.recipientId, { kind: "testimony", propositionId: e.propositionId, stance: belief.stance, sourceId: e.speakerId });
+        } else if (e.op === "observe") {
+          for (const id of e.actorIds) {
+            const value = this.state.facts[e.propositionId];
+            const observed = this.event("engine.observed", [id], e.locationId, { clueId: e.sourceId, propositionId: e.propositionId, value }, [a.startEventId]);
+            this.queue(observed.id, id, { propositionId: e.propositionId, stance: value ? "believe" : "deny", sourceId: e.sourceId });
+          }
+        } else if (e.op === "offer") {
+          const agreement = this.content.agreements.find((x) => x.id === e.agreementId);
+          const offered = this.event("engine.agreement.offered", [e.speakerId], this.state.actors[e.speakerId].locationId, { agreementId: e.agreementId, version: agreement.version, recipientId: e.recipientId }, [a.startEventId]);
+          for (const id of /* @__PURE__ */ new Set([e.speakerId, e.recipientId])) this.queue(offered.id, id, { kind: "agreement", agreementId: e.agreementId, version: agreement.version, sourceId: e.speakerId });
+        } else if (e.op === "accept") this.event("engine.agreement.accepted", [e.actorId], this.state.actors[e.actorId].locationId, { agreementId: e.agreementId, version: e.version }, [a.startEventId]);
+        else if (e.op === "emit") this.event(e.type, e.actorIds, e.locationId, { instanceId: a.id }, [a.startEventId], e.subjectIds);
+        else this.event(
+          `engine.effect.${e.op}`,
+          definition.actorIds,
+          this.state.actors[definition.actorIds[0]].locationId,
+          { instanceId: a.id, effectId, detail: JSON.stringify(e) },
+          [a.startEventId]
+        );
+      });
+    }
+    abort(a, reason) {
+      const def = this.definition(a.definitionId);
+      a.abortReason = reason;
+      this.apply(def.onAbort, a);
+      this.event("engine.action.aborted", def.actorIds, this.state.actors[def.actorIds[0]].locationId, { instanceId: a.id, reason }, [a.startEventId]);
+      if (def.recovery) {
+        this.release(a, recoveryResources(def));
+        a.phase = "recovering";
+        a.elapsedTicks = 0;
+      } else {
+        this.release(a);
+        this.state.actions = this.state.actions.filter((x) => x.id !== a.id);
+      }
+    }
+    advance(cancellations) {
+      const due = [];
+      for (const a of [...this.state.actions]) {
+        const def = this.definition(a.definitionId);
+        if (a.phase === "running" && (cancellations.has(a.id) || !check(def.maintainGuard, this.state))) {
+          this.abort(a, cancellations.has(a.id) ? "\u672C\u4EBA\u304B\u3089\u306E\u4E2D\u65AD" : "\u6301\u7D9A\u6761\u4EF6\u304C\u5931\u308F\u308C\u305F");
+          continue;
+        }
+        a.elapsedTicks++;
+        if (a.elapsedTicks < (a.phase === "running" ? def.durationTicks : def.recovery.durationTicks)) continue;
+        if (a.phase === "running" && !check(def.finishGuard, this.state)) this.abort(a, "\u7D42\u4E86\u6761\u4EF6\u304C\u6210\u7ACB\u3057\u3066\u3044\u306A\u3044");
+        else due.push(a);
+      }
+      let remaining = due.filter((a) => this.state.actions.includes(a));
+      while (remaining.length > 0) {
+        let removed = false;
+        for (const a of [...this.state.actions]) {
+          const projected = clone(this.state);
+          try {
+            for (const other of remaining) if (other.id !== a.id) {
+              const d = this.definition(other.definitionId);
+              this.physical(projected, other.phase === "running" ? d.onSuccess : d.recovery.onSuccess);
+            }
+            if (a.phase === "running" && !check(this.definition(a.definitionId).maintainGuard, projected)) {
+              this.abort(a, "\u540C\u3058\u66F4\u65B0\u5185\u306B\u6301\u7D9A\u6761\u4EF6\u304C\u5931\u308F\u308C\u308B");
+              remaining = remaining.filter((x) => x.id !== a.id);
+              removed = true;
+              break;
+            }
+          } catch {
+          }
+        }
+        if (!removed) break;
+      }
+      for (const a of remaining) {
+        const def = this.definition(a.definitionId);
+        try {
+          this.apply(a.phase === "running" ? def.onSuccess : def.recovery.onSuccess, a);
+          this.event(
+            a.phase === "running" ? "engine.action.finished" : "engine.action.recovered",
+            def.actorIds,
+            this.state.actors[def.actorIds[0]].locationId,
+            { instanceId: a.id, actionId: def.id },
+            [a.startEventId]
+          );
+          this.release(a);
+          this.state.actions = this.state.actions.filter((x) => x.id !== a.id);
+        } catch (error) {
+          if (a.phase === "running") this.abort(a, error instanceof Error ? error.message : "\u7D50\u679C\u3092\u78BA\u5B9A\u3067\u304D\u306A\u3044");
+          else {
+            a.elapsedTicks = def.recovery.durationTicks - 1;
+            this.event("engine.recovery.blocked", def.actorIds, this.state.actors[def.actorIds[0]].locationId, { reason: String(error) }, [a.startEventId]);
+          }
+        }
+      }
+    }
+    start(p, startSnapshot) {
+      const d = this.definition(p.actionId);
+      const actor2 = this.state.actors[p.actorId];
+      if (p.ruleId) actor2.retryAt[p.ruleId] = this.state.tick + p.retryTicks;
+      const resources = actionResources(d);
+      const conflict = resources.find((r) => this.state.reservations[r] !== void 0);
+      let reason = conflict ? `\u4F7F\u7528\u4E2D\u306E\u8CC7\u6E90: ${conflict}` : null;
+      if (!check(d.startGuard, startSnapshot) || !check(d.maintainGuard, startSnapshot)) reason = "\u958B\u59CB\u6761\u4EF6\u307E\u305F\u306F\u6301\u7D9A\u6761\u4EF6\u304C\u6210\u7ACB\u3057\u3066\u3044\u306A\u3044";
+      if (!check(d.startGuard, this.state) || !check(d.maintainGuard, this.state)) reason = "\u958B\u59CB\u6642\u70B9\u3067\u6761\u4EF6\u304C\u5909\u5316\u3057\u305F";
+      if (d.movement && this.state.actors[d.movement.actorId].locationId !== d.movement.from) reason = "\u79FB\u52D5\u306E\u51FA\u767A\u5730\u70B9\u304C\u9055\u3046";
+      if (reason) {
+        this.event("engine.action.rejected", [p.actorId], actor2.locationId, { actionId: d.id, reason, retryAt: this.state.tick + p.retryTicks });
+        return;
+      }
+      const id = this.state.nextActionId++;
+      const e = this.event("engine.action.started", d.actorIds, actor2.locationId, { instanceId: id, actionId: d.id, ruleId: p.ruleId ?? "command" });
+      const a = { id, definitionId: d.id, startedAt: this.state.tick, elapsedTicks: 0, phase: "running", resources, abortReason: null, startEventId: e.id, appliedEffectIds: [] };
+      for (const r of resources) this.state.reservations[r] = id;
+      this.state.actions.push(a);
+    }
+    completeGoals(firstEventId) {
+      for (const evidence of [...this.state.events].filter((e) => e.id >= firstEventId)) {
+        for (const id of evidence.actorIds) {
+          const d = this.content.actors.find((a) => a.id === id);
+          if (this.state.completions[id] || !d.goalEvidence.includes(evidence.type)) continue;
+          const e = this.event("engine.goal.completed", [id], evidence.locationId, { goalVersion: 1 }, [evidence.id]);
+          this.state.completions[id] = { eventId: e.id, evidenceEventIds: [evidence.id], achievedAt: this.state.tick, goalVersion: 1, postGoalContractVersion: d.postGoalContract.version };
+          this.state.actors[id].routineMode = "ordinary";
+          for (const service of d.postGoalContract.serviceIds) this.state.services[service] = true;
+          if (this.state.actors.player.locationId === evidence.locationId && !this.moving("player")) this.queue(e.id, "player", { kind: "completion", completionActorId: id, sourceId: id });
+        }
+      }
+    }
+    update() {
+      const before = clone(this.state);
+      try {
+        this.state.tick++;
+        const firstEventId = this.state.nextEventId;
+        this.refreshDerived();
+        this.deliver();
+        this.perceive();
+        const proposals = [];
+        const cancellations = /* @__PURE__ */ new Set();
+        const commands = this.state.pending;
+        this.state.pending = [];
+        for (const entry of commands) {
+          try {
+            this.process(entry.command, entry.id, proposals, cancellations);
+          } catch (error) {
+            this.event("engine.command.rejected", [entry.command.actorId], this.state.actors[entry.command.actorId].locationId, { commandId: entry.id, reason: error instanceof Error ? error.message : String(error) });
+          }
+        }
+        const startSnapshot = clone(this.state);
+        let order = this.state.nextCommandId;
+        for (const d of [...this.content.actors].sort((a, b) => a.id.localeCompare(b.id, "en"))) {
+          const self = startSnapshot.actors[d.id];
+          const busy = startSnapshot.actions.some((a) => !this.definition(a.definitionId).concurrent && this.definition(a.definitionId).actorIds.includes(d.id));
+          const r = [...d.rules].sort((a, b) => b.priority - a.priority || a.id.localeCompare(b.id, "en")).find((r2) => ((r2.mode ?? "problem") === self.routineMode || r2.mode === "always") && (!busy || this.definition(r2.actionId).concurrent) && !startSnapshot.actions.some((a) => a.definitionId === r2.actionId) && (self.retryAt[r2.id] ?? 0) <= this.state.tick && choose(r2.choiceGuard, self));
+          if (r) proposals.push({ actorId: d.id, actionId: r.actionId, order: order++, ruleId: r.id, retryTicks: r.retryTicks });
+        }
+        this.advance(cancellations);
+        for (const p of proposals.sort((a, b) => a.order - b.order)) this.start(p, startSnapshot);
+        this.completeGoals(firstEventId);
+        this.refreshDerived();
+      } catch (error) {
+        this.state = before;
+        throw error;
+      }
+    }
+  };
+
+  // src/core/clock.ts
+  var FixedClock = class {
+    remainderMs = 0;
+    paused = true;
+    setPaused(paused) {
+      this.paused = paused;
+      this.remainderMs = 0;
+    }
+    advance(milliseconds, tick) {
+      requireThat(Number.isFinite(milliseconds) && milliseconds >= 0, "\u7D4C\u904E\u6642\u9593\u304C\u4E0D\u6B63\u3067\u3059");
+      if (this.paused) return 0;
+      this.remainderMs += milliseconds;
+      const steps = Math.floor((this.remainderMs + 1e-8) / 100);
+      this.remainderMs = Math.max(0, this.remainderMs - steps * 100);
+      for (let i = 0; i < steps; i++) tick();
+      return steps;
+    }
+  };
+
+  // src/content/foundation.ts
+  var always = { op: "always" };
+  var at = (actorId2, locationId) => ({ op: "at", actorId: actorId2, locationId });
+  var all = (...conditions) => ({ op: "all", conditions });
+  var action = (id, label, actorIds, options2) => ({
+    id,
+    label,
+    actorIds,
+    durationTicks: 5,
+    startGuard: always,
+    maintainGuard: always,
+    finishGuard: always,
+    resources: [],
+    onSuccess: [],
+    onAbort: [],
+    recovery: null,
+    movement: null,
+    presentationId: "debug.action",
+    designStatus: "provisional",
+    rationale: "Phase 1\u306E\u57FA\u76E4\u691C\u67FB\u7528\u3002\u672C\u7DE8\u306E\u4EBA\u7269\u30FB\u5834\u9762\u30C7\u30FC\u30BF\u3067\u306F\u306A\u3044\u3002",
+    ...options2
+  });
+  var actor = (id, displayName, locationId) => ({
+    id,
+    displayName,
+    locationId,
+    kind: id === "player" ? "player" : "fixture",
+    sourceRef: "doc/foundation-status.md",
+    normalLife: "\u5B9F\u88C5\u57FA\u76E4\u306E\u691C\u67FB\u5F79\u3002\u672C\u7DE8100\u4EBA\u306B\u306F\u542B\u3081\u306A\u3044\u3002",
+    goal: "\u691C\u67FB\u7528\u306E\u884C\u70BA\u3092\u5B9F\u969B\u306B\u5B8C\u4E86\u3059\u308B",
+    initialBeliefs: [],
+    rules: [],
+    goalEvidence: [],
+    postGoalContract: { version: 1, serviceIds: [] }
+  });
+  var actors = [actor("player", "\u4E3B\u4EBA\u516C", "loc.yard"), actor("fixture.carrier", "\u904B\u3073\u624B", "loc.yard"), actor("fixture.recipient", "\u53D7\u53D6\u4EBA", "loc.home"), actor("fixture.worker", "\u4F5C\u696D\u8005", "loc.works")];
+  actors[3].goalEvidence = ["fixture.work.finished"];
+  actors[3].postGoalContract.serviceIds = ["service.return"];
+  actors[3].rules = [{ id: "rule.work", priority: 1, choiceGuard: { op: "belief", propositionId: "prop.request", stance: "believe" }, actionId: "act.work", retryTicks: 10 }];
+  var places = [
+    { id: "loc.yard", name: "\u4E2D\u5EAD", x: 0, y: 0, links: ["loc.home", "loc.works"] },
+    { id: "loc.home", name: "\u53D7\u53D6\u6240", x: 1, y: 0, links: ["loc.yard"] },
+    { id: "loc.works", name: "\u4F5C\u696D\u6240", x: 0, y: 1, links: ["loc.yard", "loc.store"] },
+    { id: "loc.store", name: "\u8FD4\u5374\u53E3", x: 1, y: 1, links: ["loc.works"] }
+  ];
+  var travel = actors.flatMap((a) => places.flatMap((p) => p.links.map((to) => action(`act.walk.${a.id}.${p.id}.${to}`, `${places.find((x) => x.id === to).name}\u3078\u6B69\u304F`, [a.id], {
+    durationTicks: 20,
+    startGuard: at(a.id, p.id),
+    movement: { actorId: a.id, from: p.id, to },
+    onSuccess: [{ op: "move", actorId: a.id, to }]
+  }))));
+  var foundationContent = {
+    version: "foundation-0.1.0",
+    namespace: "redesign-v1",
+    tickMs: 100,
+    ticksPerDay: 14400,
+    places,
+    actors,
+    resources: ["slot.workbench"],
+    services: ["service.return"],
+    propositions: [
+      { id: "prop.request", description: "\u4F9D\u983C\u672D\u306B\u4F5C\u696D\u306E\u6CE8\u6587\u304C\u66F8\u304B\u308C\u3066\u3044\u308B", initialValue: true },
+      { id: "prop.safe", description: "\u4F5C\u696D\u8A2D\u5099\u304C\u5B89\u5168\u306A\u72B6\u614B\u306B\u3042\u308B", initialValue: true },
+      { id: "prop.delivered", description: "\u5305\u307F\u304C\u53D7\u53D6\u4EBA\u3078\u5C4A\u3044\u305F", initialValue: false },
+      { id: "prop.finished", description: "\u4F5C\u696D\u304C\u5B9F\u969B\u306B\u5B8C\u4E86\u3057\u305F", initialValue: false }
+    ],
+    objects: [
+      { id: "obj.package", name: "\u6CE8\u6587\u306E\u5305\u307F", ownerId: "fixture.recipient", custody: { kind: "place", id: "loc.yard" }, quantity: 1, unit: "\u5305", portable: true, consumable: false },
+      { id: "obj.material", name: "\u4F5C\u696D\u7528\u306E\u6750\u6599", ownerId: "fixture.worker", custody: { kind: "place", id: "loc.works" }, quantity: 3, unit: "\u500B", portable: true, consumable: true }
+    ],
+    clues: [
+      { id: "clue.request", locationId: "loc.yard", propositionId: "prop.request", visible: always, description: "\u4F9D\u983C\u672D\u3092\u8AAD\u3080" },
+      { id: "clue.safety", locationId: "loc.works", propositionId: "prop.safe", visible: always, description: "\u8A2D\u5099\u306E\u5B89\u5168\u8868\u793A\u3092\u8ABF\u3079\u308B" },
+      { id: "clue.receipt", locationId: "loc.home", propositionId: "prop.delivered", visible: always, description: "\u53D7\u53D6\u53F0\u5E33\u3092\u8ABF\u3079\u308B" }
+    ],
+    agreements: [{ id: "agreement.work", version: 1, proposerId: "player", participantIds: ["player", "fixture.worker"], terms: "\u5408\u56F3\u3092\u78BA\u8A8D\u3057\u3066\u304B\u3089\u4E00\u7DD2\u306B\u4F5C\u696D\u3059\u308B\u3002\u4E2D\u65AD\u6642\u306F\u53D7\u3051\u53F0\u3078\u623B\u3059\u3002" }],
+    actions: [
+      ...travel,
+      ...["player", "fixture.carrier"].map((id) => action(`act.take.${id}`, "\u5305\u307F\u3092\u53D7\u3051\u53D6\u308B", [id], {
+        startGuard: all(at(id, "loc.yard"), { op: "custody", objectId: "obj.package", custody: { kind: "place", id: "loc.yard" } }),
+        resources: [`hand:${id}:right`],
+        onSuccess: [{ op: "transfer", objectId: "obj.package", from: { kind: "place", id: "loc.yard" }, to: { kind: "actor", id } }]
+      })),
+      ...["player", "fixture.carrier"].map((id) => action(`act.deliver.${id}`, "\u53D7\u53D6\u4EBA\u3078\u5305\u307F\u3092\u6E21\u3059", [id], {
+        startGuard: all(at(id, "loc.home"), at("fixture.recipient", "loc.home"), { op: "custody", objectId: "obj.package", custody: { kind: "actor", id } }),
+        resources: [`hand:${id}:right`, "hand:fixture.recipient:left", "actor:fixture.recipient"],
+        onSuccess: [{ op: "transfer", objectId: "obj.package", from: { kind: "actor", id }, to: { kind: "actor", id: "fixture.recipient" } }, { op: "fact", propositionId: "prop.delivered", value: true }, { op: "emit", type: "fixture.package.received", actorIds: ["fixture.recipient"], locationId: "loc.home", subjectIds: ["obj.package"] }]
+      })),
+      action("act.work", "\u6750\u6599\u3092\u52A0\u5DE5\u3059\u308B", ["fixture.worker"], {
+        durationTicks: 30,
+        startGuard: all(at("fixture.worker", "loc.works"), { op: "quantity", objectId: "obj.material", minimum: 1 }),
+        maintainGuard: { op: "fact", propositionId: "prop.safe", value: true },
+        resources: ["hand:fixture.worker:left", "hand:fixture.worker:right", "slot.workbench"],
+        onSuccess: [{ op: "consume", objectId: "obj.material", quantity: 1, unit: "\u500B" }, { op: "fact", propositionId: "prop.finished", value: true }, { op: "emit", type: "fixture.work.finished", actorIds: ["fixture.worker"], locationId: "loc.works", subjectIds: ["obj.material"] }],
+        recovery: { durationTicks: 10, retainResources: ["hand:fixture.worker:left", "slot.workbench"], onSuccess: [{ op: "emit", type: "fixture.work.restored", actorIds: ["fixture.worker"], locationId: "loc.works", subjectIds: [] }] }
+      }),
+      action("act.stop", "\u8A2D\u5099\u3092\u505C\u6B62\u3059\u308B", ["player"], { durationTicks: 1, startGuard: at("player", "loc.works"), onSuccess: [{ op: "fact", propositionId: "prop.safe", value: false }] }),
+      action("act.restore", "\u8A2D\u5099\u3092\u5FA9\u65E7\u3059\u308B", ["player"], { durationTicks: 1, startGuard: at("player", "loc.works"), onSuccess: [{ op: "fact", propositionId: "prop.safe", value: true }] }),
+      action("act.borrow-bench", "\u4F5C\u696D\u53F0\u3092\u501F\u308A\u308B", ["player"], { startGuard: at("player", "loc.works"), resources: ["slot.workbench"], durationTicks: 10 }),
+      action("act.agreed-work", "\u5408\u610F\u3057\u305F\u5171\u540C\u4F5C\u696D\u3092\u8A66\u3059", ["player", "fixture.worker"], {
+        startGuard: all(at("player", "loc.works"), at("fixture.worker", "loc.works"), { op: "agreement", agreementId: "agreement.work", version: 1, actorIds: ["player", "fixture.worker"] }),
+        resources: ["slot.workbench"],
+        durationTicks: 10
+      })
+    ]
+  };
+
+  // src/storage/saves.ts
+  var Saves = class {
+    store;
+    prefix;
+    constructor(store, prefix = "roadonden:foundation:v1:") {
+      this.store = store;
+      this.prefix = prefix;
+    }
+    write(simulation, slot) {
+      requireThat([1, 2, 3].includes(slot), "\u4FDD\u5B58\u67A0\u304C\u4E0D\u6B63\u3067\u3059");
+      this.store.setItem(`${this.prefix}manual:${slot}`, this.export(simulation));
+    }
+    read(simulation, slot) {
+      const data = this.store.getItem(`${this.prefix}${typeof slot === "number" ? `manual:${slot}` : slot}`);
+      requireThat(data !== null, "\u3053\u306E\u67A0\u306B\u306F\u30BB\u30FC\u30D6\u304C\u3042\u308A\u307E\u305B\u3093");
+      this.import(simulation, data);
+    }
+    autosave(simulation) {
+      const previous = this.store.getItem(`${this.prefix}auto`);
+      if (previous !== null) this.store.setItem(`${this.prefix}previous`, previous);
+      this.store.setItem(`${this.prefix}auto`, this.export(simulation));
+    }
+    export(simulation) {
+      return JSON.stringify(simulation.save());
+    }
+    import(simulation, json) {
+      const candidate = JSON.parse(json);
+      simulation.load(candidate);
+    }
+  };
+
+  // src/dev/main.ts
+  var el = (id) => document.getElementById(id);
+  var select = (id) => el(id);
+  var button = (id, f) => el(id).addEventListener("click", () => guarded(f));
+  var c = foundationContent;
+  var sim = new Simulation(c);
+  var clock = new FixedClock();
+  var saves = new Saves({ getItem: (key) => localStorage.getItem(key), setItem: (key, value) => localStorage.setItem(key, value) });
+  var running = false;
+  var lastFrame = performance.now();
+  var lastRenderedTick = -1;
+  var observedEventId = 0;
+  var storageFailed = false;
+  var name = (id) => c.actors.find((a) => a.id === id)?.displayName ?? c.places.find((p) => p.id === id)?.name ?? c.objects.find((o) => o.id === id)?.name ?? id;
+  function message(text, error = false) {
+    el("status").textContent = text;
+    el("status").classList.toggle("error", error);
+  }
+  function pause() {
+    running = false;
+    clock.setPaused(true);
+    el("run").textContent = "\u25B6 \u9032\u3081\u308B";
+  }
+  function guarded(f) {
+    try {
+      f();
+      render();
+    } catch (error) {
+      pause();
+      message(error instanceof Error ? error.message : String(error), true);
+    }
+  }
+  function options(id, entries) {
+    const s = select(id);
+    const previous = s.value;
+    if ([...s.options].map((o) => `${o.value}:${o.textContent}`).join("|") === entries.map((e) => `${e[0]}:${e[1]}`).join("|")) return;
+    s.replaceChildren(...entries.map(([value, label]) => new Option(label, value)));
+    if (entries.some((e) => e[0] === previous)) s.value = previous;
+  }
+  function lines(id, entries, empty) {
+    const root = el(id);
+    root.replaceChildren();
+    if (!entries.length) {
+      const p = document.createElement("p");
+      p.className = "empty";
+      p.textContent = empty;
+      root.append(p);
+    }
+    for (const row of entries) {
+      const div = document.createElement("div");
+      div.textContent = row.text;
+      if (row.detail) {
+        const meta = document.createElement("span");
+        meta.className = "meta";
+        meta.textContent = row.detail;
+        div.append(meta);
+      }
+      root.append(div);
+    }
+  }
+  function custodyText(at2) {
+    return at2.kind === "consumed" ? "\u6D88\u8CBB\u6E08\u307F" : `${name(at2.id)}${at2.kind === "actor" ? "\u304C\u6240\u6301" : at2.kind === "object" ? "\u306E\u4E2D" : "\u306B\u914D\u7F6E"}`;
+  }
+  function actorId() {
+    return select("actor").value;
+  }
+  function command(command2) {
+    sim.enqueue(command2);
+    message("\u6B21\u306E\u66F4\u65B0\u306B\u64CD\u4F5C\u3092\u4E88\u7D04\u3057\u307E\u3057\u305F\u3002");
+  }
+  function update(steps) {
+    sim.step(steps);
+    const state = sim.snapshot();
+    const fresh = state.events.filter((e) => e.id > observedEventId);
+    observedEventId = state.nextEventId - 1;
+    const rejected = fresh.findLast((e) => e.type.endsWith(".rejected"));
+    if (rejected) message(String(rejected.payload.reason), true);
+    if (fresh.some((e) => ["engine.goal.completed", "engine.effect.transfer", "engine.effect.move"].includes(e.type)) && !storageFailed) {
+      try {
+        saves.autosave(sim);
+      } catch (error) {
+        storageFailed = true;
+        message(`\u81EA\u52D5\u4FDD\u5B58\u306B\u5931\u6557\u3057\u307E\u3057\u305F\u3002JSON\u306E\u66F8\u51FA\u3057\u306F\u5229\u7528\u3067\u304D\u307E\u3059\u3002${String(error)}`, true);
+      }
+    }
+  }
+  function afterLoad() {
+    pause();
+    observedEventId = sim.snapshot().nextEventId - 1;
+    lastRenderedTick = -1;
+    storageFailed = false;
+    message("\u4FDD\u5B58\u3057\u305F\u66F4\u65B0\u6642\u70B9\u304B\u3089\u518D\u958B\u3057\u307E\u3057\u305F\u3002\u5B9F\u6642\u9593\u306E\u7D4C\u904E\u306F\u52A0\u7B97\u3057\u3066\u3044\u307E\u305B\u3093\u3002");
+  }
+  function render() {
+    const s = sim.snapshot();
+    const id = actorId() || "player";
+    const a = s.actors[id];
+    el("time").textContent = `\u66F4\u65B0 ${s.tick} / ${Math.floor(s.tick / c.ticksPerDay) + 1}\u65E5\u76EE \xB7 ${running ? "\u9032\u884C\u4E2D" : "\u505C\u6B62\u4E2D"}`;
+    options("action", c.actions.filter((x) => x.actorIds.includes(id) && (!x.movement || x.movement.from === a.locationId)).map((x) => [x.id, x.label]));
+    options("clue", c.clues.filter((x) => x.locationId === a.locationId).map((x) => [x.id, x.description]));
+    options("recipient", c.actors.filter((x) => x.id !== id).map((x) => [x.id, `${x.displayName}\uFF08${name(s.actors[x.id].locationId)}\uFF09`]));
+    options("information", Object.keys(a.beliefs).map((pid) => [pid, c.propositions.find((p) => p.id === pid).description]));
+    el("inspect").disabled = !select("clue").value;
+    el("say").disabled = !select("information").value;
+    el("cancel").disabled = !s.actions.some((x) => c.actions.find((d) => d.id === x.definitionId).actorIds.includes(id) && x.phase === "running");
+    el("accept").disabled = a.offered["agreement.work"] !== 1 || a.accepted["agreement.work"] === 1;
+    lines("active", s.actions.map((x) => {
+      const d = c.actions.find((a2) => a2.id === x.definitionId);
+      return { text: `${d.actorIds.map(name).join("\u30FB")}\uFF1A${d.label} / ${x.phase === "recovering" ? "\u5FA9\u65E7\u4E2D" : "\u5B9F\u884C\u4E2D"} ${x.elapsedTicks}/${x.phase === "recovering" ? d.recovery.durationTicks : d.durationTicks}`, detail: `\u78BA\u4FDD\uFF1A${x.resources.join("\u3001")}${x.abortReason ? ` / \u4E2D\u65AD\u7406\u7531\uFF1A${x.abortReason}` : ""}` };
+    }), "\u5B9F\u884C\u4E2D\u306E\u884C\u70BA\u306F\u3042\u308A\u307E\u305B\u3093\u3002");
+    lines("objects", c.objects.map((o) => ({ text: `${o.name}\uFF1A${s.objects[o.id].quantity}${o.unit} / ${custodyText(s.objects[o.id].custody)}`, detail: `\u6240\u6709\u8005\uFF1A${name(s.objects[o.id].ownerId)}` })), "");
+    lines("beliefs", Object.values(a.beliefs).map((b) => ({ text: `${c.propositions.find((p) => p.id === b.propositionId).description}\uFF1A${b.stance === "believe" ? "\u305D\u3046\u8A8D\u8B58\u3057\u3066\u3044\u308B" : b.stance === "deny" ? "\u305D\u3046\u3067\u306F\u306A\u3044\u3068\u8A8D\u8B58" : "\u672A\u78BA\u5B9A"}`, detail: `${b.sourceKind === "observation" ? "\u76EE\u6483\u30FB\u8ABF\u67FB" : b.sourceKind === "testimony" ? "\u4F1D\u805E" : "\u521D\u671F\u8A18\u61B6"} / ${name(b.sourceId)} / \u66F4\u65B0 ${b.acquiredAt} / \u8A3C\u62E0 ${b.evidenceEventIds.join(", ")}` })), "\u307E\u3060\u60C5\u5831\u3092\u53D6\u5F97\u3057\u3066\u3044\u307E\u305B\u3093\u3002");
+    const agreement = document.createElement("div");
+    agreement.textContent = `\u5171\u540C\u4F5C\u696D\u306E\u624B\u9806\uFF1A${a.accepted["agreement.work"] === 1 ? "\u53D7\u8AFE\u6E08\u307F" : a.offered["agreement.work"] === 1 ? "\u63D0\u6848\u3092\u53D7\u9818\u30FB\u307E\u3060\u540C\u610F\u3057\u3066\u3044\u306A\u3044" : "\u307E\u3060\u805E\u3044\u3066\u3044\u306A\u3044"}`;
+    el("beliefs").append(agreement);
+    lines("known", Object.keys(s.knownCompletions).map((id2) => ({ text: `${name(id2)}\u306E\u9054\u6210\u3092\u78BA\u8A8D\u6E08\u307F` })), "\u78BA\u8A8D\u3057\u305F\u9054\u6210\u306F\u3042\u308A\u307E\u305B\u3093\u3002");
+    lines("truth", [...c.propositions.map((p) => ({ text: `${p.description}\uFF1A${String(s.facts[p.id])}` })), { text: `\u5185\u90E8\u306E\u9054\u6210\uFF1A${Object.keys(s.completions).map(name).join("\u30FB") || "\u306A\u3057"}` }], "");
+    el("positions").replaceChildren(...c.actors.map((d) => {
+      const span = document.createElement("span");
+      span.textContent = `${d.displayName}\uFF1A${name(s.actors[d.id].locationId)}`;
+      return span;
+    }));
+    const events = el("events");
+    events.replaceChildren(...s.events.slice(-18).reverse().map((e) => {
+      const li = document.createElement("li");
+      li.textContent = `[${e.tick}] ${e.type} \xB7 ${e.actorIds.map(name).join("\u30FB")} ${e.payload.reason ?? e.payload.actionId ?? ""}`;
+      return li;
+    }));
+    lastRenderedTick = s.tick;
+    draw(s);
+  }
+  function draw(s) {
+    const canvas = el("map");
+    const ctx = canvas.getContext("2d");
+    const point = (id) => {
+      const p = c.places.find((p2) => p2.id === id);
+      return [155 + p.x * 445, 100 + p.y * 275];
+    };
+    ctx.clearRect(0, 0, 840, 500);
+    ctx.fillStyle = "#f1f1e5";
+    ctx.fillRect(0, 0, 840, 500);
+    for (const p of c.places) for (const to of p.links) {
+      const a = point(p.id), b = point(to);
+      ctx.beginPath();
+      ctx.moveTo(...a);
+      ctx.lineTo(...b);
+      ctx.strokeStyle = "#d9dcca";
+      ctx.lineWidth = 30;
+      ctx.stroke();
+      ctx.strokeStyle = "#eeeee2";
+      ctx.lineWidth = 22;
+      ctx.stroke();
+    }
+    for (const p of c.places) {
+      const [x, y] = point(p.id);
+      ctx.fillStyle = p.id === "loc.works" ? "#e3e7d9" : "#e9e2ce";
+      ctx.fillRect(x - 112, y - 70, 224, 160);
+      ctx.strokeStyle = "#bcc7b4";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(x - 112, y - 70, 224, 160);
+      ctx.fillStyle = "#445f4c";
+      ctx.font = "20px system-ui";
+      ctx.textAlign = "center";
+      ctx.fillText(p.name, x, y - 38);
+    }
+    c.actors.forEach((a, i) => {
+      let [x, y] = point(s.actors[a.id].locationId);
+      const active = s.actions.find((inst) => c.actions.find((d) => d.id === inst.definitionId).movement?.actorId === a.id && inst.phase === "running");
+      if (active) {
+        const d = c.actions.find((d2) => d2.id === active.definitionId);
+        const [tx, ty] = point(d.movement.to);
+        const progress = active.elapsedTicks / d.durationTicks;
+        x += (tx - x) * progress;
+        y += (ty - y) * progress;
+      } else {
+        x += i % 2 ? 37 : -37;
+        y += Math.floor(i / 2) * 37;
+      }
+      ctx.fillStyle = ["#315d49", "#b17b47", "#798caf", "#875e6c"][i];
+      ctx.beginPath();
+      ctx.arc(x, y, 12, 0, Math.PI * 2);
+      ctx.fill();
+      if (a.id === actorId()) {
+        ctx.strokeStyle = "#d7a742";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(x, y, 18, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+      ctx.font = "13px system-ui";
+      ctx.fillStyle = "#293d30";
+      ctx.fillText(a.displayName, x, y + 30);
+    });
+  }
+  options("actor", c.actors.map((a) => [a.id, a.displayName]));
+  select("actor").addEventListener("change", render);
+  button("run", () => {
+    running = !running;
+    clock.setPaused(!running);
+    lastFrame = performance.now();
+    el("run").textContent = running ? "\u2161 \u505C\u6B62" : "\u25B6 \u9032\u3081\u308B";
+  });
+  button("step", () => {
+    pause();
+    update(1);
+  });
+  button("ten", () => {
+    pause();
+    update(10);
+  });
+  button("hundred", () => {
+    pause();
+    update(100);
+  });
+  button("start", () => command({ kind: "start", actorId: actorId(), actionId: select("action").value }));
+  button("cancel", () => {
+    const a = sim.snapshot().actions.find((x) => c.actions.find((d) => d.id === x.definitionId).actorIds.includes(actorId()) && x.phase === "running");
+    if (a) command({ kind: "cancel", actorId: actorId(), instanceId: a.id });
+  });
+  button("inspect", () => command({ kind: "inspect", actorId: actorId(), clueId: select("clue").value }));
+  button("say", () => command({ kind: "say", actorId: actorId(), recipientId: select("recipient").value, propositionId: select("information").value }));
+  button("offer", () => command({ kind: "offer", actorId: actorId(), recipientId: select("recipient").value, agreementId: "agreement.work" }));
+  button("accept", () => command({ kind: "accept", actorId: actorId(), agreementId: "agreement.work", version: 1 }));
+  button("ask", () => command({ kind: "askCompletion", actorId: actorId(), recipientId: select("recipient").value }));
+  button("save", () => {
+    saves.write(sim, Number(select("slot").value));
+    storageFailed = false;
+    message(`\u624B\u52D5\u67A0${select("slot").value}\u3078\u4FDD\u5B58\u3057\u307E\u3057\u305F\u3002`);
+  });
+  button("load", () => {
+    pause();
+    saves.read(sim, Number(select("slot").value));
+    afterLoad();
+  });
+  button("auto", () => {
+    pause();
+    saves.read(sim, "auto");
+    afterLoad();
+  });
+  button("previous", () => {
+    pause();
+    saves.read(sim, "previous");
+    afterLoad();
+  });
+  button("reset", () => {
+    pause();
+    if (!confirm("\u691C\u67FB\u72B6\u614B\u3092\u521D\u671F\u5316\u3057\u307E\u3059\u3002\u4FDD\u5B58\u6E08\u307F\u306E\u67A0\u306F\u6B8B\u308A\u307E\u3059\u3002")) return;
+    sim = new Simulation(c);
+    observedEventId = 0;
+    storageFailed = false;
+    message("\u521D\u671F\u72B6\u614B\u306B\u623B\u3057\u307E\u3057\u305F\u3002");
+  });
+  button("export", () => {
+    const blob = new Blob([saves.export(sim)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `roadonden-foundation-tick-${sim.snapshot().tick}.json`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 5e3);
+    message("JSON\u3092\u66F8\u304D\u51FA\u3057\u307E\u3057\u305F\u3002");
+  });
+  button("import", () => {
+    pause();
+    el("file").click();
+  });
+  el("file").addEventListener("change", async () => {
+    const file = el("file").files?.[0];
+    if (!file) return;
+    try {
+      const text = await file.text();
+      guarded(() => {
+        saves.import(sim, text);
+        afterLoad();
+      });
+    } catch (error) {
+      message(String(error), true);
+    } finally {
+      el("file").value = "";
+    }
+  });
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      pause();
+      render();
+    }
+    lastFrame = performance.now();
+  });
+  function frame(now) {
+    if (running && !document.hidden) guarded(() => {
+      clock.advance(Math.min(now - lastFrame, 250), () => update(1));
+      if (lastRenderedTick !== sim.snapshot().tick) render();
+    });
+    lastFrame = now;
+    requestAnimationFrame(frame);
+  }
+  render();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body></html>

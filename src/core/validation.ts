@@ -1,4 +1,4 @@
-import type { ActionDefinition, Command, Content, Custody, Effect, SaveFile, WorldState } from './types.ts';
+import type { ActionDefinition, ActionEffect, Command, Content, Custody, SaveFile, WorldState } from './types.ts';
 
 export function requireThat(ok: unknown, message: string): asserts ok {
   if (!ok) throw new Error(message);
@@ -42,14 +42,17 @@ function guard(x: unknown, c: Content, choice = false, depth = 0) {
     case 'belief': ref(x.propositionId, c.propositions, 'condition.proposition'); stance(x.stance); if (!choice) actor(x.actorId); return;
     case 'here': requireThat(choice, 'hereは判断専用です'); ref(x.locationId, c.places, 'condition.place'); return;
     case 'accepted': requireThat(choice, 'acceptedは判断専用です'); ref(x.agreementId, c.agreements, 'condition.agreement'); int(x.version, 'version', 1); return;
+    case 'offered': ref(x.agreementId, c.agreements, 'condition.agreement'); int(x.version, 'version', 1); if (!choice) actor(x.actorId); return;
   }
   requireThat(!choice, `判断規則から世界状態は読めません: ${String(x.op)}`);
   switch (x.op) {
     case 'fact': ref(x.propositionId, c.propositions, 'condition.proposition'); val(x.value, 'condition.value'); break;
     case 'at': actor(x.actorId); ref(x.locationId, c.places, 'condition.place'); break;
+    case 'together': strings(x.actorIds, 'together.actors'); requireThat(x.actorIds.length > 0, '同席者が必要です'); x.actorIds.forEach(actor); break;
     case 'custody': ref(x.objectId, c.objects, 'condition.object'); custody(x.custody, c); break;
     case 'quantity': ref(x.objectId, c.objects, 'condition.object'); int(x.minimum, 'minimum'); break;
     case 'agreement': ref(x.agreementId, c.agreements, 'condition.agreement'); int(x.version, 'version', 1); strings(x.actorIds, 'actorIds'); x.actorIds.forEach(actor); break;
+    case 'loan': ref(x.loanId, c.loans ?? [], 'condition.loan'); requireThat(['available','borrowed','returned'].includes(x.status as string), '貸借状態が不正です'); break;
     case 'during': int(x.from, 'from'); int(x.until, 'until', 1); requireThat(x.until > x.from, '時間区間が逆転しています'); break;
     case 'event': str(x.type, 'event.type'); actor(x.actorId); break;
     case 'active': ref(x.actionId, c.actions, 'condition.action'); break;
@@ -67,13 +70,18 @@ function effect(x: unknown, c: Content) {
       const o = c.objects.find(o => o.id === x.objectId)!;
       requireThat(o.consumable && o.unit === x.unit, '消費できない物または単位の不一致'); break;
     }
-    case 'fact': ref(x.propositionId, c.propositions, 'effect.proposition'); val(x.value, 'effect.value'); break;
+    case 'fact': ref(x.propositionId, c.propositions, 'effect.proposition'); val(x.value, 'effect.value'); requireThat(!c.propositions.find(p => p.id === x.propositionId)!.derived, '観測用の導出命題は直接書き換えられません'); break;
     case 'emit': strings(x.actorIds, 'event.actorIds'); x.actorIds.forEach(id => ref(id, c.actors, 'event.actor')); strings(x.subjectIds, 'event.subjectIds'); str(x.type, 'event.type'); requireThat(!x.type.startsWith('engine.'), 'engine.*は予約された出来事名です'); ref(x.locationId, c.places, 'event.place'); break;
     case 'service': str(x.serviceId, 'serviceId'); requireThat(c.services.includes(x.serviceId), '未定義のサービス'); bool(x.active, 'active'); break;
+    case 'inform': ref(x.speakerId, c.actors, 'speaker'); ref(x.recipientId, c.actors, 'recipient'); ref(x.propositionId, c.propositions, 'proposition'); break;
+    case 'observe': strings(x.actorIds, 'observers'); x.actorIds.forEach(id => ref(id, c.actors, 'observer')); ref(x.propositionId, c.propositions, 'proposition'); ref(x.locationId, c.places, 'observation.place'); str(x.sourceId, 'source'); break;
+    case 'offer': ref(x.speakerId, c.actors, 'speaker'); ref(x.recipientId, c.actors, 'recipient'); ref(x.agreementId, c.agreements, 'agreement'); break;
+    case 'accept': ref(x.actorId, c.actors, 'actor'); ref(x.agreementId, c.agreements, 'agreement'); int(x.version, 'version', 1); break;
+    case 'loan': ref(x.loanId, c.loans ?? [], 'loan'); requireThat(['borrowed','returned'].includes(x.status as string), '貸借の効果が不正です'); break;
     default: throw new Error(`未知の効果: ${String(x.op)}`);
   }
 }
-export function effectResources(e: Effect): string[] {
+export function effectResources(e: ActionEffect): string[] {
   switch (e.op) {
     case 'move': return [`actor:${e.actorId}`];
     case 'transfer': return [`object:${e.objectId}`, ...[e.from, e.to].filter(x => x.kind === 'actor').map(x => `actor:${(x as { id: string }).id}`)];
@@ -81,10 +89,12 @@ export function effectResources(e: Effect): string[] {
     case 'fact': return [`fact:${e.propositionId}`];
     case 'service': return [`service:${e.serviceId}`];
     case 'emit': return [];
+    case 'observe': case 'inform': case 'offer': case 'accept': return [];
+    case 'loan': return [`loan:${e.loanId}`];
   }
 }
 export function actionResources(a: ActionDefinition): string[] {
-  return [...new Set([...a.actorIds.map(id => `actor:${id}`), ...a.resources,
+  return [...new Set([...(a.concurrent ? [] : a.actorIds.map(id => `actor:${id}`)), ...a.resources,
     ...[...a.onSuccess, ...a.onAbort, ...(a.recovery?.onSuccess ?? [])].flatMap(effectResources)])].sort();
 }
 export function recoveryResources(a: ActionDefinition): string[] {
@@ -92,7 +102,7 @@ export function recoveryResources(a: ActionDefinition): string[] {
 }
 export function allResources(c: Content): string[] {
   return [...c.resources, ...c.actors.flatMap(a => [`actor:${a.id}`, `hand:${a.id}:left`, `hand:${a.id}:right`]),
-    ...c.objects.map(o => `object:${o.id}`), ...c.propositions.map(p => `fact:${p.id}`), ...c.services.map(id => `service:${id}`)];
+    ...c.objects.map(o => `object:${o.id}`), ...c.propositions.map(p => `fact:${p.id}`), ...c.services.map(id => `service:${id}`), ...(c.loans ?? []).map(l => `loan:${l.id}`)];
 }
 export function validateContent(input: unknown): asserts input is Content {
   record(input, 'content'); const c = input as unknown as Content;
@@ -107,25 +117,38 @@ export function validateContent(input: unknown): asserts input is Content {
     str(p.name, 'place.name'); requireThat(Number.isFinite(p.x) && Number.isFinite(p.y), '二次元座標が不正です');
     strings(p.links, 'place.links'); p.links.forEach(id => { ref(id, c.places, 'place.link'); requireThat(c.places.find(q => q.id === id)!.links.includes(p.id), '場所の接続は双方向にしてください'); });
   }
-  c.propositions.forEach(p => { str(p.description, 'proposition.description'); val(p.initialValue, 'proposition.initialValue'); });
+  c.propositions.forEach(p => {
+    str(p.description, 'proposition.description'); val(p.initialValue, 'proposition.initialValue');
+    if (p.derived) {
+      guard(p.derived, c);
+      const independent = (g: Content['actions'][number]['startGuard']): boolean => {
+        if (g.op === 'all' || g.op === 'any') return g.conditions.every(independent);
+        if (g.op === 'not') return independent(g.condition);
+        return g.op !== 'fact' || !c.propositions.find(p => p.id === g.propositionId)!.derived;
+      };
+      requireThat(independent(p.derived), '導出命題同士の連鎖・循環は未対応です');
+    }
+  });
   for (const a of c.actors) {
     str(a.displayName, 'actor.name'); ref(a.locationId, c.places, 'actor.place'); str(a.sourceRef, 'sourceRef'); str(a.normalLife, 'normalLife'); str(a.goal, 'goal');
-    requireThat(['player', 'resident', 'fixture'].includes(a.kind), '人物種別が不正です');
+    requireThat(['player', 'resident', 'fixture', 'animal'].includes(a.kind), '人物種別が不正です');
     if (a.kind === 'resident') requireThat(/^C(00[1-9]|0[1-9]\d|100)$/.test(a.id), '住民IDが不正です');
     array(a.initialBeliefs, 'initialBeliefs'); a.initialBeliefs.forEach(b => { record(b, 'belief'); ref(b.propositionId, c.propositions, 'belief'); stance(b.stance); str(b.reason, 'memory.reason'); });
     array(a.rules, 'rules'); unique(a.rules.map(r => r.id), 'rules');
-    a.rules.forEach(r => { str(r.id, 'rule.id'); int(r.priority, 'priority'); int(r.retryTicks, 'retryTicks', 1); ref(r.actionId, c.actions, 'rule.action'); requireThat(c.actions.find(x => x.id === r.actionId)!.actorIds.includes(a.id), '他人だけの行為を規則で選択できません'); guard(r.choiceGuard, c, true); });
+    a.rules.forEach(r => { str(r.id, 'rule.id'); int(r.priority, 'priority'); int(r.retryTicks, 'retryTicks', 1); requireThat(r.mode === undefined || ['problem','ordinary','always'].includes(r.mode), '規則の生活モードが不正です'); ref(r.actionId, c.actions, 'rule.action'); requireThat(c.actions.find(x => x.id === r.actionId)!.actorIds.includes(a.id), '他人だけの行為を規則で選択できません'); guard(r.choiceGuard, c, true); });
     strings(a.goalEvidence, 'goalEvidence'); requireThat(a.goalEvidence.every(t => !t.startsWith('engine.')), '内部イベントを生活の達成に使えません');
     record(a.postGoalContract, 'postGoalContract'); int(a.postGoalContract.version, 'postGoalContract.version', 1); strings(a.postGoalContract.serviceIds, 'postGoalContract.serviceIds'); a.postGoalContract.serviceIds.forEach(id => requireThat(c.services.includes(id), '未定義の達成後サービス'));
   }
   for (const o of c.objects) { str(o.name, 'object.name'); ref(o.ownerId, c.actors, 'object.owner'); custody(o.custody, c); int(o.quantity, 'quantity'); str(o.unit, 'unit'); bool(o.portable, 'portable'); bool(o.consumable, 'consumable'); }
   for (const a of c.agreements) { int(a.version, 'agreement.version', 1); ref(a.proposerId, c.actors, 'proposer'); strings(a.participantIds, 'participants'); unique(a.participantIds, 'participants'); a.participantIds.forEach(id => ref(id, c.actors, 'participant')); requireThat(a.participantIds.includes(a.proposerId), '提案者は参加者である必要があります'); str(a.terms, 'terms'); }
-  for (const clue of c.clues) { ref(clue.locationId, c.places, 'clue.place'); ref(clue.propositionId, c.propositions, 'clue.proposition'); str(clue.description, 'clue.description'); guard(clue.visible, c); }
+  for (const clue of c.clues) { ref(clue.locationId, c.places, 'clue.place'); ref(clue.propositionId, c.propositions, 'clue.proposition'); str(clue.description, 'clue.description'); guard(clue.visible, c); if (clue.observerIds) clue.observerIds.forEach(id => ref(id, c.actors, 'clue.observer')); }
+  if (c.loans) { array(c.loans, 'loans'); unique(c.loans.map(l => l.id), 'loans'); for (const l of c.loans) { ref(l.objectId, c.objects, 'loan.object'); ref(l.lenderId, c.actors, 'loan.lender'); ref(l.borrowerId, c.actors, 'loan.borrower'); ref(l.returnLocationId, c.places, 'loan.return'); str(l.policy, 'loan.policy'); requireThat(c.objects.find(o => o.id === l.objectId)!.ownerId === l.lenderId, '貸主と所有者が一致しません'); } }
   for (const a of c.actions) {
     str(a.label, 'action.label'); strings(a.actorIds, 'action.actors'); requireThat(a.actorIds.length > 0, '実行者が必要です'); unique(a.actorIds, 'action.actors'); a.actorIds.forEach(id => ref(id, c.actors, 'action.actor'));
     int(a.durationTicks, 'durationTicks', 1); strings(a.resources, 'action.resources'); a.resources.forEach(r => requireThat(allResources(c).includes(r), `未定義の資源 ${r}`));
     [a.startGuard, a.maintainGuard, a.finishGuard].forEach(g => guard(g, c));
     for (const effects of [a.onSuccess, a.onAbort]) { array(effects, 'effects'); effects.forEach(e => effect(e, c)); }
+    if (a.concurrent) requireThat(!a.movement && !a.recovery && a.resources.length === 0 && [...a.onSuccess,...a.onAbort].every(e => !['move','transfer','consume','loan'].includes(e.op)), '同時会話で物理作業を行えません');
     requireThat(a.designStatus === 'provisional', '試作値の出典を指定してください'); str(a.rationale, 'rationale'); str(a.presentationId, 'presentationId');
     if (a.recovery !== null) { record(a.recovery, 'recovery'); int(a.recovery.durationTicks, 'recovery.durationTicks', 1); strings(a.recovery.retainResources, 'retainResources'); array(a.recovery.onSuccess, 'recovery.effects'); a.recovery.onSuccess.forEach(e => effect(e, c)); a.recovery.retainResources.forEach(r => requireThat(actionResources(a).includes(r), '未確保の資源を復旧時に保持できません')); }
     if (a.movement !== null) { record(a.movement, 'movement'); ref(a.movement.actorId, c.actors, 'movement.actor'); requireThat(a.actorIds.includes(a.movement.actorId), '移動者が実行者に含まれていません'); ref(a.movement.from, c.places, 'movement.from'); ref(a.movement.to, c.places, 'movement.to'); requireThat(c.places.find(p => p.id === a.movement!.from)!.links.includes(a.movement.to), '移動経路が接続されていません'); requireThat(a.onSuccess.some(e => e.op === 'move' && e.actorId === a.movement!.actorId && e.to === a.movement!.to), '移動終了効果が必要です'); }
@@ -146,12 +169,14 @@ export function validateCommand(x: unknown, c: Content): asserts x is Command {
 }
 export function validateState(input: unknown, c: Content): asserts input is WorldState {
   record(input, 'state'); const s = input as unknown as WorldState;
-  sameKeys(input, ['tick','randomState','nextEventId','nextActionId','nextCommandId','actors','objects','facts','services','actions','reservations','deliveries','events','completions','knownCompletions','commandLog','pending'], 'state');
+  sameKeys(input, ['tick','randomState','nextEventId','nextActionId','nextCommandId','actors','objects','facts','services','actions','reservations','deliveries','events','completions','knownCompletions','commandLog','pending','loans'], 'state');
   for (const k of ['tick','randomState','nextEventId','nextActionId','nextCommandId'] as const) int(s[k], k, k.startsWith('next') ? 1 : 0);
-  for (const k of ['actors','objects','facts','services','reservations','completions','knownCompletions'] as const) record(s[k], k);
+  for (const k of ['actors','objects','facts','services','reservations','completions','knownCompletions','loans'] as const) record(s[k], k);
   for (const k of ['actions','deliveries','events','commandLog','pending'] as const) array(s[k], k);
   sameKeys(s.actors, c.actors.map(a => a.id), 'actors'); sameKeys(s.objects, c.objects.map(o => o.id), 'objects'); sameKeys(s.facts, c.propositions.map(p => p.id), 'facts'); sameKeys(s.services, c.services, 'services');
   Object.values(s.facts).forEach(v => val(v, 'fact')); Object.values(s.services).forEach(v => bool(v, 'service'));
+  sameKeys(s.loans, (c.loans ?? []).map(l => l.id), 'loans');
+  for (const [id, l] of Object.entries(s.loans)) { record(l, 'loan'); requireThat(['available','borrowed','returned'].includes(l.status), '貸借状態が不正です'); if (l.borrowedAt !== null) { int(l.borrowedAt, 'borrowedAt'); requireThat(l.borrowedAt <= s.tick, '未来の貸借'); } if (l.returnedAt !== null) { int(l.returnedAt, 'returnedAt'); requireThat(l.borrowedAt !== null && l.returnedAt >= l.borrowedAt && l.returnedAt <= s.tick, '返却時刻が不正です'); } requireThat((l.status === 'available') === (l.borrowedAt === null) && (l.status === 'returned') === (l.returnedAt !== null), '貸借記録が一致しません'); const d = c.loans!.find(x => x.id === id)!; if (l.status === 'returned') requireThat(sameCustody(s.objects[d.objectId]!.custody, {kind:'place',id:d.returnLocationId}) || sameCustody(s.objects[d.objectId]!.custody, {kind:'actor',id:d.lenderId}), '返却先が一致しません'); }
   let previousId = 0; let previousTick = 0;
   for (const e of s.events) {
     record(e, 'event'); int(e.id, 'event.id', previousId + 1); int(e.tick, 'event.tick', previousTick); requireThat(e.tick <= s.tick, '未来のイベント'); previousId = e.id; previousTick = e.tick;
@@ -200,7 +225,7 @@ export function validateState(input: unknown, c: Content): asserts input is Worl
     requireThat(s.events.some(e => e.id === a.startEventId && e.tick === a.startedAt && e.type === 'engine.action.started' && e.payload.instanceId === a.id && e.payload.actionId === a.definitionId), '行為開始の証拠がありません');
     strings(a.appliedEffectIds, 'appliedEffectIds'); requireThat(a.abortReason === null || typeof a.abortReason === 'string', '中断理由が不正です');
     if (a.phase === 'running') requireThat(a.abortReason === null && a.appliedEffectIds.length === 0 && a.elapsedTicks === s.tick - a.startedAt, '実行中行為の進行が不正です');
-    else requireThat(typeof a.abortReason === 'string' && JSON.stringify(a.appliedEffectIds) === JSON.stringify(d.onAbort.map((_, i) => `${a.id}:running:abort:${i}`)) && s.events.some(e => e.type === 'engine.action.aborted' && e.payload.instanceId === a.id && s.tick - e.tick === a.elapsedTicks), '復旧の進行または適用済み効果が不正です');
+    else requireThat(typeof a.abortReason === 'string' && JSON.stringify(a.appliedEffectIds) === JSON.stringify(d.onAbort.map((_, i) => `${a.id}:running:abort:${i}`)) && s.events.some(e => e.type === 'engine.action.aborted' && e.payload.instanceId === a.id && Math.min(s.tick - e.tick, d.recovery!.durationTicks - 1) === a.elapsedTicks), '復旧の進行または適用済み効果が不正です');
     for (const r of a.resources) { requireThat(locked[r] === undefined, `資源の二重予約: ${r}`); locked[r] = a.id; }
   }
   requireThat(JSON.stringify(Object.entries(locked).sort()) === JSON.stringify(Object.entries(s.reservations).sort()), '予約台帳が実行中行為と一致しません');
@@ -229,7 +254,7 @@ export function validateState(input: unknown, c: Content): asserts input is Worl
 }
 export function validateSave(input: unknown, c: Content): asserts input is SaveFile {
   record(input, 'save'); sameKeys(input, ['schemaVersion','contentVersion','designNamespace','state'], 'save');
-  requireThat(input.schemaVersion === 1, '未対応のセーブ形式です。現在の状態は変更していません');
+  requireThat(input.schemaVersion === 2, '未対応のセーブ形式です。現在の状態は変更していません');
   requireThat(input.contentVersion === c.version && input.designNamespace === c.namespace, '別のコンテンツ版・人物体系のセーブは読み込めません');
   validateState(input.state, c);
 }

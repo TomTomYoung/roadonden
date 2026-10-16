@@ -12,6 +12,7 @@ export type ChoiceGuard =
   | { op: 'belief'; propositionId: string; stance: Stance }
   | { op: 'here'; locationId: string }
   | { op: 'accepted'; agreementId: string; version: number }
+  | { op: 'offered'; agreementId: string; version: number }
   | { op: 'all' | 'any'; conditions: ChoiceGuard[] }
   | { op: 'not'; condition: ChoiceGuard };
 export type Condition =
@@ -20,10 +21,13 @@ export type Condition =
   | { op: 'not'; condition: Condition }
   | { op: 'fact'; propositionId: string; value: Value }
   | { op: 'at'; actorId: string; locationId: string }
+  | { op: 'together'; actorIds: string[] }
   | { op: 'custody'; objectId: string; custody: Custody }
   | { op: 'quantity'; objectId: string; minimum: number }
   | { op: 'belief'; actorId: string; propositionId: string; stance: Stance }
   | { op: 'agreement'; agreementId: string; version: number; actorIds: string[] }
+  | { op: 'offered'; actorId: string; agreementId: string; version: number }
+  | { op: 'loan'; loanId: string; status: 'available' | 'borrowed' | 'returned' }
   | { op: 'during'; from: number; until: number }
   | { op: 'event'; type: string; actorId: string }
   | { op: 'active'; actionId: string }
@@ -35,29 +39,38 @@ export type Effect =
   | { op: 'fact'; propositionId: string; value: Value }
   | { op: 'emit'; type: string; actorIds: string[]; locationId: string; subjectIds: string[] }
   | { op: 'service'; serviceId: string; active: boolean };
+export type SocialEffect =
+  | { op: 'inform'; speakerId: string; recipientId: string; propositionId: string }
+  | { op: 'observe'; actorIds: string[]; propositionId: string; locationId: string; sourceId: string }
+  | { op: 'offer'; speakerId: string; recipientId: string; agreementId: string }
+  | { op: 'accept'; actorId: string; agreementId: string; version: number }
+  | { op: 'loan'; loanId: string; status: 'borrowed' | 'returned' };
+export type ActionEffect = Effect | SocialEffect;
 export interface ActionDefinition {
   id: string; label: string; actorIds: string[]; durationTicks: number;
   startGuard: Condition; maintainGuard: Condition; finishGuard: Condition;
-  resources: string[]; onSuccess: Effect[]; onAbort: Effect[];
-  recovery: { durationTicks: number; retainResources: string[]; onSuccess: Effect[] } | null;
+  resources: string[]; onSuccess: ActionEffect[]; onAbort: ActionEffect[];
+  recovery: { durationTicks: number; retainResources: string[]; onSuccess: ActionEffect[] } | null;
   movement: { actorId: string; from: string; to: string } | null;
   presentationId: string; designStatus: 'provisional'; rationale: string;
+  concurrent?: boolean;
 }
 export interface ResidentDefinition {
-  id: string; displayName: string; kind: 'player' | 'resident' | 'fixture';
+  id: string; displayName: string; kind: 'player' | 'resident' | 'fixture' | 'animal';
   locationId: string; sourceRef: string; normalLife: string; goal: string;
   initialBeliefs: { propositionId: string; stance: Stance; reason: string }[];
-  rules: { id: string; priority: number; choiceGuard: ChoiceGuard; actionId: string; retryTicks: number }[];
+  rules: { id: string; priority: number; choiceGuard: ChoiceGuard; actionId: string; retryTicks: number; mode?: 'problem' | 'ordinary' | 'always' }[];
   goalEvidence: string[]; postGoalContract: { version: number; serviceIds: string[] };
 }
 export interface Content {
   version: string; namespace: 'redesign-v1'; tickMs: 100; ticksPerDay: number;
   places: { id: string; name: string; x: number; y: number; links: string[] }[];
-  propositions: { id: string; description: string; initialValue: Value }[];
+  propositions: { id: string; description: string; initialValue: Value; derived?: Condition }[];
   actors: ResidentDefinition[];
   objects: { id: string; name: string; ownerId: string; custody: Custody; quantity: number; unit: string; portable: boolean; consumable: boolean }[];
   resources: string[]; services: string[];
-  clues: { id: string; locationId: string; propositionId: string; visible: Condition; description: string }[];
+  clues: { id: string; locationId: string; propositionId: string; visible: Condition; description: string; automatic?: boolean; observerIds?: string[] }[];
+  loans?: { id: string; objectId: string; lenderId: string; borrowerId: string; returnLocationId: string; policy: string; initiallyBorrowed?: boolean }[];
   agreements: { id: string; version: number; proposerId: string; participantIds: string[]; terms: string }[];
   actions: ActionDefinition[];
 }
@@ -98,5 +111,6 @@ export interface WorldState {
   services: Record<string, boolean>; actions: ActionInstance[]; reservations: Record<string, number>;
   deliveries: Delivery[]; events: EventRecord[]; completions: Record<string, Completion>;
   knownCompletions: Record<string, number>; commandLog: CommandRecord[]; pending: CommandRecord[];
+  loans: Record<string, { status: 'available' | 'borrowed' | 'returned'; borrowedAt: number | null; returnedAt: number | null }>;
 }
-export interface SaveFile { schemaVersion: 1; contentVersion: string; designNamespace: 'redesign-v1'; state: WorldState }
+export interface SaveFile { schemaVersion: 2; contentVersion: string; designNamespace: 'redesign-v1'; state: WorldState }

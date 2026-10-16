@@ -222,3 +222,8 @@ test('snapshots are detached; malformed commands cannot mutate or queue state', 
   const initial = s.snapshot(); assert.throws(() => s.enqueue({ kind: 'start', actorId: 'player', actionId: 'missing' }));
   assert.deepEqual(s.snapshot(), initial);
 });
+
+test('schema 1 foundation saves migrate explicitly without mapping fixture people to real residents', () => {
+  const s=create();s.step(10);const old=s.save();old.schemaVersion=1;delete old.state.loans;
+  const restored=create();restored.load(old);assert.deepEqual(restored.snapshot(),s.snapshot());assert.equal(restored.save().schemaVersion,2);
+});

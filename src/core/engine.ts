@@ -1,4 +1,4 @@
-import type { ActionDefinition, ActionInstance, Command, Content, Custody, Delivery, Effect, EventRecord, SaveFile, Value, WorldState } from './types.ts';
+import type { ActionDefinition, ActionEffect, ActionInstance, Command, Content, Custody, Delivery, EventRecord, SaveFile, Value, WorldState } from './types.ts';
 import { check, choose } from './conditions.ts';
 import { actionResources, recoveryResources, requireThat, sameCustody, validateCommand, validateContent, validateSave, validateState } from './validation.ts';
 
@@ -26,12 +26,19 @@ export class Simulation {
       facts: Object.fromEntries(input.propositions.map(p => [p.id, p.initialValue])),
       services: Object.fromEntries(input.services.map(id => [id, false])), actions: [], reservations: {},
       deliveries: [], events: [], completions: {}, knownCompletions: {}, commandLog: [], pending: [],
+      loans: Object.fromEntries((input.loans ?? []).map(l => [l.id, { status: l.initiallyBorrowed ? 'borrowed' : 'available', borrowedAt: l.initiallyBorrowed ? 0 : null, returnedAt: null }])),
     };
-    validateState(this.state, this.content);
+    this.refreshDerived(); validateState(this.state, this.content);
   }
   snapshot(): WorldState { return clone(this.state); }
-  save(): SaveFile { return { schemaVersion: 1, contentVersion: this.content.version, designNamespace: this.content.namespace, state: this.snapshot() }; }
-  load(input: unknown): void { validateSave(input, this.content); this.state = clone(input.state); }
+  save(): SaveFile { return { schemaVersion: 2, contentVersion: this.content.version, designNamespace: this.content.namespace, state: this.snapshot() }; }
+  load(input: unknown): void {
+    const candidate = clone(input);
+    if (candidate && typeof candidate === 'object' && 'schemaVersion' in candidate && candidate.schemaVersion === 1 && 'contentVersion' in candidate && candidate.contentVersion === 'foundation-0.1.0' && 'state' in candidate && candidate.state && typeof candidate.state === 'object' && !('loans' in candidate.state)) {
+      candidate.schemaVersion = 2; Object.assign(candidate.state, { loans: {} });
+    }
+    validateSave(candidate, this.content); this.state = clone(candidate.state);
+  }
   enqueue(command: Command): number {
     validateCommand(command, this.content);
     const entry = { id: this.state.nextCommandId++, tick: this.state.tick + 1, command: clone(command) };
@@ -68,6 +75,22 @@ export class Simulation {
       } else if (d.kind === 'agreement') actor.offered[d.agreementId!] = d.version!;
       else if (d.kind === 'completion' && d.recipientId === 'player') this.state.knownCompletions[d.completionActorId!] = d.eventId;
     }
+  }
+  private perceive(): void {
+    for (const clue of this.content.clues.filter(x => x.automatic)) {
+      if (!check(clue.visible, this.state)) continue;
+      const value = this.state.facts[clue.propositionId]; if (typeof value !== 'boolean') continue;
+      const stance = value ? 'believe' : 'deny';
+      for (const id of clue.observerIds ?? this.content.actors.map(a => a.id)) {
+        const actor = this.state.actors[id]!;
+        if (actor.locationId !== clue.locationId || this.moving(id) || actor.beliefs[clue.propositionId]?.stance === stance || this.state.deliveries.some(d => d.recipientId === id && d.propositionId === clue.propositionId && d.stance === stance)) continue;
+        const e = this.event('engine.observed', [id], actor.locationId, { clueId: clue.id, propositionId: clue.propositionId, value });
+        this.queue(e.id, id, { propositionId: clue.propositionId, stance, sourceId: clue.id });
+      }
+    }
+  }
+  private refreshDerived(): void {
+    for (const p of this.content.propositions) if (p.derived) this.state.facts[p.id] = check(p.derived, this.state);
   }
   private process(command: Command, order: number, proposals: Proposal[], cancellations: Set<number>): void {
     const c = command; const a = this.state.actors[c.actorId]!;
@@ -122,13 +145,30 @@ export class Simulation {
     return at.kind === 'place' ? at.id : null;
   }
   /** Mutate a private candidate only. A failed effect cannot leak a partial transfer or consumption. */
-  private physical(s: WorldState, effects: Effect[]): void {
+  private physical(s: WorldState, effects: ActionEffect[]): void {
     for (const e of effects) {
       switch (e.op) {
         case 'move': s.actors[e.actorId]!.locationId = e.to; break;
         case 'fact': s.facts[e.propositionId] = e.value; break;
         case 'service': s.services[e.serviceId] = e.active; break;
         case 'emit': break;
+        case 'observe': requireThat(e.actorIds.every(id => s.actors[id]!.locationId === e.locationId) && typeof s.facts[e.propositionId] === 'boolean', '観測者がその場にいません'); break;
+        case 'inform': requireThat(s.actors[e.speakerId]!.locationId === s.actors[e.recipientId]!.locationId && !this.moving(e.speakerId, s) && !this.moving(e.recipientId, s) && s.actors[e.speakerId]!.beliefs[e.propositionId], '伝える情報を知らないか、相手に届きません'); break;
+        case 'offer': {
+          const agreement = this.content.agreements.find(a => a.id === e.agreementId)!;
+          requireThat(agreement.proposerId === e.speakerId && agreement.participantIds.includes(e.recipientId) && s.actors[e.speakerId]!.locationId === s.actors[e.recipientId]!.locationId && !this.moving(e.speakerId,s) && !this.moving(e.recipientId,s), '提案が相手に届きません'); break;
+        }
+        case 'accept': {
+          const agreement = this.content.agreements.find(a => a.id === e.agreementId)!;
+          requireThat(agreement.participantIds.includes(e.actorId) && s.actors[e.actorId]!.offered[e.agreementId] === e.version && agreement.version === e.version, 'この版の提案を受け取っていません');
+          s.actors[e.actorId]!.accepted[e.agreementId] = e.version; break;
+        }
+        case 'loan': {
+          const d = this.content.loans!.find(l => l.id === e.loanId)!; const l = s.loans[e.loanId]!;
+          if (e.status === 'borrowed') { requireThat(l.status !== 'borrowed', '既に借用されています'); l.borrowedAt = s.tick; l.returnedAt = null; }
+          else { requireThat(l.status === 'borrowed' && (sameCustody(s.objects[d.objectId]!.custody, {kind:'place',id:d.returnLocationId}) || sameCustody(s.objects[d.objectId]!.custody, {kind:'actor',id:d.lenderId})), '合意した返却先に現物がありません'); l.returnedAt = s.tick; }
+          l.status = e.status; break;
+        }
         case 'consume': {
           const o = s.objects[e.objectId]!;
           requireThat(o.quantity >= e.quantity, '必要な数量が足りません');
@@ -145,14 +185,25 @@ export class Simulation {
       }
     }
   }
-  private apply(effects: Effect[], a: ActionInstance): void {
+  private apply(effects: ActionEffect[], a: ActionInstance): void {
     const candidate = clone(this.state); this.physical(candidate, effects);
-    this.state.actors = candidate.actors; this.state.objects = candidate.objects; this.state.facts = candidate.facts; this.state.services = candidate.services;
+    this.state.actors = candidate.actors; this.state.objects = candidate.objects; this.state.facts = candidate.facts; this.state.services = candidate.services; this.state.loans = candidate.loans;
     const definition = this.definition(a.definitionId);
     effects.forEach((e, index) => {
       const effectId = `${a.id}:${a.phase}:${a.abortReason ? 'abort' : 'success'}:${index}`;
       requireThat(!a.appliedEffectIds.includes(effectId), '効果の二重適用です'); a.appliedEffectIds.push(effectId);
-      if (e.op === 'emit') this.event(e.type, e.actorIds, e.locationId, { instanceId: a.id }, [a.startEventId], e.subjectIds);
+      if (e.op === 'inform') {
+        const belief = this.state.actors[e.speakerId]!.beliefs[e.propositionId]!;
+        const spoken = this.event('engine.spoken', [e.speakerId], this.state.actors[e.speakerId]!.locationId, {recipientId:e.recipientId,propositionId:e.propositionId,stance:belief.stance}, [...belief.evidenceEventIds,a.startEventId]);
+        this.queue(spoken.id,e.recipientId,{kind:'testimony',propositionId:e.propositionId,stance:belief.stance,sourceId:e.speakerId});
+      } else if (e.op === 'observe') {
+        for (const id of e.actorIds) { const value = this.state.facts[e.propositionId] as boolean; const observed = this.event('engine.observed',[id],e.locationId,{clueId:e.sourceId,propositionId:e.propositionId,value},[a.startEventId]); this.queue(observed.id,id,{propositionId:e.propositionId,stance:value?'believe':'deny',sourceId:e.sourceId}); }
+      } else if (e.op === 'offer') {
+        const agreement = this.content.agreements.find(x => x.id === e.agreementId)!;
+        const offered = this.event('engine.agreement.offered',[e.speakerId],this.state.actors[e.speakerId]!.locationId,{agreementId:e.agreementId,version:agreement.version,recipientId:e.recipientId},[a.startEventId]);
+        for (const id of new Set([e.speakerId,e.recipientId])) this.queue(offered.id,id,{kind:'agreement',agreementId:e.agreementId,version:agreement.version,sourceId:e.speakerId});
+      } else if (e.op === 'accept') this.event('engine.agreement.accepted',[e.actorId],this.state.actors[e.actorId]!.locationId,{agreementId:e.agreementId,version:e.version},[a.startEventId]);
+      else if (e.op === 'emit') this.event(e.type, e.actorIds, e.locationId, { instanceId: a.id }, [a.startEventId], e.subjectIds);
       else this.event(`engine.effect.${e.op}`, definition.actorIds, this.state.actors[definition.actorIds[0]!]!.locationId,
         { instanceId: a.id, effectId, detail: JSON.stringify(e) }, [a.startEventId]);
     });
@@ -178,7 +229,7 @@ export class Simulation {
     }
     // Check the interval against other transactions at this boundary, not just array order.
     let remaining = due.filter(a => this.state.actions.includes(a));
-    for (;;) {
+    while (remaining.length > 0) {
       let removed = false;
       for (const a of [...this.state.actions]) {
         const projected = clone(this.state);
@@ -239,7 +290,7 @@ export class Simulation {
   private update(): void {
     const before = clone(this.state);
     try {
-      this.state.tick++; const firstEventId = this.state.nextEventId; this.deliver();
+      this.state.tick++; const firstEventId = this.state.nextEventId; this.refreshDerived(); this.deliver(); this.perceive();
       const proposals: Proposal[] = []; const cancellations = new Set<number>();
       const commands = this.state.pending; this.state.pending = [];
       for (const entry of commands) {
@@ -250,13 +301,14 @@ export class Simulation {
       let order = this.state.nextCommandId;
       for (const d of [...this.content.actors].sort((a, b) => a.id.localeCompare(b.id, 'en'))) {
         const self = startSnapshot.actors[d.id]!;
-        if (self.routineMode !== 'problem' || startSnapshot.actions.some(a => this.definition(a.definitionId).actorIds.includes(d.id))) continue;
-        const r = [...d.rules].sort((a, b) => b.priority - a.priority || a.id.localeCompare(b.id, 'en')).find(r => (self.retryAt[r.id] ?? 0) <= this.state.tick && choose(r.choiceGuard, self));
+        const busy = startSnapshot.actions.some(a => !this.definition(a.definitionId).concurrent && this.definition(a.definitionId).actorIds.includes(d.id));
+        const r = [...d.rules].sort((a, b) => b.priority - a.priority || a.id.localeCompare(b.id, 'en')).find(r => ((r.mode ?? 'problem') === self.routineMode || r.mode === 'always') && (!busy || this.definition(r.actionId).concurrent) && !startSnapshot.actions.some(a => a.definitionId === r.actionId) && (self.retryAt[r.id] ?? 0) <= this.state.tick && choose(r.choiceGuard, self));
         if (r) proposals.push({ actorId: d.id, actionId: r.actionId, order: order++, ruleId: r.id, retryTicks: r.retryTicks });
       }
       this.advance(cancellations);
       for (const p of proposals.sort((a, b) => a.order - b.order)) this.start(p, startSnapshot);
       this.completeGoals(firstEventId);
+      this.refreshDerived();
     } catch (error) { this.state = before; throw error; }
   }
 }

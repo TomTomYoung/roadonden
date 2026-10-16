@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ロードンデン — 夕食までの街歩き</title><!-- STYLE --></head>
+<body>
+<header><div class="brand"><span class="seal" aria-hidden="true">R</span><div><h1>ロードンデン</h1><p>誰かの一日が、少し先へ進む街。</p></div></div><div class="clock"><span id="day">第一日</span><strong id="time">16:00</strong><small id="running">街は動いています</small></div><nav aria-label="手元の道具"><button id="map">地図 <kbd>M</kbd></button><button id="inventory">持ち物 <kbd>I</kbd></button><button id="notebook">手帳 <kbd>J</kbd></button><button id="save-menu">保存・設定</button></nav></header>
+<main>
+<section class="world" aria-label="街の地図"><div class="world-caption"><span>夕食編</span><p>宿から、好きな道へ。</p><button id="help" aria-label="操作方法">?</button></div><canvas id="town" width="1120" height="1020" tabindex="0" aria-label="街歩き。目的地をクリック、または矢印キーで移動します"></canvas><div class="map-key"><span><i></i> あなた</span><span>道をクリックして歩く</span><button id="pause">一時停止 <kbd>Esc</kbd></button></div></section>
+<aside class="place-panel"><p class="eyebrow">いま、ここに</p><h2 id="place-name">旅人の宿</h2><p id="place-description"></p><div id="activity" role="status"></div><div class="rule"></div><h3>声をかける</h3><div id="people" class="stack"></div><h3>あたりを見る</h3><div id="nearby" class="stack"></div><div id="observations"></div><h3>ここから歩く</h3><div id="exits" class="exits"></div><button id="wait" class="wait">少し待つ</button><button id="cancel" class="subtle" hidden>いまの行動を中断</button><p class="tip">手帳には、自分で見聞きしたことが残ります。</p></aside>
+</main>
+<footer><span>旅の途中に、急ぐ理由はありません。</span><span>矢印 / WASD：歩く　E：話す　I：持ち物　J：手帳</span></footer>
+<div id="toast" role="status" aria-live="polite"></div>
+<dialog id="modal" aria-labelledby="modal-title"><button id="close-modal" aria-label="閉じる">×</button><p class="eyebrow" id="modal-kicker">ロードンデン</p><h2 id="modal-title"></h2><div id="modal-body"></div></dialog>
+<!-- SCRIPT -->
+</body></html>

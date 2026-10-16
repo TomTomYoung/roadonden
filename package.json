@@ -1,14 +1,19 @@
 {
   "name": "roadonden",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
-  "engines": { "node": ">=24" },
+  "engines": {
+    "node": ">=24"
+  },
   "scripts": {
     "check": "tsc --noEmit",
     "test": "node --test tests/*.test.mjs",
     "build": "node scripts/build.mjs",
     "verify": "npm run check && npm test && npm run build"
   },
-  "devDependencies": { "esbuild": "0.25.11", "typescript": "5.9.3" }
+  "devDependencies": {
+    "esbuild": "0.25.11",
+    "typescript": "5.9.3"
+  }
 }
