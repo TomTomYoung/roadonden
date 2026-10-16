@@ -1,0 +1,54 @@
+import assert from 'node:assert/strict';
+import { mkdir } from 'node:fs/promises';
+import { pathToFileURL } from 'node:url';
+import path from 'node:path';
+
+// Optional browser QA: uses an installed Playwright, or the provided primary runtime.
+const modulePath = process.env.PLAYWRIGHT_MODULE ?? (process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES ? path.join(process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES, 'playwright/index.mjs') : 'playwright');
+const { chromium } = await import(modulePath);
+const launch = { headless: true };
+if (process.env.CHROMIUM_EXECUTABLE) launch.executablePath = process.env.CHROMIUM_EXECUTABLE;
+const browser = await chromium.launch(launch);
+await mkdir('test-results', { recursive: true });
+const context = await browser.newContext({ viewport: { width: 1280, height: 1000 }, acceptDownloads: true });
+const page = await context.newPage(); const errors = [], requests = [];
+page.on('pageerror', e => errors.push(String(e))); page.on('request', r => requests.push(r.url()));
+const url = pathToFileURL(path.resolve('index.html')).href;
+let checks = 0;
+const checked = title => { checks++; console.log(`PASS ${title}`); };
+const tick = async n => { for (let i = 0; i < n; i++) await page.click('#step'); };
+const start = async id => { await page.selectOption('#action', id); await page.click('#start'); };
+try {
+  await page.goto(url); await page.locator('#time').waitFor();
+  assert.match(await page.locator('#time').innerText(), /更新 0/); assert.equal(errors.length, 0);
+  assert.equal(requests.filter(x => /^https?:/.test(x)).length, 0); checked('file URL boots with no external requests or runtime errors');
+  await page.click('#inspect'); await tick(1); assert.match(await page.locator('#beliefs').innerText(), /まだ情報を取得/);
+  await tick(1); assert.match(await page.locator('#beliefs').innerText(), /依頼札/); checked('inspection becomes sourced knowledge on the next update');
+  await start('act.walk.player.loc.yard.loc.works'); await page.click('#hundred');
+  await page.selectOption('#recipient', 'fixture.worker'); await page.click('#say'); await tick(2);
+  assert.match(await page.locator('#active').innerText(), /材料を加工する/);
+  await page.click('#save'); assert.match(await page.locator('#status').innerText(), /保存しました/);
+  await page.click('#hundred'); assert.match(await page.locator('#known').innerText(), /作業者/); checked('information initiates autonomous work; actual completion is observable');
+  await page.click('#load'); assert.match(await page.locator('#active').innerText(), /材料を加工する/);
+  await page.click('#hundred'); assert.match(await page.locator('#objects').innerText(), /2個/); checked('manual load restores active work without duplicate consumption');
+  const downloadPromise = page.waitForEvent('download'); await page.click('#export'); const download = await downloadPromise;
+  await download.saveAs('test-results/exported-save.json'); assert.match(download.suggestedFilename(), /roadonden-foundation/); checked('JSON download works without a server');
+  const before = await page.locator('#time').innerText();
+  await page.locator('#file').setInputFiles({ name: 'bad.json', mimeType: 'application/json', buffer: Buffer.from('{bad') });
+  await page.waitForFunction(() => document.querySelector('#status').classList.contains('error'));
+  assert.equal(await page.locator('#time').innerText(), before); checked('invalid JSON preserves the current state and shows the error');
+  await page.locator('#file').setInputFiles('test-results/exported-save.json');
+  await page.waitForFunction(() => document.querySelector('#status').textContent.includes('再開しました')); checked('exported JSON can be imported');
+  await page.click('#run');
+  await page.evaluate(() => { Object.defineProperty(document, 'hidden', { configurable: true, value: true }); document.dispatchEvent(new Event('visibilitychange')); });
+  assert.match(await page.locator('#time').innerText(), /停止中/); checked('hidden document pauses rather than accumulating background time');
+  await page.evaluate(() => { delete document.hidden; });
+  await page.screenshot({ path: 'test-results/foundation-desktop.png', fullPage: true });
+  await page.setViewportSize({ width: 390, height: 844 });
+  assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
+  await page.screenshot({ path: 'test-results/foundation-narrow.png', fullPage: true }); checked('narrow inspector layout has no horizontal overflow');
+  const denied = await context.newPage(); await denied.addInitScript(() => { Storage.prototype.setItem = () => { throw new DOMException('quota', 'QuotaExceededError'); }; });
+  await denied.goto(url); await denied.click('#save'); assert.match(await denied.locator('#status').innerText(), /quota/);
+  assert.equal(await denied.locator('#status').getAttribute('class'), 'error'); checked('storage denial is not reported as a successful save');
+  assert.equal(errors.length, 0); console.log(`${checks} browser checks passed; screenshots saved in test-results/.`);
+} finally { await browser.close(); }

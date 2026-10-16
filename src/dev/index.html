@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="ja">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>ロードンデン — 実行基盤の検査</title><!-- STYLE --></head>
+<body>
+  <header><div><span class="eyebrow">ROADONDEN · DEVELOPMENT</span><h1>ロードンデン街の人々</h1></div><span class="badge">Phase 1 · 実行基盤</span></header>
+  <p class="notice">開発用の検査画面です。ここにいる3人は検査役で、本編100人には含まれません。夕食シナリオ・街歩きゲーム・最終素材は未実装です。</p>
+  <main>
+    <section class="toolbar" aria-label="時計の操作"><button id="run">▶ 進める</button><button id="step">1更新</button><button id="ten">10更新</button><button id="hundred">100更新</button><output id="time" aria-live="off"></output><button id="reset" class="subtle">検査を初期化</button></section>
+    <div class="layout">
+      <section class="panel map-panel"><div class="section-title"><h2>場所と移動</h2><span>1更新 = 0.1秒</span></div><canvas id="map" width="840" height="500" aria-label="中庭・受取所・作業所・返却口の接続と人物の位置"></canvas><div id="positions" class="positions"></div><p class="hint">場所間の移動も時間を使う行為です。画面に表示していなくても同じ時計で進みます。</p></section>
+      <section class="panel operations"><h2>介入・動作の検査</h2><label for="actor">操作する主体</label><select id="actor"></select><label for="action">行為</label><select id="action"></select><div class="button-row"><button id="start">行為を開始</button><button id="cancel" class="subtle">中断を申し出る</button></div><label for="clue">その場で調べる</label><div class="input-row"><select id="clue"></select><button id="inspect">調べる</button></div><label for="recipient">話す相手</label><select id="recipient"></select><label for="information">取得済みの情報</label><div class="input-row"><select id="information"></select><button id="say">知らせる</button></div><div class="button-row"><button id="offer" class="subtle">手順を提案</button><button id="accept" class="subtle">手順を受諾</button><button id="ask" class="subtle">達成を尋ねる</button></div><p class="hint">操作は次の更新で処理します。「提案を聞いた」と「受諾した」は別です。開始できない理由は出来事欄に残ります。</p></section>
+      <section class="panel"><h2>実行中の行為と予約</h2><div id="active" class="stack"></div><h3>現物の所在・数量</h3><div id="objects" class="stack"></div></section>
+      <section class="panel"><h2>認識と達成確認</h2><p class="hint">選択した主体が得た情報だけを表示します。</p><div id="beliefs" class="stack"></div><h3>主人公が確認した達成</h3><div id="known" class="stack"></div><details><summary>開発用：世界の真実を見る</summary><div id="truth" class="stack"></div></details></section>
+    </div>
+    <section class="panel"><h2>出来事と理由</h2><ol id="events" class="events"></ol><p id="status" role="status">停止中です。1更新ずつ検査できます。</p></section>
+    <section class="panel save-panel"><h2>保存・再開</h2><p class="hint">手動3枠と自動2世代。保存失敗は明示し、読込失敗では現在の状態を維持します。</p><div class="button-row"><label for="slot">手動枠</label><select id="slot"><option value="1">1</option><option value="2">2</option><option value="3">3</option></select><button id="save">保存</button><button id="load">読込</button><button id="auto" class="subtle">自動保存を読込</button><button id="previous" class="subtle">前の自動保存を読込</button><button id="export" class="subtle">JSONを書出し</button><button id="import" class="subtle">JSONを読込</button><input id="file" type="file" accept=".json,application/json" hidden></div></section>
+    <details class="panel"><summary>検査の例</summary><p>中庭で主人公が依頼札を調べ、2更新進めると情報が記録されます。作業所へ歩き、作業者に知らせてください。聞いた作業者は自分で加工を始めます。開始だけでは達成せず、加工終了で記録されます。</p><p>作業中に設備を停止すると中断します。復旧中は作業台と必要な手を保持し、復旧完了後に解放します。主人公を別の場所へ移すと、画面外の達成は主人公の記録に入りません。後で本人に尋ねると確認できます。</p><p>中庭の包みを主人公と運び手の両方で同じ更新に受け取ろうとすると、一方だけが確保します。包みを受取所へ運んで渡しても、遠くの相手に情報が自動共有されることはありません。</p></details>
+  </main><footer>仕様・未実装範囲は doc/foundation-status.md / doc/handoff.md を参照してください。</footer>
+  <!-- SCRIPT -->
+</body></html>
