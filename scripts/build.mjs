@@ -6,7 +6,7 @@ import { validateContent } from '../src/core/validation.ts';
 
 validateContent(foundationContent); validateContent(dinnerContent);
 for (const [directory, output] of [['game', 'index.html'], ['dev', 'inspector.html']]) {
-  const result = await build({ entryPoints: [`src/${directory}/main.ts`], bundle: true, write: false, format: 'iife', target: 'es2022', minify: false });
+  const result = await build({ entryPoints: [`src/${directory}/main.ts`], bundle: true, write: false, format: 'iife', target: 'es2022', minify: false, loader: { '.svg': 'dataurl' } });
   const template = await readFile(`src/${directory}/index.html`, 'utf8');
   const css = await readFile(`src/${directory}/style.css`, 'utf8');
   const script = result.outputFiles[0].text.replaceAll('</script', '<\\/script');

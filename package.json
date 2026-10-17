@@ -1,12 +1,13 @@
 {
   "name": "roadonden",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "engines": {
     "node": ">=24"
   },
   "scripts": {
+    "assets": "node scripts/make-block-assets.mjs",
     "check": "tsc --noEmit",
     "test": "node --test tests/*.test.mjs",
     "build": "node scripts/build.mjs",

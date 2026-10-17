@@ -1,0 +1,705 @@
+{
+  "version": "block-assets-0.3.0",
+  "notes": "All original editable SVG. No external fetch; embedded in standalone build. Ratio preserved. Audio not included.",
+  "assets": [
+    {
+      "id": "buildings.apartment-a",
+      "file": "buildings/apartment-a.svg",
+      "width": 350,
+      "height": 630,
+      "usage": "建物全体の壁・床スラブ・外廊下・階段室",
+      "states": [
+        "static"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "buildings.mixed-use",
+      "file": "buildings/mixed-use.svg",
+      "width": 430,
+      "height": 630,
+      "usage": "建物全体の壁・床スラブ・外廊下・階段室",
+      "states": [
+        "static"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "buildings.apartment-b",
+      "file": "buildings/apartment-b.svg",
+      "width": 388,
+      "height": 630,
+      "usage": "建物全体の壁・床スラブ・外廊下・階段室",
+      "states": [
+        "static"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "buildings.courtyard",
+      "file": "buildings/courtyard.svg",
+      "width": 1300,
+      "height": 150,
+      "usage": "棟間の舗装・植栽・ベンチ・搬入区分",
+      "states": [
+        "static"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "buildings.stairs",
+      "file": "buildings/stairs.svg",
+      "width": 48,
+      "height": 154,
+      "usage": "階段・手すり・段差",
+      "states": [
+        "static"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "interiors.reception",
+      "file": "interiors/reception.svg",
+      "width": 128,
+      "height": 120,
+      "usage": "receptionの室内・家具・手掛かり",
+      "states": [
+        "static"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "interiors.kitchen",
+      "file": "interiors/kitchen.svg",
+      "width": 128,
+      "height": 120,
+      "usage": "kitchenの室内・家具・手掛かり",
+      "states": [
+        "static"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "interiors.workKitchen",
+      "file": "interiors/workKitchen.svg",
+      "width": 128,
+      "height": 120,
+      "usage": "workKitchenの室内・家具・手掛かり",
+      "states": [
+        "static"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "interiors.grocer",
+      "file": "interiors/grocer.svg",
+      "width": 128,
+      "height": 120,
+      "usage": "grocerの室内・家具・手掛かり",
+      "states": [
+        "static"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "interiors.shoeShop",
+      "file": "interiors/shoeShop.svg",
+      "width": 128,
+      "height": 120,
+      "usage": "shoeShopの室内・家具・手掛かり",
+      "states": [
+        "static"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "interiors.club",
+      "file": "interiors/club.svg",
+      "width": 128,
+      "height": 120,
+      "usage": "clubの室内・家具・手掛かり",
+      "states": [
+        "static"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "interiors.studio",
+      "file": "interiors/studio.svg",
+      "width": 128,
+      "height": 120,
+      "usage": "studioの室内・家具・手掛かり",
+      "states": [
+        "static"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "interiors.dining",
+      "file": "interiors/dining.svg",
+      "width": 128,
+      "height": 120,
+      "usage": "diningの室内・家具・手掛かり",
+      "states": [
+        "static"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "interiors.bedroom",
+      "file": "interiors/bedroom.svg",
+      "width": 128,
+      "height": 120,
+      "usage": "bedroomの室内・家具・手掛かり",
+      "states": [
+        "static"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "interiors.lounge",
+      "file": "interiors/lounge.svg",
+      "width": 128,
+      "height": 120,
+      "usage": "loungeの室内・家具・手掛かり",
+      "states": [
+        "static"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "interiors.mailroom",
+      "file": "interiors/mailroom.svg",
+      "width": 128,
+      "height": 120,
+      "usage": "mailroomの室内・家具・手掛かり",
+      "states": [
+        "static"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "interiors.laundry",
+      "file": "interiors/laundry.svg",
+      "width": 128,
+      "height": 120,
+      "usage": "laundryの室内・家具・手掛かり",
+      "states": [
+        "static"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "interiors.workshop",
+      "file": "interiors/workshop.svg",
+      "width": 128,
+      "height": 120,
+      "usage": "workshopの室内・家具・手掛かり",
+      "states": [
+        "static"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "interiors.theatre",
+      "file": "interiors/theatre.svg",
+      "width": 128,
+      "height": 120,
+      "usage": "theatreの室内・家具・手掛かり",
+      "states": [
+        "static"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "interiors.roof",
+      "file": "interiors/roof.svg",
+      "width": 128,
+      "height": 120,
+      "usage": "roofの室内・家具・手掛かり",
+      "states": [
+        "static"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "interiors.roofGarden",
+      "file": "interiors/roofGarden.svg",
+      "width": 128,
+      "height": 120,
+      "usage": "roofGardenの室内・家具・手掛かり",
+      "states": [
+        "static"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "interiors.petGarden",
+      "file": "interiors/petGarden.svg",
+      "width": 128,
+      "height": 120,
+      "usage": "petGardenの室内・家具・手掛かり",
+      "states": [
+        "static"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "interiors.courtyard",
+      "file": "interiors/courtyard.svg",
+      "width": 128,
+      "height": 120,
+      "usage": "courtyardの室内・家具・手掛かり",
+      "states": [
+        "static"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "interiors.loading",
+      "file": "interiors/loading.svg",
+      "width": 128,
+      "height": 120,
+      "usage": "loadingの室内・家具・手掛かり",
+      "states": [
+        "static"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "interiors.stairs",
+      "file": "interiors/stairs.svg",
+      "width": 128,
+      "height": 120,
+      "usage": "stairsの室内・家具・手掛かり",
+      "states": [
+        "static"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.package",
+      "file": "props/package.svg",
+      "width": 48,
+      "height": 48,
+      "usage": "packageの現物・設備状態",
+      "states": [
+        "static"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.shoes",
+      "file": "props/shoes.svg",
+      "width": 48,
+      "height": 48,
+      "usage": "shoesの現物・設備状態",
+      "states": [
+        "static"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.loanShoes",
+      "file": "props/loanShoes.svg",
+      "width": 48,
+      "height": 48,
+      "usage": "loanShoesの現物・設備状態",
+      "states": [
+        "static"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.pot",
+      "file": "props/pot.svg",
+      "width": 48,
+      "height": 48,
+      "usage": "potの現物・設備状態",
+      "states": [
+        "static"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.return-box",
+      "file": "props/return-box.svg",
+      "width": 48,
+      "height": 48,
+      "usage": "return-boxの現物・設備状態",
+      "states": [
+        "static"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.flag",
+      "file": "props/flag.svg",
+      "width": 48,
+      "height": 48,
+      "usage": "flagの現物・設備状態",
+      "states": [
+        "static"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.stand",
+      "file": "props/stand.svg",
+      "width": 48,
+      "height": 48,
+      "usage": "standの現物・設備状態",
+      "states": [
+        "static"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.cargo",
+      "file": "props/cargo.svg",
+      "width": 48,
+      "height": 48,
+      "usage": "cargoの現物・設備状態",
+      "states": [
+        "static"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.meal",
+      "file": "props/meal.svg",
+      "width": 48,
+      "height": 48,
+      "usage": "mealの現物・設備状態",
+      "states": [
+        "static"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.puppet",
+      "file": "props/puppet.svg",
+      "width": 48,
+      "height": 48,
+      "usage": "puppetの現物・設備状態",
+      "states": [
+        "static"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.toy",
+      "file": "props/toy.svg",
+      "width": 48,
+      "height": 48,
+      "usage": "toyの現物・設備状態",
+      "states": [
+        "static"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.gate-closed",
+      "file": "props/gate-closed.svg",
+      "width": 48,
+      "height": 48,
+      "usage": "gate-closedの現物・設備状態",
+      "states": [
+        "static"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.gate-open",
+      "file": "props/gate-open.svg",
+      "width": 48,
+      "height": 48,
+      "usage": "gate-openの現物・設備状態",
+      "states": [
+        "static"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.curtain-closed",
+      "file": "props/curtain-closed.svg",
+      "width": 48,
+      "height": 48,
+      "usage": "curtain-closedの現物・設備状態",
+      "states": [
+        "static"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.shutter-closed",
+      "file": "props/shutter-closed.svg",
+      "width": 48,
+      "height": 48,
+      "usage": "shutter-closedの現物・設備状態",
+      "states": [
+        "static"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "residents.player",
+      "file": "residents/player.svg",
+      "width": 384,
+      "height": 80,
+      "usage": "人物の服装・姿勢（左から待機・歩行2枚・作業/運搬・着席・踊り）",
+      "states": [
+        "idle",
+        "walk-a",
+        "walk-b",
+        "work",
+        "sit",
+        "dance"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "residents.C001",
+      "file": "residents/C001.svg",
+      "width": 384,
+      "height": 80,
+      "usage": "人物の服装・姿勢（左から待機・歩行2枚・作業/運搬・着席・踊り）",
+      "states": [
+        "idle",
+        "walk-a",
+        "walk-b",
+        "work",
+        "sit",
+        "dance"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "residents.C002",
+      "file": "residents/C002.svg",
+      "width": 384,
+      "height": 80,
+      "usage": "人物の服装・姿勢（左から待機・歩行2枚・作業/運搬・着席・踊り）",
+      "states": [
+        "idle",
+        "walk-a",
+        "walk-b",
+        "work",
+        "sit",
+        "dance"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "residents.C003",
+      "file": "residents/C003.svg",
+      "width": 384,
+      "height": 80,
+      "usage": "人物の服装・姿勢（左から待機・歩行2枚・作業/運搬・着席・踊り）",
+      "states": [
+        "idle",
+        "walk-a",
+        "walk-b",
+        "work",
+        "sit",
+        "dance"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "residents.C004",
+      "file": "residents/C004.svg",
+      "width": 384,
+      "height": 80,
+      "usage": "人物の服装・姿勢（左から待機・歩行2枚・作業/運搬・着席・踊り）",
+      "states": [
+        "idle",
+        "walk-a",
+        "walk-b",
+        "work",
+        "sit",
+        "dance"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "residents.C005",
+      "file": "residents/C005.svg",
+      "width": 384,
+      "height": 80,
+      "usage": "人物の服装・姿勢（左から待機・歩行2枚・作業/運搬・着席・踊り）",
+      "states": [
+        "idle",
+        "walk-a",
+        "walk-b",
+        "work",
+        "sit",
+        "dance"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "residents.C006",
+      "file": "residents/C006.svg",
+      "width": 384,
+      "height": 80,
+      "usage": "人物の服装・姿勢（左から待機・歩行2枚・作業/運搬・着席・踊り）",
+      "states": [
+        "idle",
+        "walk-a",
+        "walk-b",
+        "work",
+        "sit",
+        "dance"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "residents.C007",
+      "file": "residents/C007.svg",
+      "width": 384,
+      "height": 80,
+      "usage": "人物の服装・姿勢（左から待機・歩行2枚・作業/運搬・着席・踊り）",
+      "states": [
+        "idle",
+        "walk-a",
+        "walk-b",
+        "work",
+        "sit",
+        "dance"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "residents.C008",
+      "file": "residents/C008.svg",
+      "width": 384,
+      "height": 80,
+      "usage": "人物の服装・姿勢（左から待機・歩行2枚・作業/運搬・着席・踊り）",
+      "states": [
+        "idle",
+        "walk-a",
+        "walk-b",
+        "work",
+        "sit",
+        "dance"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "residents.C045",
+      "file": "residents/C045.svg",
+      "width": 384,
+      "height": 80,
+      "usage": "人物の服装・姿勢（左から待機・歩行2枚・作業/運搬・着席・踊り）",
+      "states": [
+        "idle",
+        "walk-a",
+        "walk-b",
+        "work",
+        "sit",
+        "dance"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "residents.C054",
+      "file": "residents/C054.svg",
+      "width": 384,
+      "height": 80,
+      "usage": "人物の服装・姿勢（左から待機・歩行2枚・作業/運搬・着席・踊り）",
+      "states": [
+        "idle",
+        "walk-a",
+        "walk-b",
+        "work",
+        "sit",
+        "dance"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "residents.C064",
+      "file": "residents/C064.svg",
+      "width": 384,
+      "height": 80,
+      "usage": "人物の服装・姿勢（左から待機・歩行2枚・作業/運搬・着席・踊り）",
+      "states": [
+        "idle",
+        "walk-a",
+        "walk-b",
+        "work",
+        "sit",
+        "dance"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "residents.dog",
+      "file": "residents/dog.svg",
+      "width": 256,
+      "height": 48,
+      "usage": "犬の待機・歩行・振り返り・靴をくわえる姿",
+      "states": [
+        "idle",
+        "walk",
+        "look",
+        "carry-shoe"
+      ],
+      "source": "Original procedural SVG; scripts/make-block-assets.mjs",
+      "license": "Project original"
+    }
+  ]
+}

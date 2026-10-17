@@ -1,0 +1,2170 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ロードンデン — 夕食までの街歩き</title><style>:root{color-scheme:light;--paper:#f6f1e5;--ink:#303f3a;--muted:#6e776a;--green:#526e55;--line:#d7d7c5;--accent:#a95b3f;font-family:'Hiragino Kaku Gothic ProN','Yu Gothic',sans-serif;font-size:14px}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink)}button{font:inherit;color:inherit;cursor:pointer;border:1px solid var(--line);background:#fffdf6;border-radius:6px;padding:10px 13px;transition:background .15s}button:hover{background:#e9eddc}button:focus-visible,canvas:focus-visible{outline:3px solid #ba744d;outline-offset:3px}button:disabled{opacity:.48;cursor:default}h1,h2{font-family:'Yu Mincho','Hiragino Mincho ProN',serif;font-weight:500}header{max-width:1530px;margin:auto;display:flex;align-items:center;gap:28px;padding:24px 36px 22px;border-bottom:1px solid var(--line)}.brand{display:flex;align-items:center;gap:15px;flex:1}.seal{border:1px solid #778b6d;color:var(--green);font-family:Georgia,serif;font-size:28px;width:43px;height:50px;border-radius:22px 22px 6px 6px;display:grid;place-items:center}h1{font-size:27px;letter-spacing:.14em;margin:0 0 7px}.brand p{margin:0;color:var(--muted);font-size:11px;letter-spacing:.06em}.clock{display:grid;grid-template-columns:auto auto;gap:1px 10px;align-items:center}.clock span{font-size:11px}.clock strong{font-family:Georgia,serif;font-weight:400;font-size:26px}.clock small{grid-column:1 / 3;font-size:10px;color:var(--muted);text-align:right}nav{display:flex;gap:8px}nav button{font-size:12px}kbd{font:10px ui-monospace,monospace;border:1px solid var(--line);border-radius:3px;padding:1px 4px;color:var(--muted);margin-left:8px}main{max-width:1530px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) 310px;padding:24px 36px;gap:28px}.world{position:relative;background:#e0e5cc;border:1px solid #c8cfb7;border-radius:12px;overflow:hidden;align-self:start;box-shadow:0 4px 24px #3d4e3710}.world-caption{position:absolute;top:18px;left:22px;right:18px;display:flex;align-items:center;gap:15px;z-index:1;pointer-events:none}.world-caption span{border:1px solid #748266;border-radius:2px;padding:3px 9px;font-size:11px;letter-spacing:.1em;background:#f6f1e599}.world-caption p{font-family:'Yu Mincho',serif;font-size:13px}.world-caption button{margin-left:auto;padding:4px 10px;border-radius:50%;pointer-events:auto;background:#f6f1e5ba}canvas{display:block;width:100%;height:auto;max-height:calc(100vh - 240px);min-height:430px;object-fit:contain;touch-action:manipulation}.map-key{display:flex;align-items:center;gap:18px;border-top:1px solid #c8cfb7;background:#eef0df;font-size:11px;padding:10px 16px;color:var(--muted)}.map-key i{display:inline-block;width:8px;height:8px;border-radius:50%;background:#a95b3f;margin-right:5px}.map-key button{margin-left:auto;background:transparent;font-size:11px;padding:5px 8px}.place-panel{padding:8px 0 0}.eyebrow{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--green);margin:0 0 12px}h2{font-size:25px;letter-spacing:.05em;margin:0 0 16px}#place-description{font-size:13px;line-height:1.9;color:var(--muted);min-height:50px}#activity{min-height:28px;color:var(--accent);font-size:12px;line-height:1.8}.rule{height:1px;background:var(--line);margin:14px 0 20px}h3{font-size:11px;font-weight:500;letter-spacing:.1em;color:var(--muted);margin:20px 0 9px}.stack{display:grid;gap:7px}.stack button{text-align:left;font-size:12px;line-height:1.5}.person{display:flex;align-items:center;gap:9px}.person i{height:10px;width:10px;border-radius:50%;background:var(--green)}.person small{margin-left:auto;color:var(--muted)}.empty{font-size:12px;color:var(--muted);margin:6px 0;line-height:1.8}.exits{display:flex;flex-wrap:wrap;gap:6px}.exits button{font-size:11px;padding:7px 9px;background:transparent}.wait{width:100%;margin-top:24px;background:#526e55;color:#fffdf6;border-color:#526e55}.wait:hover{background:#445d47}.subtle{width:100%;font-size:11px;border:0;background:transparent;color:var(--muted);padding:8px}.tip{font-size:10px;line-height:1.9;color:var(--muted);margin-top:18px}footer{max-width:1530px;margin:auto;padding:0 36px 20px;display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:10px}dialog{width:min(580px,calc(100vw - 32px));max-height:85vh;overflow:auto;background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:32px;box-shadow:0 20px 80px #17231c33}dialog::backdrop{background:#22362e65;backdrop-filter:blur(3px)}#close-modal{position:absolute;right:16px;top:12px;background:transparent;border:0;font-size:23px;padding:4px 9px}#modal-body p{line-height:1.9;font-size:13px}#modal-body .stack{margin-top:24px}.journal-entry{padding:14px 0;border-bottom:1px solid var(--line)}.journal-entry small{font-size:10px;color:var(--muted)}.journal-entry p{margin:4px 0}.confirmed{color:var(--accent)}.save-row{display:flex;gap:8px;align-items:center;margin:8px 0}.save-row span{margin-right:auto;font-size:12px}.save-row button{font-size:12px}.file-label{display:block;border:1px dashed #a1ab94;border-radius:6px;padding:14px;margin-top:10px;font-size:12px}.file-label input{display:block;margin-top:9px;width:100%;font:inherit}#toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%);max-width:min(600px,90vw);padding:12px 20px;background:#30493f;color:#fefbf0;border-radius:7px;font-size:12px;line-height:1.7;box-shadow:0 5px 20px #132a2030;opacity:0;pointer-events:none;transition:opacity .2s;z-index:10}#toast.show{opacity:1}#toast.error{background:#904b3b}.welcome-note{padding:14px;background:#e7ebd9;border-radius:6px}.primary{background:var(--green);color:white}.primary:hover{background:#435d46}[hidden]{display:none!important}@media(min-width:1600px){canvas{max-height:850px}}@media(max-width:1000px){header{padding:18px 20px;gap:18px}main{padding:18px 20px;grid-template-columns:minmax(0,1fr) 270px;gap:20px}nav{gap:5px}nav button{padding:8px}kbd{display:none}.brand p{font-size:10px}h1{font-size:23px}.seal{display:none}.map-key{gap:9px}.map-key span:nth-child(2){display:none}footer{padding:0 20px 16px}}@media(max-width:720px){header{flex-wrap:wrap;gap:14px}nav{width:100%;display:flex}nav button{flex:1}main{display:block;padding:12px}canvas{min-height:0;max-height:65vh}.world-caption{top:8px;left:12px;right:10px;gap:8px}.world-caption p{font-size:11px}.world-caption span{font-size:9px}.place-panel{padding:24px 8px}.place-panel h2{font-size:24px}.stack button{padding:12px}footer{padding:0 20px 20px;display:block}footer span{display:block;margin-top:6px}.world-caption button{font-size:12px}dialog{padding:26px 22px}.clock strong{font-size:24px}}
+.person small{font-size:9px;max-width:115px;line-height:1.6}#observations{margin-top:18px;padding-top:4px;border-top:1px dotted var(--line)}#observations:empty{display:none}#observations .empty{font-size:11px;padding-left:12px;border-left:2px solid #bdc8a8;margin:10px 0}
+</style></head>
+<body>
+<header><div class="brand"><span class="seal" aria-hidden="true">R</span><div><h1>ロードンデン</h1><p>誰かの一日が、少し先へ進む街。</p></div></div><div class="clock"><span id="day">第一日</span><strong id="time">16:00</strong><small id="running">街は動いています</small></div><nav aria-label="手元の道具"><button id="map">地図 <kbd>M</kbd></button><button id="inventory">持ち物 <kbd>I</kbd></button><button id="notebook">手帳 <kbd>J</kbd></button><button id="save-menu">保存・設定</button></nav></header>
+<main>
+<section class="world" aria-label="街の地図"><div class="world-caption"><span>夕食編</span><p>宿から、好きな道へ。</p><button id="help" aria-label="操作方法">?</button></div><canvas id="town" width="1120" height="1020" tabindex="0" aria-label="街歩き。目的地をクリック、または矢印キーで移動します"></canvas><div class="map-key"><span><i></i> あなた</span><span>道をクリックして歩く</span><button id="pause">一時停止 <kbd>Esc</kbd></button></div></section>
+<aside class="place-panel"><p class="eyebrow">いま、ここに</p><h2 id="place-name">旅人の宿</h2><p id="place-description"></p><div id="activity" role="status"></div><div class="rule"></div><h3>声をかける</h3><div id="people" class="stack"></div><h3>あたりを見る</h3><div id="nearby" class="stack"></div><div id="observations"></div><h3>ここから歩く</h3><div id="exits" class="exits"></div><button id="wait" class="wait">少し待つ</button><button id="cancel" class="subtle" hidden>いまの行動を中断</button><p class="tip">手帳には、自分で見聞きしたことが残ります。</p></aside>
+</main>
+<footer><span>旅の途中に、急ぐ理由はありません。</span><span>矢印 / WASD：歩く　E：話す　I：持ち物　J：手帳</span></footer>
+<div id="toast" role="status" aria-live="polite"></div>
+<dialog id="modal" aria-labelledby="modal-title"><button id="close-modal" aria-label="閉じる">×</button><p class="eyebrow" id="modal-kicker">ロードンデン</p><h2 id="modal-title"></h2><div id="modal-body"></div></dialog>
+<script>"use strict";
+(() => {
+  // src/core/validation.ts
+  function requireThat(ok, message) {
+    if (!ok) throw new Error(message);
+  }
+  function record(x, path2) {
+    requireThat(x !== null && typeof x === "object" && !Array.isArray(x), `${path2}: \u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u304C\u5FC5\u8981\u3067\u3059`);
+  }
+  function array(x, path2) {
+    requireThat(Array.isArray(x), `${path2}: \u914D\u5217\u304C\u5FC5\u8981\u3067\u3059`);
+  }
+  function str(x, path2) {
+    requireThat(typeof x === "string" && x.length > 0 && !["__proto__", "constructor", "prototype"].includes(x), `${path2}: \u6587\u5B57\u5217\u304C\u4E0D\u6B63\u3067\u3059`);
+  }
+  function int(x, path2, min = 0) {
+    requireThat(Number.isSafeInteger(x) && x >= min, `${path2}: ${min}\u4EE5\u4E0A\u306E\u6574\u6570\u304C\u5FC5\u8981\u3067\u3059`);
+  }
+  function val(x, path2) {
+    requireThat(typeof x === "string" || typeof x === "boolean" || typeof x === "number" && Number.isFinite(x), `${path2}: \u5024\u304C\u4E0D\u6B63\u3067\u3059`);
+  }
+  function stance(x) {
+    requireThat(["believe", "deny", "uncertain"].includes(x), "\u8A8D\u8B58\u306E stance \u304C\u4E0D\u6B63\u3067\u3059");
+  }
+  function strings(x, path2) {
+    array(x, path2);
+    x.forEach((v) => str(v, path2));
+  }
+  function unique(xs, label2) {
+    requireThat(new Set(xs).size === xs.length, `${label2}: ID\u304C\u91CD\u8907\u3057\u3066\u3044\u307E\u3059`);
+  }
+  function ref(id, xs, label2) {
+    str(id, label2);
+    requireThat(xs.some((x) => x.id === id), `${label2}: \u672A\u5B9A\u7FA9\u306E\u53C2\u7167 ${id}`);
+  }
+  function bool(x, label2) {
+    requireThat(typeof x === "boolean", `${label2}: \u771F\u507D\u5024\u304C\u5FC5\u8981\u3067\u3059`);
+  }
+  function sameKeys(x, keys, label2) {
+    requireThat(Object.keys(x).sort().join("|") === [...keys].sort().join("|"), `${label2}: \u30D5\u30A3\u30FC\u30EB\u30C9\u304C\u4E0D\u8DB3\u307E\u305F\u306F\u672A\u77E5\u3067\u3059`);
+  }
+  function sameCustody(a, b2) {
+    return a.kind === b2.kind && (a.kind === "consumed" || b2.kind !== "consumed" && a.id === b2.id);
+  }
+  function custody(x, c2) {
+    record(x, "custody");
+    switch (x.kind) {
+      case "actor":
+        ref(x.id, c2.actors, "custody.actor");
+        break;
+      case "place":
+        ref(x.id, c2.places, "custody.place");
+        break;
+      case "object":
+        ref(x.id, c2.objects, "custody.object");
+        break;
+      case "consumed":
+        break;
+      default:
+        throw new Error(`custody: \u672A\u77E5\u306E\u7A2E\u5225 ${String(x.kind)}`);
+    }
+    sameKeys(x, x.kind === "consumed" ? ["kind"] : ["kind", "id"], "custody");
+  }
+  function guard(x, c2, choice = false, depth = 0) {
+    requireThat(depth < 32, "\u6761\u4EF6\u306E\u5165\u308C\u5B50\u304C\u6DF1\u3059\u304E\u307E\u3059");
+    record(x, "condition");
+    const actor2 = (id) => ref(id, c2.actors, "condition.actor");
+    switch (x.op) {
+      case "always":
+        return;
+      case "all":
+      case "any":
+        array(x.conditions, "conditions");
+        x.conditions.forEach((y) => guard(y, c2, choice, depth + 1));
+        return;
+      case "not":
+        guard(x.condition, c2, choice, depth + 1);
+        return;
+      case "belief":
+        ref(x.propositionId, c2.propositions, "condition.proposition");
+        stance(x.stance);
+        if (!choice) actor2(x.actorId);
+        return;
+      case "here":
+        requireThat(choice, "here\u306F\u5224\u65AD\u5C02\u7528\u3067\u3059");
+        ref(x.locationId, c2.places, "condition.place");
+        return;
+      case "accepted":
+        requireThat(choice, "accepted\u306F\u5224\u65AD\u5C02\u7528\u3067\u3059");
+        ref(x.agreementId, c2.agreements, "condition.agreement");
+        int(x.version, "version", 1);
+        return;
+      case "offered":
+        ref(x.agreementId, c2.agreements, "condition.agreement");
+        int(x.version, "version", 1);
+        if (!choice) actor2(x.actorId);
+        return;
+    }
+    requireThat(!choice, `\u5224\u65AD\u898F\u5247\u304B\u3089\u4E16\u754C\u72B6\u614B\u306F\u8AAD\u3081\u307E\u305B\u3093: ${String(x.op)}`);
+    switch (x.op) {
+      case "fact":
+        ref(x.propositionId, c2.propositions, "condition.proposition");
+        val(x.value, "condition.value");
+        break;
+      case "at":
+        actor2(x.actorId);
+        ref(x.locationId, c2.places, "condition.place");
+        break;
+      case "together":
+        strings(x.actorIds, "together.actors");
+        requireThat(x.actorIds.length > 0, "\u540C\u5E2D\u8005\u304C\u5FC5\u8981\u3067\u3059");
+        x.actorIds.forEach(actor2);
+        break;
+      case "custody":
+        ref(x.objectId, c2.objects, "condition.object");
+        custody(x.custody, c2);
+        break;
+      case "quantity":
+        ref(x.objectId, c2.objects, "condition.object");
+        int(x.minimum, "minimum");
+        break;
+      case "agreement":
+        ref(x.agreementId, c2.agreements, "condition.agreement");
+        int(x.version, "version", 1);
+        strings(x.actorIds, "actorIds");
+        x.actorIds.forEach(actor2);
+        break;
+      case "loan":
+        ref(x.loanId, c2.loans ?? [], "condition.loan");
+        requireThat(["available", "borrowed", "returned"].includes(x.status), "\u8CB8\u501F\u72B6\u614B\u304C\u4E0D\u6B63\u3067\u3059");
+        break;
+      case "during":
+        int(x.from, "from");
+        int(x.until, "until", 1);
+        requireThat(x.until > x.from, "\u6642\u9593\u533A\u9593\u304C\u9006\u8EE2\u3057\u3066\u3044\u307E\u3059");
+        break;
+      case "event":
+        str(x.type, "event.type");
+        actor2(x.actorId);
+        break;
+      case "active":
+        ref(x.actionId, c2.actions, "condition.action");
+        break;
+      case "reserved":
+        str(x.resourceId, "resourceId");
+        requireThat(allResources(c2).includes(x.resourceId), "\u672A\u5B9A\u7FA9\u306E\u4E88\u7D04\u8CC7\u6E90");
+        break;
+      default:
+        throw new Error(`\u672A\u77E5\u306E\u6761\u4EF6\u6F14\u7B97\u5B50: ${String(x.op)}`);
+    }
+  }
+  function effect(x, c2) {
+    record(x, "effect");
+    switch (x.op) {
+      case "move":
+        ref(x.actorId, c2.actors, "effect.actor");
+        ref(x.to, c2.places, "effect.place");
+        break;
+      case "transfer":
+        ref(x.objectId, c2.objects, "effect.object");
+        custody(x.from, c2);
+        custody(x.to, c2);
+        requireThat(x.to.kind !== "consumed", "\u6D88\u8CBB\u306B\u306Fconsume\u3092\u4F7F\u3063\u3066\u304F\u3060\u3055\u3044");
+        break;
+      case "consume": {
+        ref(x.objectId, c2.objects, "effect.object");
+        int(x.quantity, "quantity", 1);
+        str(x.unit, "unit");
+        const o = c2.objects.find((o2) => o2.id === x.objectId);
+        requireThat(o.consumable && o.unit === x.unit, "\u6D88\u8CBB\u3067\u304D\u306A\u3044\u7269\u307E\u305F\u306F\u5358\u4F4D\u306E\u4E0D\u4E00\u81F4");
+        break;
+      }
+      case "fact":
+        ref(x.propositionId, c2.propositions, "effect.proposition");
+        val(x.value, "effect.value");
+        requireThat(!c2.propositions.find((p) => p.id === x.propositionId).derived, "\u89B3\u6E2C\u7528\u306E\u5C0E\u51FA\u547D\u984C\u306F\u76F4\u63A5\u66F8\u304D\u63DB\u3048\u3089\u308C\u307E\u305B\u3093");
+        break;
+      case "emit":
+        strings(x.actorIds, "event.actorIds");
+        x.actorIds.forEach((id) => ref(id, c2.actors, "event.actor"));
+        strings(x.subjectIds, "event.subjectIds");
+        str(x.type, "event.type");
+        requireThat(!x.type.startsWith("engine."), "engine.*\u306F\u4E88\u7D04\u3055\u308C\u305F\u51FA\u6765\u4E8B\u540D\u3067\u3059");
+        ref(x.locationId, c2.places, "event.place");
+        break;
+      case "service":
+        str(x.serviceId, "serviceId");
+        requireThat(c2.services.includes(x.serviceId), "\u672A\u5B9A\u7FA9\u306E\u30B5\u30FC\u30D3\u30B9");
+        bool(x.active, "active");
+        break;
+      case "inform":
+        ref(x.speakerId, c2.actors, "speaker");
+        ref(x.recipientId, c2.actors, "recipient");
+        ref(x.propositionId, c2.propositions, "proposition");
+        break;
+      case "observe":
+        strings(x.actorIds, "observers");
+        x.actorIds.forEach((id) => ref(id, c2.actors, "observer"));
+        ref(x.propositionId, c2.propositions, "proposition");
+        ref(x.locationId, c2.places, "observation.place");
+        str(x.sourceId, "source");
+        break;
+      case "offer":
+        ref(x.speakerId, c2.actors, "speaker");
+        ref(x.recipientId, c2.actors, "recipient");
+        ref(x.agreementId, c2.agreements, "agreement");
+        break;
+      case "accept":
+        ref(x.actorId, c2.actors, "actor");
+        ref(x.agreementId, c2.agreements, "agreement");
+        int(x.version, "version", 1);
+        break;
+      case "loan":
+        ref(x.loanId, c2.loans ?? [], "loan");
+        requireThat(["borrowed", "returned"].includes(x.status), "\u8CB8\u501F\u306E\u52B9\u679C\u304C\u4E0D\u6B63\u3067\u3059");
+        break;
+      default:
+        throw new Error(`\u672A\u77E5\u306E\u52B9\u679C: ${String(x.op)}`);
+    }
+  }
+  function effectResources(e) {
+    switch (e.op) {
+      case "move":
+        return [`actor:${e.actorId}`];
+      case "transfer":
+        return [`object:${e.objectId}`, ...[e.from, e.to].filter((x) => x.kind === "actor").map((x) => `actor:${x.id}`)];
+      case "consume":
+        return [`object:${e.objectId}`];
+      case "fact":
+        return [`fact:${e.propositionId}`];
+      case "service":
+        return [`service:${e.serviceId}`];
+      case "emit":
+        return [];
+      case "observe":
+      case "inform":
+      case "offer":
+      case "accept":
+        return [];
+      case "loan":
+        return [`loan:${e.loanId}`];
+    }
+  }
+  function actionResources(a) {
+    return [.../* @__PURE__ */ new Set([
+      ...a.concurrent ? [] : a.actorIds.map((id) => `actor:${id}`),
+      ...a.resources,
+      ...[...a.onSuccess, ...a.onAbort, ...a.recovery?.onSuccess ?? []].flatMap(effectResources)
+    ])].sort();
+  }
+  function recoveryResources(a) {
+    return [.../* @__PURE__ */ new Set([...a.actorIds.map((id) => `actor:${id}`), ...a.recovery?.retainResources ?? [], ...a.recovery?.onSuccess.flatMap(effectResources) ?? []])].sort();
+  }
+  function allResources(c2) {
+    return [
+      ...c2.resources,
+      ...c2.actors.flatMap((a) => [`actor:${a.id}`, `hand:${a.id}:left`, `hand:${a.id}:right`]),
+      ...c2.objects.map((o) => `object:${o.id}`),
+      ...c2.propositions.map((p) => `fact:${p.id}`),
+      ...c2.services.map((id) => `service:${id}`),
+      ...(c2.loans ?? []).map((l) => `loan:${l.id}`)
+    ];
+  }
+  function validateContent(input) {
+    record(input, "content");
+    const c2 = input;
+    requireThat(c2.namespace === "redesign-v1" && c2.tickMs === 100, "\u540D\u524D\u7A7A\u9593\u307E\u305F\u306F\u56FA\u5B9A\u6642\u8A08\u304C\u4E0D\u6B63\u3067\u3059");
+    str(c2.version, "content.version");
+    int(c2.ticksPerDay, "ticksPerDay", 1);
+    for (const key of ["places", "propositions", "actors", "objects", "clues", "agreements", "actions"]) {
+      array(c2[key], key);
+      c2[key].forEach((x) => {
+        record(x, key);
+        str(x.id, `${key}.id`);
+      });
+      unique(c2[key].map((x) => x.id), key);
+    }
+    strings(c2.resources, "resources");
+    strings(c2.services, "services");
+    unique(allResources(c2), "resources");
+    requireThat(c2.actors.filter((a) => a.kind === "player" && a.id === "player").length === 1, "player\u304C\u4E00\u4EBA\u5FC5\u8981\u3067\u3059");
+    for (const p of c2.places) {
+      str(p.name, "place.name");
+      requireThat(Number.isFinite(p.x) && Number.isFinite(p.y), "\u4E8C\u6B21\u5143\u5EA7\u6A19\u304C\u4E0D\u6B63\u3067\u3059");
+      strings(p.links, "place.links");
+      p.links.forEach((id) => {
+        ref(id, c2.places, "place.link");
+        requireThat(c2.places.find((q) => q.id === id).links.includes(p.id), "\u5834\u6240\u306E\u63A5\u7D9A\u306F\u53CC\u65B9\u5411\u306B\u3057\u3066\u304F\u3060\u3055\u3044");
+      });
+    }
+    c2.propositions.forEach((p) => {
+      str(p.description, "proposition.description");
+      val(p.initialValue, "proposition.initialValue");
+      if (p.derived) {
+        guard(p.derived, c2);
+        const independent = (g) => {
+          if (g.op === "all" || g.op === "any") return g.conditions.every(independent);
+          if (g.op === "not") return independent(g.condition);
+          return g.op !== "fact" || !c2.propositions.find((p2) => p2.id === g.propositionId).derived;
+        };
+        requireThat(independent(p.derived), "\u5C0E\u51FA\u547D\u984C\u540C\u58EB\u306E\u9023\u9396\u30FB\u5FAA\u74B0\u306F\u672A\u5BFE\u5FDC\u3067\u3059");
+      }
+    });
+    for (const a of c2.actors) {
+      str(a.displayName, "actor.name");
+      ref(a.locationId, c2.places, "actor.place");
+      str(a.sourceRef, "sourceRef");
+      str(a.normalLife, "normalLife");
+      str(a.goal, "goal");
+      requireThat(["player", "resident", "fixture", "animal"].includes(a.kind), "\u4EBA\u7269\u7A2E\u5225\u304C\u4E0D\u6B63\u3067\u3059");
+      if (a.kind === "resident") requireThat(/^C(00[1-9]|0[1-9]\d|100)$/.test(a.id), "\u4F4F\u6C11ID\u304C\u4E0D\u6B63\u3067\u3059");
+      array(a.initialBeliefs, "initialBeliefs");
+      a.initialBeliefs.forEach((b2) => {
+        record(b2, "belief");
+        ref(b2.propositionId, c2.propositions, "belief");
+        stance(b2.stance);
+        str(b2.reason, "memory.reason");
+      });
+      array(a.rules, "rules");
+      unique(a.rules.map((r) => r.id), "rules");
+      a.rules.forEach((r) => {
+        str(r.id, "rule.id");
+        int(r.priority, "priority");
+        int(r.retryTicks, "retryTicks", 1);
+        requireThat(r.mode === void 0 || ["problem", "ordinary", "always"].includes(r.mode), "\u898F\u5247\u306E\u751F\u6D3B\u30E2\u30FC\u30C9\u304C\u4E0D\u6B63\u3067\u3059");
+        ref(r.actionId, c2.actions, "rule.action");
+        requireThat(c2.actions.find((x) => x.id === r.actionId).actorIds.includes(a.id), "\u4ED6\u4EBA\u3060\u3051\u306E\u884C\u70BA\u3092\u898F\u5247\u3067\u9078\u629E\u3067\u304D\u307E\u305B\u3093");
+        guard(r.choiceGuard, c2, true);
+      });
+      strings(a.goalEvidence, "goalEvidence");
+      requireThat(a.goalEvidence.every((t) => !t.startsWith("engine.")), "\u5185\u90E8\u30A4\u30D9\u30F3\u30C8\u3092\u751F\u6D3B\u306E\u9054\u6210\u306B\u4F7F\u3048\u307E\u305B\u3093");
+      record(a.postGoalContract, "postGoalContract");
+      int(a.postGoalContract.version, "postGoalContract.version", 1);
+      strings(a.postGoalContract.serviceIds, "postGoalContract.serviceIds");
+      a.postGoalContract.serviceIds.forEach((id) => requireThat(c2.services.includes(id), "\u672A\u5B9A\u7FA9\u306E\u9054\u6210\u5F8C\u30B5\u30FC\u30D3\u30B9"));
+    }
+    for (const o of c2.objects) {
+      str(o.name, "object.name");
+      ref(o.ownerId, c2.actors, "object.owner");
+      custody(o.custody, c2);
+      int(o.quantity, "quantity");
+      str(o.unit, "unit");
+      bool(o.portable, "portable");
+      bool(o.consumable, "consumable");
+    }
+    for (const a of c2.agreements) {
+      int(a.version, "agreement.version", 1);
+      ref(a.proposerId, c2.actors, "proposer");
+      strings(a.participantIds, "participants");
+      unique(a.participantIds, "participants");
+      a.participantIds.forEach((id) => ref(id, c2.actors, "participant"));
+      requireThat(a.participantIds.includes(a.proposerId), "\u63D0\u6848\u8005\u306F\u53C2\u52A0\u8005\u3067\u3042\u308B\u5FC5\u8981\u304C\u3042\u308A\u307E\u3059");
+      str(a.terms, "terms");
+    }
+    for (const clue2 of c2.clues) {
+      ref(clue2.locationId, c2.places, "clue.place");
+      ref(clue2.propositionId, c2.propositions, "clue.proposition");
+      str(clue2.description, "clue.description");
+      guard(clue2.visible, c2);
+      if (clue2.observerIds) clue2.observerIds.forEach((id) => ref(id, c2.actors, "clue.observer"));
+    }
+    if (c2.loans) {
+      array(c2.loans, "loans");
+      unique(c2.loans.map((l) => l.id), "loans");
+      for (const l of c2.loans) {
+        ref(l.objectId, c2.objects, "loan.object");
+        ref(l.lenderId, c2.actors, "loan.lender");
+        ref(l.borrowerId, c2.actors, "loan.borrower");
+        ref(l.returnLocationId, c2.places, "loan.return");
+        str(l.policy, "loan.policy");
+        requireThat(c2.objects.find((o) => o.id === l.objectId).ownerId === l.lenderId, "\u8CB8\u4E3B\u3068\u6240\u6709\u8005\u304C\u4E00\u81F4\u3057\u307E\u305B\u3093");
+      }
+    }
+    for (const a of c2.actions) {
+      str(a.label, "action.label");
+      strings(a.actorIds, "action.actors");
+      requireThat(a.actorIds.length > 0, "\u5B9F\u884C\u8005\u304C\u5FC5\u8981\u3067\u3059");
+      unique(a.actorIds, "action.actors");
+      a.actorIds.forEach((id) => ref(id, c2.actors, "action.actor"));
+      int(a.durationTicks, "durationTicks", 1);
+      strings(a.resources, "action.resources");
+      a.resources.forEach((r) => requireThat(allResources(c2).includes(r), `\u672A\u5B9A\u7FA9\u306E\u8CC7\u6E90 ${r}`));
+      [a.startGuard, a.maintainGuard, a.finishGuard].forEach((g) => guard(g, c2));
+      for (const effects of [a.onSuccess, a.onAbort]) {
+        array(effects, "effects");
+        effects.forEach((e) => effect(e, c2));
+      }
+      if (a.concurrent) requireThat(!a.movement && !a.recovery && a.resources.length === 0 && [...a.onSuccess, ...a.onAbort].every((e) => !["move", "transfer", "consume", "loan"].includes(e.op)), "\u540C\u6642\u4F1A\u8A71\u3067\u7269\u7406\u4F5C\u696D\u3092\u884C\u3048\u307E\u305B\u3093");
+      requireThat(a.designStatus === "provisional", "\u8A66\u4F5C\u5024\u306E\u51FA\u5178\u3092\u6307\u5B9A\u3057\u3066\u304F\u3060\u3055\u3044");
+      str(a.rationale, "rationale");
+      str(a.presentationId, "presentationId");
+      if (a.recovery !== null) {
+        record(a.recovery, "recovery");
+        int(a.recovery.durationTicks, "recovery.durationTicks", 1);
+        strings(a.recovery.retainResources, "retainResources");
+        array(a.recovery.onSuccess, "recovery.effects");
+        a.recovery.onSuccess.forEach((e) => effect(e, c2));
+        a.recovery.retainResources.forEach((r) => requireThat(actionResources(a).includes(r), "\u672A\u78BA\u4FDD\u306E\u8CC7\u6E90\u3092\u5FA9\u65E7\u6642\u306B\u4FDD\u6301\u3067\u304D\u307E\u305B\u3093"));
+      }
+      if (a.movement !== null) {
+        record(a.movement, "movement");
+        ref(a.movement.actorId, c2.actors, "movement.actor");
+        requireThat(a.actorIds.includes(a.movement.actorId), "\u79FB\u52D5\u8005\u304C\u5B9F\u884C\u8005\u306B\u542B\u307E\u308C\u3066\u3044\u307E\u305B\u3093");
+        ref(a.movement.from, c2.places, "movement.from");
+        ref(a.movement.to, c2.places, "movement.to");
+        requireThat(c2.places.find((p) => p.id === a.movement.from).links.includes(a.movement.to), "\u79FB\u52D5\u7D4C\u8DEF\u304C\u63A5\u7D9A\u3055\u308C\u3066\u3044\u307E\u305B\u3093");
+        requireThat(a.onSuccess.some((e) => e.op === "move" && e.actorId === a.movement.actorId && e.to === a.movement.to), "\u79FB\u52D5\u7D42\u4E86\u52B9\u679C\u304C\u5FC5\u8981\u3067\u3059");
+      }
+    }
+  }
+  function validateCommand(x, c2) {
+    record(x, "command");
+    ref(x.actorId, c2.actors, "command.actor");
+    switch (x.kind) {
+      case "start":
+        ref(x.actionId, c2.actions, "command.action");
+        break;
+      case "cancel":
+        int(x.instanceId, "instanceId", 1);
+        break;
+      case "inspect":
+        ref(x.clueId, c2.clues, "command.clue");
+        break;
+      case "say":
+        ref(x.recipientId, c2.actors, "recipient");
+        ref(x.propositionId, c2.propositions, "proposition");
+        break;
+      case "askCompletion":
+        ref(x.recipientId, c2.actors, "recipient");
+        break;
+      case "offer":
+        ref(x.recipientId, c2.actors, "recipient");
+        ref(x.agreementId, c2.agreements, "agreement");
+        break;
+      case "accept":
+        ref(x.agreementId, c2.agreements, "agreement");
+        int(x.version, "version", 1);
+        break;
+      default:
+        throw new Error(`\u672A\u77E5\u306E\u30B3\u30DE\u30F3\u30C9: ${String(x.kind)}`);
+    }
+  }
+  function validateState(input, c2) {
+    record(input, "state");
+    const s = input;
+    sameKeys(input, ["tick", "randomState", "nextEventId", "nextActionId", "nextCommandId", "actors", "objects", "facts", "services", "actions", "reservations", "deliveries", "events", "completions", "knownCompletions", "commandLog", "pending", "loans"], "state");
+    for (const k of ["tick", "randomState", "nextEventId", "nextActionId", "nextCommandId"]) int(s[k], k, k.startsWith("next") ? 1 : 0);
+    for (const k of ["actors", "objects", "facts", "services", "reservations", "completions", "knownCompletions", "loans"]) record(s[k], k);
+    for (const k of ["actions", "deliveries", "events", "commandLog", "pending"]) array(s[k], k);
+    sameKeys(s.actors, c2.actors.map((a) => a.id), "actors");
+    sameKeys(s.objects, c2.objects.map((o) => o.id), "objects");
+    sameKeys(s.facts, c2.propositions.map((p) => p.id), "facts");
+    sameKeys(s.services, c2.services, "services");
+    Object.values(s.facts).forEach((v) => val(v, "fact"));
+    Object.values(s.services).forEach((v) => bool(v, "service"));
+    sameKeys(s.loans, (c2.loans ?? []).map((l) => l.id), "loans");
+    for (const [id, l] of Object.entries(s.loans)) {
+      record(l, "loan");
+      requireThat(["available", "borrowed", "returned"].includes(l.status), "\u8CB8\u501F\u72B6\u614B\u304C\u4E0D\u6B63\u3067\u3059");
+      if (l.borrowedAt !== null) {
+        int(l.borrowedAt, "borrowedAt");
+        requireThat(l.borrowedAt <= s.tick, "\u672A\u6765\u306E\u8CB8\u501F");
+      }
+      if (l.returnedAt !== null) {
+        int(l.returnedAt, "returnedAt");
+        requireThat(l.borrowedAt !== null && l.returnedAt >= l.borrowedAt && l.returnedAt <= s.tick, "\u8FD4\u5374\u6642\u523B\u304C\u4E0D\u6B63\u3067\u3059");
+      }
+      requireThat(l.status === "available" === (l.borrowedAt === null) && l.status === "returned" === (l.returnedAt !== null), "\u8CB8\u501F\u8A18\u9332\u304C\u4E00\u81F4\u3057\u307E\u305B\u3093");
+      const d = c2.loans.find((x) => x.id === id);
+      if (l.status === "returned") requireThat(sameCustody(s.objects[d.objectId].custody, { kind: "place", id: d.returnLocationId }) || sameCustody(s.objects[d.objectId].custody, { kind: "actor", id: d.lenderId }), "\u8FD4\u5374\u5148\u304C\u4E00\u81F4\u3057\u307E\u305B\u3093");
+    }
+    let previousId = 0;
+    let previousTick = 0;
+    for (const e of s.events) {
+      record(e, "event");
+      int(e.id, "event.id", previousId + 1);
+      int(e.tick, "event.tick", previousTick);
+      requireThat(e.tick <= s.tick, "\u672A\u6765\u306E\u30A4\u30D9\u30F3\u30C8");
+      previousId = e.id;
+      previousTick = e.tick;
+      str(e.type, "event.type");
+      strings(e.actorIds, "event.actors");
+      e.actorIds.forEach((id) => ref(id, c2.actors, "event.actor"));
+      strings(e.subjectIds, "event.subjects");
+      ref(e.locationId, c2.places, "event.place");
+      record(e.payload, "payload");
+      Object.values(e.payload).forEach((v) => val(v, "payload"));
+      array(e.causalEventIds, "event.causes");
+      e.causalEventIds.forEach((id) => requireThat(s.events.some((p) => p.id === id && p.id < e.id), "\u56E0\u679C\u5143\u306E\u51FA\u6765\u4E8B\u304C\u3042\u308A\u307E\u305B\u3093"));
+    }
+    requireThat(s.nextEventId > previousId, "\u6B21\u306E\u30A4\u30D9\u30F3\u30C8\u756A\u53F7\u304C\u91CD\u8907\u3057\u307E\u3059");
+    const startedInstances = s.events.filter((e) => e.type === "engine.action.started");
+    const startIds = startedInstances.map((e) => {
+      int(e.payload.instanceId, "started.instanceId", 1);
+      return e.payload.instanceId;
+    });
+    requireThat(new Set(startIds).size === startIds.length, "\u958B\u59CB\u3057\u305F\u884C\u70BA\u756A\u53F7\u304C\u91CD\u8907\u3057\u3066\u3044\u307E\u3059");
+    requireThat(s.nextActionId === Math.max(0, ...startIds) + 1, "\u6B21\u306E\u884C\u70BA\u756A\u53F7\u304C\u5C65\u6B74\u3068\u4E00\u81F4\u3057\u307E\u305B\u3093");
+    for (const [id, a] of Object.entries(s.actors)) {
+      record(a, "actor");
+      ref(a.locationId, c2.places, "actor.place");
+      requireThat(["problem", "ordinary"].includes(a.routineMode), "\u751F\u6D3B\u72B6\u614B\u304C\u4E0D\u6B63\u3067\u3059");
+      for (const k of ["beliefs", "accepted", "offered", "retryAt"]) record(a[k], `actor.${k}`);
+      for (const [pid, b2] of Object.entries(a.beliefs)) {
+        record(b2, "belief");
+        ref(pid, c2.propositions, "belief.proposition");
+        requireThat(b2.propositionId === pid, "\u8A8D\u8B58ID\u304C\u4E00\u81F4\u3057\u307E\u305B\u3093");
+        stance(b2.stance);
+        int(b2.acquiredAt, "acquiredAt");
+        requireThat(b2.acquiredAt <= s.tick, "\u672A\u6765\u306E\u8A8D\u8B58");
+        requireThat(["memory", "observation", "testimony", "inference"].includes(b2.sourceKind), "\u8A8D\u8B58\u306E\u51FA\u5178\u304C\u4E0D\u6B63\u3067\u3059");
+        str(b2.sourceId, "belief.source");
+        str(b2.revisionReason, "revisionReason");
+        array(b2.evidenceEventIds, "evidence");
+        b2.evidenceEventIds.forEach((eid) => requireThat(s.events.some((e) => e.id === eid && e.tick <= b2.acquiredAt), "\u8A8D\u8B58\u306E\u8A3C\u62E0\u30A4\u30D9\u30F3\u30C8\u304C\u3042\u308A\u307E\u305B\u3093"));
+        if (b2.sourceKind !== "memory") {
+          const evidence = b2.evidenceEventIds.map((eid) => s.events.find((e) => e.id === eid));
+          const source = evidence.find((e) => b2.sourceKind === "observation" ? e.type === "engine.observed" && e.actorIds.includes(id) && e.payload.clueId === b2.sourceId && e.payload.propositionId === pid && (e.payload.value ? "believe" : "deny") === b2.stance : e.type === "engine.spoken" && e.actorIds.includes(b2.sourceId) && e.payload.recipientId === id && e.payload.propositionId === pid && e.payload.stance === b2.stance);
+          requireThat(source && evidence.some((e) => e.type === "engine.information.received" && e.actorIds.includes(id) && e.tick === b2.acquiredAt && e.payload.sourceEventId === source.id), "\u8A8D\u8B58\u306E\u53D6\u5F97\u7D4C\u8DEF\u304C\u3042\u308A\u307E\u305B\u3093");
+          requireThat(b2.sourceKind !== "inference", "\u63A8\u8AD6\u306B\u3088\u308B\u8A8D\u8B58\u751F\u6210\u306F\u307E\u3060\u672A\u5BFE\u5FDC\u3067\u3059");
+        } else requireThat(b2.sourceId === id && b2.acquiredAt === 0 && c2.actors.find((x) => x.id === id).initialBeliefs.some((x) => x.propositionId === pid && x.stance === b2.stance), "\u521D\u671F\u8A18\u61B6\u304C\u5B9A\u7FA9\u3068\u4E00\u81F4\u3057\u307E\u305B\u3093");
+      }
+      for (const k of ["accepted", "offered"]) for (const [aid, version] of Object.entries(a[k])) {
+        ref(aid, c2.agreements, k);
+        int(version, "agreement.version", 1);
+        requireThat(version <= c2.agreements.find((x) => x.id === aid).version, "\u672A\u77E5\u306E\u7D04\u675F\u7248");
+      }
+      for (const [aid, version] of Object.entries(a.accepted)) requireThat(a.offered[aid] === version, "\u77E5\u3089\u306A\u3044\u7D04\u675F\u3092\u53D7\u8AFE\u3057\u3066\u3044\u307E\u3059");
+      for (const [aid, version] of Object.entries(a.accepted)) requireThat(s.events.some((e) => e.type === "engine.agreement.accepted" && e.actorIds.includes(id) && e.payload.agreementId === aid && e.payload.version === version), "\u53D7\u8AFE\u306E\u51FA\u6765\u4E8B\u304C\u3042\u308A\u307E\u305B\u3093");
+      for (const [aid, version] of Object.entries(a.offered)) requireThat(s.events.some((e) => e.type === "engine.information.received" && e.actorIds.includes(id) && s.events.some((source) => source.id === e.payload.sourceEventId && source.type === "engine.agreement.offered" && source.payload.agreementId === aid && source.payload.version === version)), "\u63D0\u6848\u3092\u53D7\u3051\u53D6\u3063\u305F\u51FA\u6765\u4E8B\u304C\u3042\u308A\u307E\u305B\u3093");
+      for (const [rid, retry] of Object.entries(a.retryAt)) {
+        requireThat(c2.actors.find((x) => x.id === id).rules.some((r) => r.id === rid), "\u672A\u77E5\u306E\u518D\u8A66\u884C\u898F\u5247");
+        int(retry, "retryAt");
+      }
+    }
+    for (const [id, o] of Object.entries(s.objects)) {
+      record(o, "object");
+      requireThat(o.ownerId === c2.objects.find((x) => x.id === id).ownerId, "\u6240\u6709\u8005\u304C\u4E0D\u6B63\u3067\u3059");
+      custody(o.custody, c2);
+      int(o.quantity, "object.quantity");
+      requireThat(o.quantity === 0 === (o.custody.kind === "consumed"), "\u6570\u91CF\u3068\u6D88\u8CBB\u72B6\u614B\u304C\u4E00\u81F4\u3057\u307E\u305B\u3093");
+      const seen = /* @__PURE__ */ new Set([id]);
+      let at2 = o.custody;
+      while (at2.kind === "object") {
+        requireThat(!seen.has(at2.id), "\u7269\u306E\u53CE\u7D0D\u5148\u304C\u5FAA\u74B0\u3057\u3066\u3044\u307E\u3059");
+        seen.add(at2.id);
+        const parent = s.objects[at2.id];
+        requireThat(parent && parent.custody.kind !== "consumed", "\u53CE\u7D0D\u5148\u304C\u6D88\u8CBB\u6E08\u307F\u3067\u3059");
+        at2 = parent.custody;
+      }
+    }
+    const locked = {};
+    const instanceIds = /* @__PURE__ */ new Set();
+    for (const a of s.actions) {
+      record(a, "action");
+      int(a.id, "instance.id", 1);
+      requireThat(!instanceIds.has(a.id) && a.id < s.nextActionId, "\u884C\u70BA\u306E\u63A1\u756A\u304C\u4E0D\u6B63\u3067\u3059");
+      instanceIds.add(a.id);
+      ref(a.definitionId, c2.actions, "action.definition");
+      const d = c2.actions.find((x) => x.id === a.definitionId);
+      requireThat(a.phase === "running" || a.phase === "recovering" && d.recovery, "\u884C\u70BA\u306E\u6BB5\u968E\u304C\u4E0D\u6B63\u3067\u3059");
+      int(a.startedAt, "startedAt");
+      requireThat(a.startedAt <= s.tick, "\u672A\u6765\u306E\u884C\u70BA");
+      int(a.elapsedTicks, "elapsedTicks");
+      requireThat(a.elapsedTicks < (a.phase === "running" ? d.durationTicks : d.recovery.durationTicks), "\u7D42\u4E86\u6E08\u307F\u884C\u70BA\u304C\u6B8B\u3063\u3066\u3044\u307E\u3059");
+      strings(a.resources, "action.resources");
+      unique(a.resources, "action.resources");
+      requireThat([...a.resources].sort().join("|") === (a.phase === "running" ? actionResources(d) : recoveryResources(d)).join("|"), "\u4E88\u7D04\u304C\u884C\u70BA\u5B9A\u7FA9\u3068\u4E00\u81F4\u3057\u307E\u305B\u3093");
+      requireThat(s.events.some((e) => e.id === a.startEventId && e.tick === a.startedAt && e.type === "engine.action.started" && e.payload.instanceId === a.id && e.payload.actionId === a.definitionId), "\u884C\u70BA\u958B\u59CB\u306E\u8A3C\u62E0\u304C\u3042\u308A\u307E\u305B\u3093");
+      strings(a.appliedEffectIds, "appliedEffectIds");
+      requireThat(a.abortReason === null || typeof a.abortReason === "string", "\u4E2D\u65AD\u7406\u7531\u304C\u4E0D\u6B63\u3067\u3059");
+      if (a.phase === "running") requireThat(a.abortReason === null && a.appliedEffectIds.length === 0 && a.elapsedTicks === s.tick - a.startedAt, "\u5B9F\u884C\u4E2D\u884C\u70BA\u306E\u9032\u884C\u304C\u4E0D\u6B63\u3067\u3059");
+      else requireThat(typeof a.abortReason === "string" && JSON.stringify(a.appliedEffectIds) === JSON.stringify(d.onAbort.map((_, i) => `${a.id}:running:abort:${i}`)) && s.events.some((e) => e.type === "engine.action.aborted" && e.payload.instanceId === a.id && Math.min(s.tick - e.tick, d.recovery.durationTicks - 1) === a.elapsedTicks), "\u5FA9\u65E7\u306E\u9032\u884C\u307E\u305F\u306F\u9069\u7528\u6E08\u307F\u52B9\u679C\u304C\u4E0D\u6B63\u3067\u3059");
+      for (const r of a.resources) {
+        requireThat(locked[r] === void 0, `\u8CC7\u6E90\u306E\u4E8C\u91CD\u4E88\u7D04: ${r}`);
+        locked[r] = a.id;
+      }
+    }
+    requireThat(JSON.stringify(Object.entries(locked).sort()) === JSON.stringify(Object.entries(s.reservations).sort()), "\u4E88\u7D04\u53F0\u5E33\u304C\u5B9F\u884C\u4E2D\u884C\u70BA\u3068\u4E00\u81F4\u3057\u307E\u305B\u3093");
+    for (const [id, completion] of Object.entries(s.completions)) {
+      ref(id, c2.actors, "completion.actor");
+      record(completion, "completion");
+      const actor2 = c2.actors.find((a) => a.id === id);
+      const e = s.events.find((e2) => e2.id === completion.eventId);
+      requireThat(e?.type === "engine.goal.completed" && e.actorIds.includes(id) && e.tick === completion.achievedAt, "\u9054\u6210\u306E\u51FA\u6765\u4E8B\u304C\u3042\u308A\u307E\u305B\u3093");
+      requireThat(completion.goalVersion === 1 && completion.postGoalContractVersion === actor2.postGoalContract.version, "\u9054\u6210\u306E\u7248\u304C\u4E0D\u6B63\u3067\u3059");
+      array(completion.evidenceEventIds, "completion.evidence");
+      requireThat(completion.evidenceEventIds.length > 0, "\u751F\u6D3B\u5B9F\u884C\u306E\u8A3C\u62E0\u304C\u3042\u308A\u307E\u305B\u3093");
+      completion.evidenceEventIds.forEach((eid) => requireThat(s.events.some((e2) => e2.id === eid && e2.actorIds.includes(id) && actor2.goalEvidence.includes(e2.type) && e2.tick <= completion.achievedAt), "\u751F\u6D3B\u5B9F\u884C\u306E\u8A3C\u62E0\u304C\u4E0D\u6B63\u3067\u3059"));
+      requireThat(s.actors[id].routineMode === "ordinary", "\u9054\u6210\u5F8C\u306E\u901A\u5E38\u751F\u6D3B\u3078\u79FB\u884C\u3057\u3066\u3044\u307E\u305B\u3093");
+    }
+    for (const [id, eid] of Object.entries(s.knownCompletions)) requireThat(s.completions[id]?.eventId === eid && s.events.some((e) => e.type === "engine.information.received" && e.actorIds.includes("player") && e.payload.sourceEventId === eid), "\u4E3B\u4EBA\u516C\u306E\u9054\u6210\u78BA\u8A8D\u306B\u53D6\u5F97\u7D4C\u8DEF\u304C\u3042\u308A\u307E\u305B\u3093");
+    for (const d of s.deliveries) {
+      record(d, "delivery");
+      int(d.dueAt, "delivery.dueAt", s.tick + 1);
+      ref(d.recipientId, c2.actors, "delivery.recipient");
+      requireThat(s.events.some((e) => e.id === d.eventId), "\u914D\u9001\u5143\u30A4\u30D9\u30F3\u30C8\u304C\u3042\u308A\u307E\u305B\u3093");
+      str(d.sourceId, "delivery.source");
+      switch (d.kind) {
+        case "observation":
+        case "testimony":
+          ref(d.propositionId, c2.propositions, "delivery.proposition");
+          stance(d.stance);
+          break;
+        case "agreement":
+          ref(d.agreementId, c2.agreements, "delivery.agreement");
+          int(d.version, "delivery.version", 1);
+          requireThat(d.version === c2.agreements.find((a) => a.id === d.agreementId).version, "\u914D\u9001\u3059\u308B\u7D04\u675F\u306E\u7248\u304C\u4E0D\u6B63\u3067\u3059");
+          break;
+        case "completion":
+          requireThat(s.completions[d.completionActorId ?? ""]?.eventId === d.eventId, "\u9054\u6210\u901A\u77E5\u304C\u4E0D\u6B63\u3067\u3059");
+          break;
+        default:
+          throw new Error("\u914D\u9001\u7A2E\u5225\u304C\u4E0D\u6B63\u3067\u3059");
+      }
+    }
+    let lastCommand = 0;
+    let lastCommandTick = 0;
+    for (const entry of s.commandLog) {
+      record(entry, "commandLog");
+      int(entry.id, "command.id", lastCommand + 1);
+      int(entry.tick, "command.tick", lastCommandTick);
+      requireThat(entry.tick <= s.tick + 1, "\u672A\u6765\u306E\u30B3\u30DE\u30F3\u30C9");
+      validateCommand(entry.command, c2);
+      lastCommand = entry.id;
+      lastCommandTick = entry.tick;
+    }
+    requireThat(s.nextCommandId > lastCommand, "\u30B3\u30DE\u30F3\u30C9\u756A\u53F7\u304C\u91CD\u8907\u3057\u307E\u3059");
+    const pendingIds = /* @__PURE__ */ new Set();
+    for (const entry of s.pending) {
+      record(entry, "pending");
+      requireThat(!pendingIds.has(entry.id), "\u4FDD\u7559\u30B3\u30DE\u30F3\u30C9\u304C\u91CD\u8907\u3057\u3066\u3044\u307E\u3059");
+      pendingIds.add(entry.id);
+      requireThat(entry.tick === s.tick + 1 && JSON.stringify(s.commandLog.find((x) => x.id === entry.id)) === JSON.stringify(entry), "\u4FDD\u7559\u30B3\u30DE\u30F3\u30C9\u304C\u5C65\u6B74\u3068\u4E00\u81F4\u3057\u307E\u305B\u3093");
+    }
+  }
+  function validateSave(input, c2) {
+    record(input, "save");
+    sameKeys(input, ["schemaVersion", "contentVersion", "designNamespace", "state"], "save");
+    requireThat(input.schemaVersion === 2, "\u672A\u5BFE\u5FDC\u306E\u30BB\u30FC\u30D6\u5F62\u5F0F\u3067\u3059\u3002\u73FE\u5728\u306E\u72B6\u614B\u306F\u5909\u66F4\u3057\u3066\u3044\u307E\u305B\u3093");
+    requireThat(input.contentVersion === c2.version && input.designNamespace === c2.namespace, "\u5225\u306E\u30B3\u30F3\u30C6\u30F3\u30C4\u7248\u30FB\u4EBA\u7269\u4F53\u7CFB\u306E\u30BB\u30FC\u30D6\u306F\u8AAD\u307F\u8FBC\u3081\u307E\u305B\u3093");
+    validateState(input.state, c2);
+  }
+
+  // src/core/conditions.ts
+  function choose(g, self) {
+    switch (g.op) {
+      case "always":
+        return true;
+      case "belief":
+        return self.beliefs[g.propositionId]?.stance === g.stance;
+      case "here":
+        return self.locationId === g.locationId;
+      case "accepted":
+        return self.accepted[g.agreementId] === g.version;
+      case "offered":
+        return self.offered[g.agreementId] === g.version;
+      case "all":
+        return g.conditions.every((c2) => choose(c2, self));
+      case "any":
+        return g.conditions.some((c2) => choose(c2, self));
+      case "not":
+        return !choose(g.condition, self);
+    }
+  }
+  function check(g, s) {
+    switch (g.op) {
+      case "always":
+        return true;
+      case "all":
+        return g.conditions.every((c2) => check(c2, s));
+      case "any":
+        return g.conditions.some((c2) => check(c2, s));
+      case "not":
+        return !check(g.condition, s);
+      case "fact":
+        return s.facts[g.propositionId] === g.value;
+      case "at":
+        return s.actors[g.actorId]?.locationId === g.locationId;
+      case "together":
+        return g.actorIds.length > 0 && g.actorIds.every((id) => s.actors[id]?.locationId === s.actors[g.actorIds[0]].locationId);
+      case "custody":
+        return !!s.objects[g.objectId] && sameCustody(s.objects[g.objectId].custody, g.custody);
+      case "quantity":
+        return (s.objects[g.objectId]?.quantity ?? -1) >= g.minimum;
+      case "belief":
+        return s.actors[g.actorId]?.beliefs[g.propositionId]?.stance === g.stance;
+      case "agreement":
+        return g.actorIds.every((id) => s.actors[id]?.accepted[g.agreementId] === g.version);
+      case "offered":
+        return s.actors[g.actorId]?.offered[g.agreementId] === g.version;
+      case "loan":
+        return s.loans[g.loanId]?.status === g.status;
+      case "during":
+        return s.tick >= g.from && s.tick < g.until;
+      case "event":
+        return s.events.some((e) => e.type === g.type && e.actorIds.includes(g.actorId));
+      case "active":
+        return s.actions.some((a) => a.definitionId === g.actionId && a.phase === "running");
+      case "reserved":
+        return s.reservations[g.resourceId] !== void 0;
+    }
+  }
+
+  // src/core/engine.ts
+  var clone = (x) => structuredClone(x);
+  function freeze(value) {
+    if (value !== null && typeof value === "object") {
+      Object.values(value).forEach(freeze);
+      Object.freeze(value);
+    }
+    return value;
+  }
+  var Simulation = class {
+    content;
+    state;
+    constructor(input, seed = 1) {
+      validateContent(input);
+      this.content = freeze(clone(input));
+      requireThat(Number.isSafeInteger(seed) && seed >= 0, "\u4E71\u6570\u30B7\u30FC\u30C9\u304C\u4E0D\u6B63\u3067\u3059");
+      this.state = {
+        tick: 0,
+        randomState: seed,
+        nextEventId: 1,
+        nextActionId: 1,
+        nextCommandId: 1,
+        actors: Object.fromEntries(input.actors.map((a) => [a.id, {
+          locationId: a.locationId,
+          beliefs: Object.fromEntries(a.initialBeliefs.map((b2) => [b2.propositionId, {
+            propositionId: b2.propositionId,
+            stance: b2.stance,
+            sourceKind: "memory",
+            sourceId: a.id,
+            evidenceEventIds: [],
+            acquiredAt: 0,
+            revisionReason: b2.reason
+          }])),
+          accepted: {},
+          offered: {},
+          retryAt: {},
+          routineMode: "problem"
+        }])),
+        objects: Object.fromEntries(input.objects.map((o) => [o.id, { ownerId: o.ownerId, custody: clone(o.custody), quantity: o.quantity }])),
+        facts: Object.fromEntries(input.propositions.map((p) => [p.id, p.initialValue])),
+        services: Object.fromEntries(input.services.map((id) => [id, false])),
+        actions: [],
+        reservations: {},
+        deliveries: [],
+        events: [],
+        completions: {},
+        knownCompletions: {},
+        commandLog: [],
+        pending: [],
+        loans: Object.fromEntries((input.loans ?? []).map((l) => [l.id, { status: l.initiallyBorrowed ? "borrowed" : "available", borrowedAt: l.initiallyBorrowed ? 0 : null, returnedAt: null }]))
+      };
+      this.refreshDerived();
+      validateState(this.state, this.content);
+    }
+    snapshot() {
+      return clone(this.state);
+    }
+    save() {
+      return { schemaVersion: 2, contentVersion: this.content.version, designNamespace: this.content.namespace, state: this.snapshot() };
+    }
+    load(input) {
+      const candidate = clone(input);
+      if (candidate && typeof candidate === "object" && "schemaVersion" in candidate && candidate.schemaVersion === 1 && "contentVersion" in candidate && candidate.contentVersion === "foundation-0.1.0" && "state" in candidate && candidate.state && typeof candidate.state === "object" && !("loans" in candidate.state)) {
+        candidate.schemaVersion = 2;
+        Object.assign(candidate.state, { loans: {} });
+      }
+      validateSave(candidate, this.content);
+      this.state = clone(candidate.state);
+    }
+    enqueue(command) {
+      validateCommand(command, this.content);
+      const entry = { id: this.state.nextCommandId++, tick: this.state.tick + 1, command: clone(command) };
+      this.state.commandLog.push(entry);
+      this.state.pending.push(entry);
+      return entry.id;
+    }
+    step(count = 1) {
+      requireThat(Number.isSafeInteger(count) && count >= 0, "\u66F4\u65B0\u56DE\u6570\u306F\u975E\u8CA0\u6574\u6570\u306B\u3057\u3066\u304F\u3060\u3055\u3044");
+      for (let i = 0; i < count; i++) this.update();
+    }
+    definition(id) {
+      return this.content.actions.find((a) => a.id === id);
+    }
+    event(type, actorIds, locationId, payload = {}, causalEventIds = [], subjectIds = []) {
+      const e = { id: this.state.nextEventId++, tick: this.state.tick, type, actorIds: [...actorIds], subjectIds: [...subjectIds], locationId, payload, causalEventIds: [...causalEventIds] };
+      this.state.events.push(e);
+      return e;
+    }
+    moving(actorId, s = this.state) {
+      return s.actions.some((a) => a.phase === "running" && this.definition(a.definitionId).movement?.actorId === actorId);
+    }
+    together(a, b2) {
+      return !this.moving(a) && !this.moving(b2) && this.state.actors[a].locationId === this.state.actors[b2].locationId;
+    }
+    queue(eventId, recipientId, fields) {
+      this.state.deliveries.push({
+        dueAt: this.state.tick + 1,
+        recipientId,
+        eventId,
+        kind: "observation",
+        sourceId: recipientId,
+        propositionId: null,
+        stance: null,
+        agreementId: null,
+        version: null,
+        completionActorId: null,
+        ...fields
+      });
+    }
+    deliver() {
+      const due = this.state.deliveries.filter((d) => d.dueAt <= this.state.tick);
+      this.state.deliveries = this.state.deliveries.filter((d) => d.dueAt > this.state.tick);
+      for (const d of due) {
+        const actor2 = this.state.actors[d.recipientId];
+        const receipt = this.event(
+          "engine.information.received",
+          [d.recipientId],
+          actor2.locationId,
+          { sourceEventId: d.eventId, channel: d.kind, sourceId: d.sourceId },
+          [d.eventId]
+        );
+        if (d.kind === "observation" || d.kind === "testimony") {
+          actor2.beliefs[d.propositionId] = {
+            propositionId: d.propositionId,
+            stance: d.stance,
+            sourceKind: d.kind,
+            sourceId: d.sourceId,
+            evidenceEventIds: [d.eventId, receipt.id],
+            acquiredAt: this.state.tick,
+            revisionReason: d.kind === "observation" ? "\u305D\u306E\u5834\u3067\u78BA\u304B\u3081\u305F" : "\u767A\u8A00\u3092\u805E\u3044\u305F\uFF08\u540C\u610F\u3068\u306F\u5225\uFF09"
+          };
+        } else if (d.kind === "agreement") actor2.offered[d.agreementId] = d.version;
+        else if (d.kind === "completion" && d.recipientId === "player") this.state.knownCompletions[d.completionActorId] = d.eventId;
+      }
+    }
+    perceive() {
+      for (const clue2 of this.content.clues.filter((x) => x.automatic)) {
+        if (!check(clue2.visible, this.state)) continue;
+        const value = this.state.facts[clue2.propositionId];
+        if (typeof value !== "boolean") continue;
+        const stance2 = value ? "believe" : "deny";
+        for (const id of clue2.observerIds ?? this.content.actors.map((a) => a.id)) {
+          const actor2 = this.state.actors[id];
+          if (actor2.locationId !== clue2.locationId || this.moving(id) || actor2.beliefs[clue2.propositionId]?.stance === stance2 || this.state.deliveries.some((d) => d.recipientId === id && d.propositionId === clue2.propositionId && d.stance === stance2)) continue;
+          const e = this.event("engine.observed", [id], actor2.locationId, { clueId: clue2.id, propositionId: clue2.propositionId, value });
+          this.queue(e.id, id, { propositionId: clue2.propositionId, stance: stance2, sourceId: clue2.id });
+        }
+      }
+    }
+    refreshDerived() {
+      for (const p of this.content.propositions) if (p.derived) this.state.facts[p.id] = check(p.derived, this.state);
+    }
+    process(command, order, proposals, cancellations) {
+      const c2 = command;
+      const a = this.state.actors[c2.actorId];
+      if (c2.kind === "start") {
+        requireThat(this.definition(c2.actionId).actorIds.includes(c2.actorId), "\u305D\u306E\u884C\u70BA\u306E\u5B9F\u884C\u8005\u3067\u306F\u3042\u308A\u307E\u305B\u3093");
+        proposals.push({ actionId: c2.actionId, actorId: c2.actorId, order, ruleId: null, retryTicks: 1 });
+        return;
+      }
+      if (c2.kind === "cancel") {
+        const action2 = this.state.actions.find((x) => x.id === c2.instanceId);
+        requireThat(action2 && this.definition(action2.definitionId).actorIds.includes(c2.actorId), "\u81EA\u5206\u306E\u5B9F\u884C\u4E2D\u884C\u70BA\u3060\u3051\u4E2D\u65AD\u3067\u304D\u307E\u3059");
+        requireThat(action2.phase === "running", "\u5B89\u5168\u306A\u5FA9\u65E7\u304C\u7D42\u308F\u308B\u307E\u3067\u5F85\u3063\u3066\u304F\u3060\u3055\u3044");
+        cancellations.add(action2.id);
+        return;
+      }
+      requireThat(!this.moving(c2.actorId), "\u79FB\u52D5\u4E2D\u3067\u3059\u3002\u5230\u7740\u3057\u3066\u304B\u3089\u64CD\u4F5C\u3057\u3066\u304F\u3060\u3055\u3044");
+      if (c2.kind === "inspect") {
+        const clue2 = this.content.clues.find((x) => x.id === c2.clueId);
+        requireThat(a.locationId === clue2.locationId && check(clue2.visible, this.state), "\u3053\u3053\u304B\u3089\u306F\u78BA\u304B\u3081\u3089\u308C\u307E\u305B\u3093");
+        const observed = this.state.facts[clue2.propositionId];
+        requireThat(typeof observed === "boolean", "\u3053\u306E\u691C\u67FB\u306E\u547D\u984C\u306F\u771F\u507D\u5024\u3067\u3042\u308B\u5FC5\u8981\u304C\u3042\u308A\u307E\u3059");
+        const e = this.event("engine.observed", [c2.actorId], a.locationId, { clueId: clue2.id, propositionId: clue2.propositionId, value: observed });
+        this.queue(e.id, c2.actorId, { propositionId: clue2.propositionId, stance: observed ? "believe" : "deny", sourceId: clue2.id });
+      } else if (c2.kind === "say") {
+        requireThat(this.together(c2.actorId, c2.recipientId), "\u76F8\u624B\u306B\u5C4A\u304F\u5834\u6240\u3067\u8A71\u3057\u3066\u304F\u3060\u3055\u3044");
+        const belief = a.beliefs[c2.propositionId];
+        requireThat(belief, "\u307E\u3060\u53D6\u5F97\u3057\u3066\u3044\u306A\u3044\u60C5\u5831\u3067\u3059");
+        const e = this.event("engine.spoken", [c2.actorId], a.locationId, { recipientId: c2.recipientId, propositionId: c2.propositionId, stance: belief.stance }, belief.evidenceEventIds);
+        this.queue(e.id, c2.recipientId, { kind: "testimony", propositionId: c2.propositionId, stance: belief.stance, sourceId: c2.actorId });
+      } else if (c2.kind === "askCompletion") {
+        requireThat(this.together(c2.actorId, c2.recipientId), "\u76F8\u624B\u306B\u5C4A\u304F\u5834\u6240\u3067\u5C0B\u306D\u3066\u304F\u3060\u3055\u3044");
+        const completion = this.state.completions[c2.recipientId];
+        requireThat(completion, "\u76F8\u624B\u306F\u307E\u3060\u751F\u6D3B\u306E\u76EE\u7684\u3092\u7D42\u3048\u3066\u3044\u307E\u305B\u3093");
+        this.event("engine.completion.reported", [c2.recipientId], a.locationId, { recipientId: c2.actorId }, [completion.eventId]);
+        this.queue(completion.eventId, c2.actorId, { kind: "completion", completionActorId: c2.recipientId, sourceId: c2.recipientId });
+      } else if (c2.kind === "offer") {
+        const agreement2 = this.content.agreements.find((x) => x.id === c2.agreementId);
+        requireThat(agreement2.proposerId === c2.actorId && agreement2.participantIds.includes(c2.recipientId), "\u3053\u306E\u7D04\u675F\u3092\u63D0\u6848\u3067\u304D\u308B\u76F8\u624B\u3067\u306F\u3042\u308A\u307E\u305B\u3093");
+        requireThat(this.together(c2.actorId, c2.recipientId), "\u76F8\u624B\u306B\u5C4A\u304F\u5834\u6240\u3067\u63D0\u6848\u3057\u3066\u304F\u3060\u3055\u3044");
+        const e = this.event("engine.agreement.offered", [c2.actorId], a.locationId, { agreementId: agreement2.id, version: agreement2.version, recipientId: c2.recipientId });
+        for (const recipientId of /* @__PURE__ */ new Set([c2.actorId, c2.recipientId])) this.queue(e.id, recipientId, { kind: "agreement", agreementId: agreement2.id, version: agreement2.version, sourceId: c2.actorId });
+      } else if (c2.kind === "accept") {
+        const agreement2 = this.content.agreements.find((x) => x.id === c2.agreementId);
+        requireThat(agreement2.participantIds.includes(c2.actorId) && a.offered[c2.agreementId] === c2.version && agreement2.version === c2.version, "\u305D\u306E\u7248\u306E\u63D0\u6848\u3092\u53D7\u3051\u53D6\u3063\u3066\u3044\u307E\u305B\u3093");
+        a.accepted[c2.agreementId] = c2.version;
+        this.event("engine.agreement.accepted", [c2.actorId], a.locationId, { agreementId: c2.agreementId, version: c2.version });
+      }
+    }
+    release(a, retain = []) {
+      for (const r of a.resources) if (!retain.includes(r)) delete this.state.reservations[r];
+      a.resources = retain;
+    }
+    custodyPlace(custody2, s) {
+      const seen = /* @__PURE__ */ new Set();
+      let at2 = custody2;
+      while (at2.kind === "object") {
+        requireThat(!seen.has(at2.id), "\u5BB9\u5668\u306E\u5FAA\u74B0\u3067\u3059");
+        seen.add(at2.id);
+        at2 = s.objects[at2.id].custody;
+      }
+      if (at2.kind === "actor") return s.actors[at2.id].locationId;
+      return at2.kind === "place" ? at2.id : null;
+    }
+    /** Mutate a private candidate only. A failed effect cannot leak a partial transfer or consumption. */
+    physical(s, effects) {
+      for (const e of effects) {
+        switch (e.op) {
+          case "move":
+            s.actors[e.actorId].locationId = e.to;
+            break;
+          case "fact":
+            s.facts[e.propositionId] = e.value;
+            break;
+          case "service":
+            s.services[e.serviceId] = e.active;
+            break;
+          case "emit":
+            break;
+          case "observe":
+            requireThat(e.actorIds.every((id) => s.actors[id].locationId === e.locationId) && typeof s.facts[e.propositionId] === "boolean", "\u89B3\u6E2C\u8005\u304C\u305D\u306E\u5834\u306B\u3044\u307E\u305B\u3093");
+            break;
+          case "inform":
+            requireThat(s.actors[e.speakerId].locationId === s.actors[e.recipientId].locationId && !this.moving(e.speakerId, s) && !this.moving(e.recipientId, s) && s.actors[e.speakerId].beliefs[e.propositionId], "\u4F1D\u3048\u308B\u60C5\u5831\u3092\u77E5\u3089\u306A\u3044\u304B\u3001\u76F8\u624B\u306B\u5C4A\u304D\u307E\u305B\u3093");
+            break;
+          case "offer": {
+            const agreement2 = this.content.agreements.find((a) => a.id === e.agreementId);
+            requireThat(agreement2.proposerId === e.speakerId && agreement2.participantIds.includes(e.recipientId) && s.actors[e.speakerId].locationId === s.actors[e.recipientId].locationId && !this.moving(e.speakerId, s) && !this.moving(e.recipientId, s), "\u63D0\u6848\u304C\u76F8\u624B\u306B\u5C4A\u304D\u307E\u305B\u3093");
+            break;
+          }
+          case "accept": {
+            const agreement2 = this.content.agreements.find((a) => a.id === e.agreementId);
+            requireThat(agreement2.participantIds.includes(e.actorId) && s.actors[e.actorId].offered[e.agreementId] === e.version && agreement2.version === e.version, "\u3053\u306E\u7248\u306E\u63D0\u6848\u3092\u53D7\u3051\u53D6\u3063\u3066\u3044\u307E\u305B\u3093");
+            s.actors[e.actorId].accepted[e.agreementId] = e.version;
+            break;
+          }
+          case "loan": {
+            const d = this.content.loans.find((l2) => l2.id === e.loanId);
+            const l = s.loans[e.loanId];
+            if (e.status === "borrowed") {
+              requireThat(l.status !== "borrowed", "\u65E2\u306B\u501F\u7528\u3055\u308C\u3066\u3044\u307E\u3059");
+              l.borrowedAt = s.tick;
+              l.returnedAt = null;
+            } else {
+              requireThat(l.status === "borrowed" && (sameCustody(s.objects[d.objectId].custody, { kind: "place", id: d.returnLocationId }) || sameCustody(s.objects[d.objectId].custody, { kind: "actor", id: d.lenderId })), "\u5408\u610F\u3057\u305F\u8FD4\u5374\u5148\u306B\u73FE\u7269\u304C\u3042\u308A\u307E\u305B\u3093");
+              l.returnedAt = s.tick;
+            }
+            l.status = e.status;
+            break;
+          }
+          case "consume": {
+            const o = s.objects[e.objectId];
+            requireThat(o.quantity >= e.quantity, "\u5FC5\u8981\u306A\u6570\u91CF\u304C\u8DB3\u308A\u307E\u305B\u3093");
+            requireThat(!Object.values(s.objects).some((child) => child.custody.kind === "object" && child.custody.id === e.objectId), "\u4E2D\u8EAB\u304C\u5165\u3063\u305F\u5BB9\u5668\u306F\u6D88\u8CBB\u3067\u304D\u307E\u305B\u3093");
+            o.quantity -= e.quantity;
+            if (o.quantity === 0) o.custody = { kind: "consumed" };
+            break;
+          }
+          case "transfer": {
+            const o = s.objects[e.objectId];
+            requireThat(sameCustody(o.custody, e.from), "\u54C1\u7269\u306F\u3082\u3046\u305D\u306E\u5834\u6240\u306B\u3042\u308A\u307E\u305B\u3093");
+            requireThat(this.content.objects.find((x) => x.id === e.objectId).portable, "\u904B\u3079\u306A\u3044\u7269\u3067\u3059");
+            requireThat(o.quantity > 0 && this.custodyPlace(e.from, s) === this.custodyPlace(e.to, s), "\u53D7\u6E21\u3057\u76F8\u624B\u3068\u54C1\u7269\u304C\u540C\u3058\u5834\u6240\u306B\u3044\u307E\u305B\u3093");
+            o.custody = clone(e.to);
+            this.custodyPlace(o.custody, s);
+            break;
+          }
+        }
+      }
+    }
+    apply(effects, a) {
+      const candidate = clone(this.state);
+      this.physical(candidate, effects);
+      this.state.actors = candidate.actors;
+      this.state.objects = candidate.objects;
+      this.state.facts = candidate.facts;
+      this.state.services = candidate.services;
+      this.state.loans = candidate.loans;
+      const definition = this.definition(a.definitionId);
+      effects.forEach((e, index) => {
+        const effectId = `${a.id}:${a.phase}:${a.abortReason ? "abort" : "success"}:${index}`;
+        requireThat(!a.appliedEffectIds.includes(effectId), "\u52B9\u679C\u306E\u4E8C\u91CD\u9069\u7528\u3067\u3059");
+        a.appliedEffectIds.push(effectId);
+        if (e.op === "inform") {
+          const belief = this.state.actors[e.speakerId].beliefs[e.propositionId];
+          const spoken = this.event("engine.spoken", [e.speakerId], this.state.actors[e.speakerId].locationId, { recipientId: e.recipientId, propositionId: e.propositionId, stance: belief.stance }, [...belief.evidenceEventIds, a.startEventId]);
+          this.queue(spoken.id, e.recipientId, { kind: "testimony", propositionId: e.propositionId, stance: belief.stance, sourceId: e.speakerId });
+        } else if (e.op === "observe") {
+          for (const id of e.actorIds) {
+            const value = this.state.facts[e.propositionId];
+            const observed = this.event("engine.observed", [id], e.locationId, { clueId: e.sourceId, propositionId: e.propositionId, value }, [a.startEventId]);
+            this.queue(observed.id, id, { propositionId: e.propositionId, stance: value ? "believe" : "deny", sourceId: e.sourceId });
+          }
+        } else if (e.op === "offer") {
+          const agreement2 = this.content.agreements.find((x) => x.id === e.agreementId);
+          const offered = this.event("engine.agreement.offered", [e.speakerId], this.state.actors[e.speakerId].locationId, { agreementId: e.agreementId, version: agreement2.version, recipientId: e.recipientId }, [a.startEventId]);
+          for (const id of /* @__PURE__ */ new Set([e.speakerId, e.recipientId])) this.queue(offered.id, id, { kind: "agreement", agreementId: e.agreementId, version: agreement2.version, sourceId: e.speakerId });
+        } else if (e.op === "accept") this.event("engine.agreement.accepted", [e.actorId], this.state.actors[e.actorId].locationId, { agreementId: e.agreementId, version: e.version }, [a.startEventId]);
+        else if (e.op === "emit") this.event(e.type, e.actorIds, e.locationId, { instanceId: a.id }, [a.startEventId], e.subjectIds);
+        else this.event(
+          `engine.effect.${e.op}`,
+          definition.actorIds,
+          this.state.actors[definition.actorIds[0]].locationId,
+          { instanceId: a.id, effectId, detail: JSON.stringify(e) },
+          [a.startEventId]
+        );
+      });
+    }
+    abort(a, reason) {
+      const def = this.definition(a.definitionId);
+      a.abortReason = reason;
+      this.apply(def.onAbort, a);
+      this.event("engine.action.aborted", def.actorIds, this.state.actors[def.actorIds[0]].locationId, { instanceId: a.id, reason }, [a.startEventId]);
+      if (def.recovery) {
+        this.release(a, recoveryResources(def));
+        a.phase = "recovering";
+        a.elapsedTicks = 0;
+      } else {
+        this.release(a);
+        this.state.actions = this.state.actions.filter((x) => x.id !== a.id);
+      }
+    }
+    advance(cancellations) {
+      const due = [];
+      for (const a of [...this.state.actions]) {
+        const def = this.definition(a.definitionId);
+        if (a.phase === "running" && (cancellations.has(a.id) || !check(def.maintainGuard, this.state))) {
+          this.abort(a, cancellations.has(a.id) ? "\u672C\u4EBA\u304B\u3089\u306E\u4E2D\u65AD" : "\u6301\u7D9A\u6761\u4EF6\u304C\u5931\u308F\u308C\u305F");
+          continue;
+        }
+        a.elapsedTicks++;
+        if (a.elapsedTicks < (a.phase === "running" ? def.durationTicks : def.recovery.durationTicks)) continue;
+        if (a.phase === "running" && !check(def.finishGuard, this.state)) this.abort(a, "\u7D42\u4E86\u6761\u4EF6\u304C\u6210\u7ACB\u3057\u3066\u3044\u306A\u3044");
+        else due.push(a);
+      }
+      let remaining = due.filter((a) => this.state.actions.includes(a));
+      while (remaining.length > 0) {
+        let removed = false;
+        for (const a of [...this.state.actions]) {
+          const projected = clone(this.state);
+          try {
+            for (const other of remaining) if (other.id !== a.id) {
+              const d = this.definition(other.definitionId);
+              this.physical(projected, other.phase === "running" ? d.onSuccess : d.recovery.onSuccess);
+            }
+            if (a.phase === "running" && !check(this.definition(a.definitionId).maintainGuard, projected)) {
+              this.abort(a, "\u540C\u3058\u66F4\u65B0\u5185\u306B\u6301\u7D9A\u6761\u4EF6\u304C\u5931\u308F\u308C\u308B");
+              remaining = remaining.filter((x) => x.id !== a.id);
+              removed = true;
+              break;
+            }
+          } catch {
+          }
+        }
+        if (!removed) break;
+      }
+      for (const a of remaining) {
+        const def = this.definition(a.definitionId);
+        try {
+          this.apply(a.phase === "running" ? def.onSuccess : def.recovery.onSuccess, a);
+          this.event(
+            a.phase === "running" ? "engine.action.finished" : "engine.action.recovered",
+            def.actorIds,
+            this.state.actors[def.actorIds[0]].locationId,
+            { instanceId: a.id, actionId: def.id },
+            [a.startEventId]
+          );
+          this.release(a);
+          this.state.actions = this.state.actions.filter((x) => x.id !== a.id);
+        } catch (error) {
+          if (a.phase === "running") this.abort(a, error instanceof Error ? error.message : "\u7D50\u679C\u3092\u78BA\u5B9A\u3067\u304D\u306A\u3044");
+          else {
+            a.elapsedTicks = def.recovery.durationTicks - 1;
+            this.event("engine.recovery.blocked", def.actorIds, this.state.actors[def.actorIds[0]].locationId, { reason: String(error) }, [a.startEventId]);
+          }
+        }
+      }
+    }
+    start(p, startSnapshot) {
+      const d = this.definition(p.actionId);
+      const actor2 = this.state.actors[p.actorId];
+      if (p.ruleId) actor2.retryAt[p.ruleId] = this.state.tick + p.retryTicks;
+      const resources = actionResources(d);
+      const conflict = resources.find((r) => this.state.reservations[r] !== void 0);
+      let reason = conflict ? `\u4F7F\u7528\u4E2D\u306E\u8CC7\u6E90: ${conflict}` : null;
+      if (!check(d.startGuard, startSnapshot) || !check(d.maintainGuard, startSnapshot)) reason = "\u958B\u59CB\u6761\u4EF6\u307E\u305F\u306F\u6301\u7D9A\u6761\u4EF6\u304C\u6210\u7ACB\u3057\u3066\u3044\u306A\u3044";
+      if (!check(d.startGuard, this.state) || !check(d.maintainGuard, this.state)) reason = "\u958B\u59CB\u6642\u70B9\u3067\u6761\u4EF6\u304C\u5909\u5316\u3057\u305F";
+      if (d.movement && this.state.actors[d.movement.actorId].locationId !== d.movement.from) reason = "\u79FB\u52D5\u306E\u51FA\u767A\u5730\u70B9\u304C\u9055\u3046";
+      if (reason) {
+        this.event("engine.action.rejected", [p.actorId], actor2.locationId, { actionId: d.id, reason, retryAt: this.state.tick + p.retryTicks });
+        return;
+      }
+      const id = this.state.nextActionId++;
+      const e = this.event("engine.action.started", d.actorIds, actor2.locationId, { instanceId: id, actionId: d.id, ruleId: p.ruleId ?? "command" });
+      const a = { id, definitionId: d.id, startedAt: this.state.tick, elapsedTicks: 0, phase: "running", resources, abortReason: null, startEventId: e.id, appliedEffectIds: [] };
+      for (const r of resources) this.state.reservations[r] = id;
+      this.state.actions.push(a);
+    }
+    completeGoals(firstEventId) {
+      for (const evidence of [...this.state.events].filter((e) => e.id >= firstEventId)) {
+        for (const id of evidence.actorIds) {
+          const d = this.content.actors.find((a) => a.id === id);
+          if (this.state.completions[id] || !d.goalEvidence.includes(evidence.type)) continue;
+          const e = this.event("engine.goal.completed", [id], evidence.locationId, { goalVersion: 1 }, [evidence.id]);
+          this.state.completions[id] = { eventId: e.id, evidenceEventIds: [evidence.id], achievedAt: this.state.tick, goalVersion: 1, postGoalContractVersion: d.postGoalContract.version };
+          this.state.actors[id].routineMode = "ordinary";
+          for (const service of d.postGoalContract.serviceIds) this.state.services[service] = true;
+          if (this.state.actors.player.locationId === evidence.locationId && !this.moving("player")) this.queue(e.id, "player", { kind: "completion", completionActorId: id, sourceId: id });
+        }
+      }
+    }
+    update() {
+      const before = clone(this.state);
+      try {
+        this.state.tick++;
+        const firstEventId = this.state.nextEventId;
+        this.refreshDerived();
+        this.deliver();
+        this.perceive();
+        const proposals = [];
+        const cancellations = /* @__PURE__ */ new Set();
+        const commands = this.state.pending;
+        this.state.pending = [];
+        for (const entry of commands) {
+          try {
+            this.process(entry.command, entry.id, proposals, cancellations);
+          } catch (error) {
+            this.event("engine.command.rejected", [entry.command.actorId], this.state.actors[entry.command.actorId].locationId, { commandId: entry.id, reason: error instanceof Error ? error.message : String(error) });
+          }
+        }
+        const startSnapshot = clone(this.state);
+        let order = this.state.nextCommandId;
+        for (const d of [...this.content.actors].sort((a, b2) => a.id.localeCompare(b2.id, "en"))) {
+          const self = startSnapshot.actors[d.id];
+          const busy = startSnapshot.actions.some((a) => !this.definition(a.definitionId).concurrent && this.definition(a.definitionId).actorIds.includes(d.id));
+          const r = [...d.rules].sort((a, b2) => b2.priority - a.priority || a.id.localeCompare(b2.id, "en")).find((r2) => ((r2.mode ?? "problem") === self.routineMode || r2.mode === "always") && (!busy || this.definition(r2.actionId).concurrent) && !startSnapshot.actions.some((a) => a.definitionId === r2.actionId) && (self.retryAt[r2.id] ?? 0) <= this.state.tick && choose(r2.choiceGuard, self));
+          if (r) proposals.push({ actorId: d.id, actionId: r.actionId, order: order++, ruleId: r.id, retryTicks: r.retryTicks });
+        }
+        this.advance(cancellations);
+        for (const p of proposals.sort((a, b2) => a.order - b2.order)) this.start(p, startSnapshot);
+        this.completeGoals(firstEventId);
+        this.refreshDerived();
+      } catch (error) {
+        this.state = before;
+        throw error;
+      }
+    }
+  };
+
+  // src/core/clock.ts
+  var FixedClock = class {
+    remainderMs = 0;
+    paused = true;
+    setPaused(paused2) {
+      this.paused = paused2;
+      this.remainderMs = 0;
+    }
+    advance(milliseconds, tick2) {
+      requireThat(Number.isFinite(milliseconds) && milliseconds >= 0, "\u7D4C\u904E\u6642\u9593\u304C\u4E0D\u6B63\u3067\u3059");
+      if (this.paused) return 0;
+      this.remainderMs += milliseconds;
+      const steps = Math.floor((this.remainderMs + 1e-8) / 100);
+      this.remainderMs = Math.max(0, this.remainderMs - steps * 100);
+      for (let i = 0; i < steps; i++) tick2();
+      return steps;
+    }
+  };
+
+  // src/storage/saves.ts
+  var Saves = class {
+    store;
+    prefix;
+    constructor(store, prefix = "roadonden:foundation:v1:") {
+      this.store = store;
+      this.prefix = prefix;
+    }
+    write(simulation, slot) {
+      requireThat([1, 2, 3].includes(slot), "\u4FDD\u5B58\u67A0\u304C\u4E0D\u6B63\u3067\u3059");
+      this.store.setItem(`${this.prefix}manual:${slot}`, this.export(simulation));
+    }
+    read(simulation, slot) {
+      const data = this.store.getItem(`${this.prefix}${typeof slot === "number" ? `manual:${slot}` : slot}`);
+      requireThat(data !== null, "\u3053\u306E\u67A0\u306B\u306F\u30BB\u30FC\u30D6\u304C\u3042\u308A\u307E\u305B\u3093");
+      this.import(simulation, data);
+    }
+    autosave(simulation) {
+      const previous = this.store.getItem(`${this.prefix}auto`);
+      if (previous !== null) this.store.setItem(`${this.prefix}previous`, previous);
+      this.store.setItem(`${this.prefix}auto`, this.export(simulation));
+    }
+    export(simulation) {
+      return JSON.stringify(simulation.save());
+    }
+    import(simulation, json) {
+      const candidate = JSON.parse(json);
+      simulation.load(candidate);
+    }
+  };
+
+  // src/content/dinner.ts
+  var P = "player";
+  var N = "C001";
+  var O = "C002";
+  var K = "C003";
+  var B = "C004";
+  var M = "C005";
+  var R = "C006";
+  var C = "C007";
+  var L = "C008";
+  var W = "C045";
+  var T = "C054";
+  var F = "C064";
+  var D = "animal.dog.nora";
+  var yes = { op: "always" };
+  var all = (...conditions) => ({ op: "all", conditions });
+  var any = (...conditions) => ({ op: "any", conditions });
+  var not = (condition) => ({ op: "not", condition });
+  var fact = (propositionId, value = true) => ({ op: "fact", propositionId, value });
+  var at = (actorId, locationId) => ({ op: "at", actorId, locationId });
+  var held = (objectId, custody2) => ({ op: "custody", objectId, custody: custody2 });
+  var actor = (id) => ({ kind: "actor", id });
+  var place = (id) => ({ kind: "place", id });
+  var set = (propositionId, value = true) => ({ op: "fact", propositionId, value });
+  var transfer = (objectId, from, to) => ({ op: "transfer", objectId, from, to });
+  var emit = (type, actorIds, locationId) => ({ op: "emit", type, actorIds, locationId, subjectIds: [] });
+  var together = (...actorIds) => ({ op: "together", actorIds });
+  var knows = (actorId, propositionId) => ({ op: "belief", actorId, propositionId, stance: "believe" });
+  var b = (propositionId, value = true) => ({ op: "belief", propositionId, stance: value ? "believe" : "deny" });
+  var ca = (...conditions) => ({ op: "all", conditions });
+  var cn = (condition) => ({ op: "not", condition });
+  var here = (locationId) => ({ op: "here", locationId });
+  var accepted = (agreementId) => ({ op: "accepted", agreementId, version: 1 });
+  var agreement = (agreementId, actorIds) => ({ op: "agreement", agreementId, version: 1, actorIds });
+  var dinnerContent = {
+    version: "dinner-0.2.0",
+    namespace: "redesign-v1",
+    tickMs: 100,
+    ticksPerDay: 14400,
+    places: [
+      { id: "inn", name: "\u65C5\u4EBA\u306E\u5BBF", x: 160, y: 610, links: ["street"] },
+      { id: "street", name: "\u5674\u6C34\u306E\u8FBB", x: 420, y: 610, links: ["inn", "home", "market", "celia", "post"] },
+      { id: "home", name: "\u30D5\u30A3\u30F3\u30C1\u5BB6", x: 420, y: 320, links: ["street", "yard", "ruth"] },
+      { id: "yard", name: "\u72AC\u306E\u3044\u308B\u4E2D\u5EAD", x: 190, y: 320, links: ["home", "garden"] },
+      { id: "garden", name: "\u5C0F\u3055\u306A\u5EAD", x: 190, y: 130, links: ["yard"] },
+      { id: "ruth", name: "\u30EB\u30FC\u30B9\u306E\u53F0\u6240", x: 590, y: 130, links: ["home"] },
+      { id: "celia", name: "\u30BB\u30EA\u30A2\u306E\u5BB6", x: 60, y: 800, links: ["street"] },
+      { id: "market", name: "\u5E02\u5834\u30FB\u9752\u679C\u5E97", x: 750, y: 610, links: ["street", "shoe", "school", "quay"] },
+      { id: "shoe", name: "\u30EC\u30AA\u306E\u9774\u5E97", x: 1010, y: 610, links: ["market", "upstairs"] },
+      { id: "upstairs", name: "\u9774\u5E97\u306E\u4E8C\u968E", x: 1010, y: 360, links: ["shoe"] },
+      { id: "school", name: "\u5B66\u6821\u306E\u5DE5\u4F5C\u5BA4", x: 750, y: 320, links: ["market"] },
+      { id: "post", name: "\u90F5\u4FBF\u6240\u524D", x: 420, y: 890, links: ["street"] },
+      { id: "quay", name: "\u904B\u6CB3\u306E\u8377\u63DA\u3052\u5834", x: 750, y: 890, links: ["market"] }
+    ],
+    propositions: [],
+    actors: [],
+    objects: [],
+    resources: ["table:home", "work:quay"],
+    services: ["home.receipt", "market.shelf", "shoe.box"],
+    clues: [],
+    loans: [],
+    agreements: [],
+    actions: []
+  };
+  var c = dinnerContent;
+  function prop(id, description, initialValue = false, derived) {
+    c.propositions.push({ id, description, initialValue, ...derived ? { derived } : {} });
+  }
+  function clue(id, locationId, observerIds, visible = yes) {
+    c.clues.push({ id: `see.${locationId}.${id}`, locationId, propositionId: id, visible, description: c.propositions.find((p) => p.id === id).description, automatic: true, ...observerIds ? { observerIds } : {} });
+  }
+  function local(id, description, location, initial = false, derived) {
+    prop(id, description, initial, derived);
+    clue(id, location);
+  }
+  function person(id, name, locationId, goal, normalLife, memories = []) {
+    const a = {
+      id,
+      displayName: name,
+      kind: id === P ? "player" : id === D ? "animal" : "resident",
+      locationId,
+      sourceRef: id === P ? "doc/01-game-design.md" : id === D ? "doc/04-world-and-scenarios.md" : `doc/sources/residents-${Number(id.slice(1)) < 49 ? "001-048" : "049-100"}.md#${id}`,
+      normalLife,
+      goal,
+      initialBeliefs: memories.map((propositionId) => ({ propositionId, stance: "believe", reason: "\u672C\u4EBA\u306E\u7528\u4EF6\u30FB\u8A18\u61B6" })),
+      rules: [],
+      goalEvidence: id === P || id === D ? [] : [id === N || id === O || id === K ? "family.dinner" : `life.${id}`],
+      postGoalContract: { version: 1, serviceIds: id === N ? ["home.receipt"] : id === M ? ["market.shelf"] : id === L ? ["shoe.box"] : [] }
+    };
+    c.actors.push(a);
+    return a;
+  }
+  function object(id, name, ownerId, custody2, quantity = 1, consumable = false) {
+    c.objects.push({ id, name, ownerId, custody: custody2, quantity, unit: consumable ? "\u675F" : "\u70B9", portable: true, consumable });
+  }
+  function action(id, label2, actorIds, startGuard, onSuccess, durationTicks = 12, extra = {}) {
+    const a = { id, label: label2, actorIds, durationTicks, startGuard, maintainGuard: startGuard, finishGuard: startGuard, resources: [], onSuccess, onAbort: [], recovery: null, movement: null, presentationId: id, designStatus: "provisional", rationale: "\u5915\u98DF\u7DE8\u306E\u539F\u6587\u3092\u691C\u8A3C\u3059\u308B\u4EEE\u306E\u6240\u8981\u6642\u9593\u30FB\u4F4D\u7F6E", ...extra };
+    c.actions.push(a);
+    return a;
+  }
+  function rule(who, id, choiceGuard, priority = 50, mode = "always") {
+    c.actors.find((a) => a.id === who).rules.push({ id: `rule.${id}.${who}.${c.actors.find((a) => a.id === who).rules.length}`, actionId: id, choiceGuard, priority, retryTicks: 6, mode });
+  }
+  function auto(who, id, label2, location, choiceGuard, guard2, effects, duration = 12, priority = 50, extra = {}) {
+    action(id, label2, [who], all(at(who, location), guard2), effects, duration, extra);
+    rule(who, id, ca(here(location), choiceGuard), priority);
+  }
+  var interactions = [];
+  function interaction(id, label2, where, guard2, effects, text, duration = 8, concurrent = false) {
+    const proximity = where.who ? together(P, where.who) : at(P, where.location);
+    const physical = concurrent ? yes : fact("quay.playerHolding", false);
+    action(id, label2, [P], all(proximity, guard2, physical), effects, duration, { concurrent });
+    interactions.push({ id, label: label2, ...where, visible: all(proximity, guard2, physical), text });
+  }
+  function talk(id, who, label2, props, text, guard2 = yes) {
+    interaction(id, label2, { who }, all(guard2, ...props.map((pid) => knows(who, pid))), props.map((propositionId) => ({ op: "inform", speakerId: who, recipientId: P, propositionId })), text, 2, true);
+  }
+  function tell(id, who, label2, pid, text) {
+    interaction(id, label2, { who }, knows(P, pid), [{ op: "inform", speakerId: P, recipientId: who, propositionId: pid }], text, 2, true);
+  }
+  function propose(id, label2, participants, where, terms, guard2 = yes) {
+    c.agreements.push({ id, version: 1, proposerId: P, participantIds: [P, ...participants], terms });
+    interaction(`offer.${id}`, label2, where, all(guard2, not(agreement(id, [P, ...participants]))), participants.map((recipientId) => ({ op: "offer", speakerId: P, recipientId, agreementId: id })), terms, 2, true);
+    for (const who of [P, ...participants]) {
+      const aid = `accept.${id}.${who}`;
+      action(aid, `${label2}\uFF1A\u8FD4\u7B54\u3059\u308B`, [who], all({ op: "offered", actorId: who, agreementId: id, version: 1 }, not(agreement(id, [who]))), [{ op: "accept", actorId: who, agreementId: id, version: 1 }], 2, { concurrent: true });
+      rule(who, aid, ca({ op: "offered", agreementId: id, version: 1 }, cn(accepted(id))), 200);
+    }
+  }
+  prop("dinner.plan", "\u30CE\u30E9\u306F\u4ECA\u591C\u3001\u5BB6\u65CF\u4E09\u4EBA\u3067\u98DF\u3079\u3066\u4ECA\u65E5\u306E\u8A71\u3092\u805E\u304D\u305F\u3044\u3002", true);
+  prop("order.details", "\u9752\u679C\u5E97\u306B\u652F\u6255\u6E08\u307F\u306E\u91CE\u83DC\u306E\u5305\u307F\u304C\u53D6\u308A\u7F6E\u304B\u308C\u3066\u3044\u308B\u3002", true);
+  prop("ruth.reason", "\u30EB\u30FC\u30B9\u306F\u501F\u308A\u305F\u5927\u934B\u306E\u67C4\u3092\u7126\u304C\u3057\u305F\u3068\u4F1D\u3048\u305F\u3044\u3002", true);
+  prop("ralph.worry", "\u30E9\u30EB\u30D5\u306F\u898B\u672C\u3068\u9055\u3046\u7D19\u4EBA\u5F62\u3067\u306F\u8A71\u304C\u4F1D\u308F\u3089\u306A\u3044\u3068\u601D\u3063\u3066\u3044\u308B\u3002", true);
+  prop("leo.policy", "\u8CB8\u3057\u9774\u306F\u5E97\u5148\u306E\u8FD4\u5374\u7BB1\u3078\u3002\u9589\u5E97\u5F8C\u3082\u5229\u7528\u3067\u304D\u308B\u3002", true);
+  local("delivery.allowed", "\u30CE\u30E9\u306F\u6CE8\u6587\u306E\u4EE3\u7406\u53D7\u53D6\u308A\u3092\u4E86\u627F\u3057\u305F\u3002", "home", false, agreement("delivery", [P, N]));
+  local("package.collected", "\u53D6\u308A\u7F6E\u304D\u68DA\u306E\u5305\u307F\u306F\u53D7\u53D6\u308A\u6E08\u307F\u306B\u306A\u3063\u3066\u3044\u308B\u3002", "market");
+  local("ingredients.received", "\u30CE\u30E9\u306F\u91CE\u83DC\u306E\u5305\u307F\u3092\u5B9F\u969B\u306B\u53D7\u3051\u53D6\u3063\u305F\u3002", "home");
+  local("meal.ready", "\u5C0F\u934B\u306E\u6599\u7406\u304C\u3067\u304D\u305F\u3002\u98DF\u5353\u3067\u5BB6\u65CF\u3092\u5F85\u3063\u3066\u3044\u308B\u3002", "home");
+  local("dinner.done", "\u4E09\u4EBA\u3067\u98DF\u3079\u3001\u30AD\u30C3\u30C8\u306E\u7D19\u4EBA\u5F62\u3068\u4ECA\u65E5\u306E\u8A71\u3092\u697D\u3057\u3093\u3060\u3002", "home");
+  local("nora.shoes", "\u30CE\u30E9\u306E\u624B\u5143\u306B\u5C65\u3051\u308B\u9774\u304C\u3042\u308B\u3002", "home", false, any(held("shoes", actor(N)), held("loanShoes", actor(N))));
+  local("family.here", "\u4E09\u4EBA\u304C\u98DF\u5353\u306B\u305D\u308D\u3063\u305F\u3002", "home", false, all(at(N, "home"), at(O, "home"), at(K, "home")));
+  local("home.package", "\u53D7\u53D6\u68DA\u306B\u91CE\u83DC\u306E\u5305\u307F\u304C\u7F6E\u304B\u308C\u3066\u3044\u308B\u3002", "home", false, held("package", place("home")));
+  local("home.shoes", "\u53D7\u53D6\u68DA\u306B\u5143\u306E\u5916\u5C65\u304D\u304C\u7F6E\u304B\u308C\u3066\u3044\u308B\u3002", "home", false, held("shoes", place("home")));
+  local("loan.held", "\u30CE\u30E9\u306F\u8CB8\u3057\u9774\u3092\u6301\u3063\u3066\u3044\u308B\u3002", "home", false, held("loanShoes", actor(N)));
+  local("mabel.locked", "\u9752\u679C\u5E97\u306F\u5916\u51FA\u306E\u305F\u3081\u65BD\u9320\u3055\u308C\u3066\u3044\u308B\u3002", "market");
+  local("mabel.closed", "\u30E1\u30A4\u30D9\u30EB\u306F\u53D7\u9818\u3092\u78BA\u8A8D\u3057\u3001\u5E97\u3058\u307E\u3044\u3092\u7D42\u3048\u305F\u3002", "market");
+  local("mabel.package", "\u30E1\u30A4\u30D9\u30EB\u304C\u914D\u9054\u3059\u308B\u5305\u307F\u3092\u6301\u3063\u3066\u3044\u308B\u3002", "market", false, held("package", actor(M)));
+  prop("mabel.empty", "\u30E1\u30A4\u30D9\u30EB\u306E\u914D\u9054\u7528\u306E\u624B\u8377\u7269\u306F\u306A\u304F\u306A\u3063\u305F\u3002", false, not(held("package", actor(M))));
+  clue("mabel.empty", "home", void 0, at(M, "home"));
+  local("ben.chasing", "\u30D9\u30F3\u304C\u8FFD\u3046\u3068\u3001\u72AC\u306F\u904A\u3073\u3060\u3068\u601D\u3063\u3066\u9003\u3052\u308B\u3002", "yard", true);
+  local("dog.looksback", "\u7ACB\u3061\u6B62\u307E\u308B\u3068\u72AC\u3082\u6B62\u307E\u308A\u3001\u3053\u3061\u3089\u3092\u632F\u308A\u8FD4\u3063\u305F\u3002", "yard");
+  local("garden.open", "\u5EAD\u306E\u5165\u53E3\u304C\u958B\u3044\u3066\u3044\u308B\u3002", "yard");
+  clue("garden.open", "garden");
+  local("toy.ready", "\u3044\u3064\u3082\u306E\u73A9\u5177\u304C\u5EAD\u306E\u5165\u53E3\u304B\u3089\u898B\u3048\u308B\u3068\u3053\u308D\u306B\u3042\u308B\u3002", "garden");
+  clue("toy.ready", "yard", void 0, fact("garden.open"));
+  local("dog.inside", "\u72AC\u304C\u5EAD\u306E\u4E2D\u306B\u5165\u3063\u305F\u3002", "garden", false, at(D, "garden"));
+  clue("dog.inside", "yard", void 0, fact("garden.open"));
+  local("dog.dropped", "\u72AC\u306F\u9774\u3092\u53E3\u304B\u3089\u653E\u3057\u305F\u3002", "garden");
+  clue("dog.dropped", "yard", void 0, fact("garden.open"));
+  local("dog.settled", "\u30D9\u30F3\u304C\u8FFD\u308F\u305A\u306B\u5EAD\u306E\u6238\u3092\u9589\u3081\u3001\u72AC\u304C\u843D\u3061\u7740\u3044\u305F\u3002", "garden");
+  local("ruth.paused", "\u30EB\u30FC\u30B9\u306F\u934B\u3092\u78E8\u304F\u624B\u3092\u6B62\u3081\u305F\u3002", "ruth");
+  local("ruth.repaired", "\u5927\u934B\u306E\u67C4\u3092\u53D6\u308A\u66FF\u3048\u305F\u3002", "ruth");
+  local("ruth.returned", "\u30EB\u30FC\u30B9\u306F\u934B\u3092\u8FD4\u3057\u3001\u67C4\u3092\u7126\u304C\u3057\u305F\u4E8B\u60C5\u3092\u8A71\u3057\u305F\u3002", "home");
+  local("celia.curtain", "\u98DF\u5353\u306E\u76EE\u96A0\u3057\u304C\u4E0B\u308A\u3066\u3044\u308B\u3002", "celia");
+  local("celia.ate", "\u30BB\u30EA\u30A2\u306F\u81EA\u5206\u306E\u98DF\u4E8B\u3092\u6E08\u307E\u305B\u305F\u3002", "celia");
+  local("leo.box", "\u8FD4\u5374\u7BB1\u3068\u9589\u5E97\u5F8C\u306E\u6848\u5185\u304C\u5E97\u5148\u306B\u8A2D\u3051\u3089\u308C\u305F\u3002", "shoe");
+  local("leo.closed", "\u30EC\u30AA\u304C\u9774\u5E97\u306E\u6238\u7DE0\u307E\u308A\u3092\u7D42\u3048\u305F\u3002", "shoe");
+  local("leo.danced", "\u30EC\u30AA\u306F\u4E8C\u968E\u3067\u8E0A\u308A\u306E\u7DF4\u7FD2\u3092\u59CB\u3081\u305F\u3002", "upstairs");
+  local("quay.clear", "\u53D7\u3051\u53F0\u3092\u7F6E\u304F\u5834\u6240\u304C\u7A7A\u3044\u3066\u3044\u308B\u3002", "quay");
+  local("quay.flag", "\u540C\u3058\u9752\u3044\u5408\u56F3\u672D\u304C\u4E09\u4EBA\u306B\u898B\u3048\u308B\u5834\u6240\u306B\u51FA\u3066\u3044\u308B\u3002", "quay");
+  local("quay.agreed", "\u4E09\u4EBA\u304C\u5408\u56F3\u3068\u4E2D\u6B62\u6761\u4EF6\u3092\u78BA\u8A8D\u3057\u305F\u3002", "quay", false, agreement("quay", [P, O, W, T]));
+  local("quay.stand", "\u30BF\u30C3\u30B5\u304C\u53D7\u3051\u53F0\u3092\u7F6E\u304D\u3001\u811A\u3092\u78BA\u304B\u3081\u305F\u3002", "quay");
+  local("quay.owenHolding", "\u30AA\u30FC\u30A6\u30A7\u30F3\u304C\u8377\u3092\u652F\u3048\u3066\u3044\u308B\u3002", "quay", true);
+  local("quay.playerHolding", "\u4E3B\u4EBA\u516C\u304C\u8377\u3092\u652F\u3048\u3066\u3044\u308B\u3002\u4E21\u624B\u3092\u96E2\u305B\u306A\u3044\u3002", "quay");
+  local("quay.stable", "\u8377\u306F\u53D7\u3051\u53F0\u306B\u8F09\u308A\u3001\u8AB0\u3082\u624B\u3067\u652F\u3048\u3066\u3044\u306A\u3044\u3002", "quay");
+  local("quay.winchFree", "\u30D1\u30FC\u30B7\u30FC\u306F\u6A5F\u69CB\u3092\u7A7A\u3051\u3001\u5171\u901A\u306E\u5408\u56F3\u3092\u63B2\u793A\u3057\u305F\u3002", "quay");
+  local("quay.toolsAway", "\u30BF\u30C3\u30B5\u306F\u88DC\u52A9\u5177\u3092\u53CE\u3081\u305F\u3002", "quay");
+  local("school.understood", "\u8A66\u6F14\u3067\u7D19\u4EBA\u5F62\u306E\u8A71\u304C\u4F1D\u308F\u308B\u3068\u78BA\u304B\u3081\u3089\u308C\u305F\u3002", "school");
+  local("school.repaired", "\u7D19\u4EBA\u5F62\u306E\u50B7\u3093\u3060\u4E00\u304B\u6240\u3092\u88DC\u4FEE\u3057\u305F\u3002", "school");
+  local("school.portioned", "\u6301\u3061\u5E30\u308B\u7D19\u4EBA\u5F62\u3068\u3001\u6B8B\u3057\u3066\u4ED5\u4E0A\u3052\u308B\u5206\u3092\u5206\u3051\u305F\u3002", "school");
+  local("school.canGo", "\u30AD\u30C3\u30C8\u306F\u81EA\u5206\u306E\u7D19\u4EBA\u5F62\u3092\u6301\u3061\u5E30\u308C\u308B\u3002", "school", false, held("kitPuppet", actor(K)));
+  local("school.kitHere", "\u30AD\u30C3\u30C8\u306F\u5DE5\u4F5C\u5BA4\u306B\u3044\u308B\u3002", "school", false, at(K, "school"));
+  local("school.playerHere", "\u4E3B\u4EBA\u516C\u306F\u5DE5\u4F5C\u5BA4\u306B\u3044\u308B\u3002", "school", false, at(P, "school"));
+  person(P, "\u65C5\u4EBA", "inn", "\u8857\u3092\u6B69\u304D\u3001\u4F4F\u6C11\u306E\u66AE\u3089\u3057\u306B\u95A2\u308F\u308B", "\u5BBF\u304B\u3089\u6765\u305F\u65C5\u4EBA");
+  person(N, "\u30CE\u30E9 \u30D5\u30A3\u30F3\u30C1", "home", "\u4E09\u4EBA\u3067\u5915\u98DF\u3092\u98DF\u3079\u3001\u8A71\u3092\u805E\u304F", "\u5BB6\u65CF\u3068\u306E\u6642\u9593\u3092\u697D\u3057\u3080", ["dinner.plan", "order.details"]);
+  person(O, "\u30AA\u30FC\u30A6\u30A7\u30F3 \u30D5\u30A3\u30F3\u30C1", "quay", "\u5E30\u5B85\u3057\u3066\u5BB6\u65CF\u3068\u5915\u98DF\u3092\u3068\u308B", "\u8377\u63DA\u3052\u5834\u3067\u50CD\u304F");
+  person(K, "\u30AD\u30C3\u30C8 \u30D5\u30A3\u30F3\u30C1", "school", "\u81EA\u4F5C\u306E\u7D19\u4EBA\u5F62\u3092\u5BB6\u65CF\u306B\u898B\u305B\u306A\u304C\u3089\u98DF\u3079\u308B", "\u5B66\u6821\u3067\u7D19\u4EBA\u5F62\u3092\u4F5C\u308B");
+  person(B, "\u30D9\u30F3 \u30CF\u30FC\u30C8", "yard", "\u72AC\u3092\u5EAD\u3078\u623B\u3057\u843D\u3061\u7740\u304B\u305B\u308B", "\u72AC\u306E\u4E16\u8A71\u3092\u3059\u308B");
+  person(M, "\u30E1\u30A4\u30D9\u30EB \u30B0\u30EA\u30FC\u30F3", "market", "\u6700\u5F8C\u306E\u53D6\u308A\u7F6E\u304D\u306E\u53D7\u9818\u3092\u77E5\u308A\u5E97\u3058\u307E\u3044\u3059\u308B", "\u9752\u679C\u5E97\u3092\u55B6\u3080", ["order.details"]);
+  person(R, "\u30EB\u30FC\u30B9 \u30AF\u30EC\u30A4", "ruth", "\u501F\u308A\u305F\u934B\u3092\u8FD4\u3057\u3066\u4E8B\u60C5\u3092\u8A71\u3059", "\u96A3\u4EBA\u3068\u8CB8\u3057\u501F\u308A\u3059\u308B", ["ruth.reason"]);
+  person(C, "\u30BB\u30EA\u30A2 \u30A6\u30C3\u30C9", "celia", "\u843D\u3061\u7740\u3044\u3066\u81EA\u5206\u306E\u98DF\u4E8B\u3092\u3059\u308B", "\u81EA\u5B85\u3067\u904E\u3054\u3059");
+  person(L, "\u30EC\u30AA \u30D6\u30FC\u30C4", "shoe", "\u9774\u5E97\u3092\u9589\u3081\u3066\u8E0A\u308A\u3092\u7DF4\u7FD2\u3059\u308B", "\u9774\u306E\u4FEE\u7406\u3068\u8CB8\u51FA\u3092\u884C\u3046", ["leo.policy"]);
+  person(W, "\u30D1\u30FC\u30B7\u30FC \u30EA\u30D5\u30C8", "quay", "\u8377\u3092\u964D\u308D\u3057\u6A5F\u69CB\u3092\u7A7A\u3051\u5408\u56F3\u3092\u6B8B\u3059", "\u8377\u5F79\u6A5F\u69CB\u3092\u6271\u3046");
+  person(T, "\u30BF\u30C3\u30B5 \u30EA\u30B0", "quay", "\u53D7\u3051\u53F0\u3092\u6574\u3048\u8377\u306E\u5B89\u5B9A\u5F8C\u306B\u88DC\u52A9\u5177\u3092\u53CE\u3081\u308B", "\u8377\u5F79\u306E\u6E96\u5099\u3092\u3059\u308B");
+  person(F, "\u30E9\u30EB\u30D5 \u30D1\u30DA\u30C3\u30C8", "school", "\u81EA\u5206\u306E\u7D19\u4EBA\u5F62\u3067\u8A71\u304C\u4F1D\u308F\u308B\u3068\u78BA\u304B\u3081\u308B", "\u7D19\u4EBA\u5F62\u3092\u4F5C\u308B", ["ralph.worry"]);
+  person(D, "\u30CE\u30E9\u306E\u72AC", "yard", "\u6163\u308C\u305F\u5EAD\u3067\u843D\u3061\u7740\u304F", "\u30D9\u30F3\u306B\u8FFD\u3044\u304B\u3051\u904A\u3073\u3092\u8A98\u3046");
+  object("shoes", "\u30CE\u30E9\u306E\u5916\u5C65\u304D", N, actor(D));
+  object("loanShoes", "\u30EC\u30AA\u306E\u8CB8\u3057\u9774", L, place("shoe"));
+  object("package", "\u652F\u6255\u6E08\u307F\u306E\u91CE\u83DC\u306E\u5305\u307F", N, place("market"), 1, true);
+  object("smallPot", "\u30CE\u30E9\u306E\u5C0F\u934B", N, place("home"));
+  object("bigPot", "\u501F\u308A\u305F\u5927\u934B", N, actor(R));
+  object("handle", "\u4EA4\u63DB\u7528\u306E\u67C4", R, place("ruth"), 1, true);
+  object("toy", "\u72AC\u306E\u3044\u3064\u3082\u306E\u73A9\u5177", N, place("garden"));
+  object("kitPuppet", "\u30AD\u30C3\u30C8\u306E\u7D19\u4EBA\u5F62", K, place("school"));
+  object("ralphPuppet", "\u30E9\u30EB\u30D5\u306E\u7D19\u4EBA\u5F62", F, actor(F));
+  object("paper", "\u88DC\u4FEE\u7528\u306E\u7D19", F, place("school"), 3, true);
+  object("cargo", "\u964D\u308D\u3057\u304B\u3051\u306E\u8377", W, place("quay"));
+  object("stand", "\u8377\u7269\u306E\u53D7\u3051\u53F0", T, place("quay"));
+  object("basket", "\u8107\u306E\u4FDD\u7BA1\u7C60", T, place("quay"));
+  object("clutter", "\u53D7\u3051\u53F0\u306E\u5834\u6240\u306B\u3042\u308B\u7A7A\u7BB1", T, place("quay"));
+  object("flag", "\u9752\u3044\u5408\u56F3\u672D", W, place("quay"));
+  c.loans.push({ id: "shoes", objectId: "loanShoes", lenderId: L, borrowerId: N, returnLocationId: "shoe", policy: "\u5E30\u5B85\u5F8C\u306F\u5BB6\u306E\u68DA\u304B\u3089\u904B\u3073\u3001\u9589\u5E97\u5F8C\u3082\u5E97\u5148\u306E\u8FD4\u5374\u7BB1\u3078\u3002" });
+  c.loans.push({ id: "pot", objectId: "bigPot", lenderId: N, borrowerId: R, returnLocationId: "home", policy: "\u30CE\u30E9\u3078\u73FE\u7269\u3092\u8FD4\u3057\u3001\u67C4\u306E\u3053\u3068\u3092\u8A71\u3059\u3002", initiallyBorrowed: true });
+  function walkId(who, from, to) {
+    return `walk.${who}.${from}.${to}`;
+  }
+  for (const who of c.actors.map((a) => a.id)) for (const from of c.places) for (const toId of from.links) {
+    const to = c.places.find((p) => p.id === toId);
+    const gate = from.id === "yard" && toId === "garden" || from.id === "garden" && toId === "yard";
+    const guard2 = all(at(who, from.id), who === P ? fact("quay.playerHolding", false) : yes, who === O ? fact("quay.owenHolding", false) : yes, gate ? any(fact("garden.open"), fact("dog.settled")) : yes);
+    action(walkId(who, from.id, toId), `${to.name}\u3078\u6B69\u304F`, [who], guard2, [{ op: "move", actorId: who, to: toId }], Math.max(8, Math.round(Math.hypot(to.x - from.x, to.y - from.y) / 14)), { movement: { actorId: who, from: from.id, to: toId } });
+  }
+  function route(from, to) {
+    const queue = [[from]], seen = /* @__PURE__ */ new Set([from]);
+    while (queue.length) {
+      const path2 = queue.shift(), tail = path2.at(-1);
+      if (tail === to) return path2.slice(1);
+      for (const id of c.places.find((p) => p.id === tail).links) if (!seen.has(id)) {
+        seen.add(id);
+        queue.push([...path2, id]);
+      }
+    }
+    return [];
+  }
+  function travel(who, to, guard2, priority = 20) {
+    for (const from of c.places) {
+      const next = route(from.id, to)[0];
+      if (next) rule(who, walkId(who, from.id, next), ca(here(from.id), guard2), priority);
+    }
+  }
+  talk("talk.nora", N, "\u5915\u98DF\u306E\u4E88\u5B9A\u3092\u805E\u304F", ["dinner.plan", "order.details"], "\u300C\u4ECA\u591C\u306F\u4E09\u4EBA\u3067\u98DF\u3079\u305F\u3044\u306E\u3002\u9752\u679C\u5E97\u306E\u5305\u307F\u306F\u652F\u6255\u3063\u3066\u3042\u308B\u308F\u3002\u9774\u3092\u72AC\u304C\u6301\u3063\u3066\u3044\u3063\u3066\u3057\u307E\u3063\u3066\u2026\u2026\u5C0F\u934B\u306A\u3089\u4F7F\u3048\u308B\u306E\u3060\u3051\u308C\u3069\u300D");
+  propose("delivery", "\u5305\u307F\u3092\u4EE3\u308F\u308A\u306B\u53D7\u3051\u53D6\u308B\u8A31\u53EF\u3092\u3082\u3089\u3046", [N], { who: N }, "\u6CE8\u6587\u306F\u652F\u6255\u6E08\u307F\u306E\u91CE\u83DC\u4E00\u5305\u307F\u3002\u4EE3\u7406\u53D7\u53D6\u308A\u3068\u3001\u30CE\u30E9\u3078\u306E\u914D\u9054\u3092\u4E86\u627F\u3059\u308B\u3002", knows(P, "order.details"));
+  talk("talk.permission", N, "\u4EE3\u7406\u53D7\u53D6\u308A\u306E\u4E86\u627F\u3092\u78BA\u304B\u3081\u308B", ["delivery.allowed"], "\u300C\u304A\u9858\u3044\u3002\u30E1\u30A4\u30D9\u30EB\u306B\u306F\u3001\u652F\u6255\u6E08\u307F\u306E\u91CE\u83DC\u4E00\u5305\u307F\u3068\u4F1D\u3048\u3066\u306D\u300D", fact("delivery.allowed"));
+  tell("tell.order", M, "\u30CE\u30E9\u306E\u6CE8\u6587\u5185\u5BB9\u3092\u4F1D\u3048\u308B", "order.details", "\u300C\u30CE\u30E9\u306E\u91CE\u83DC\u306E\u5305\u307F\u306D\u3002\u3053\u3053\u306B\u53D6\u308A\u7F6E\u3044\u3066\u3042\u308B\u308F\u300D");
+  tell("tell.permission", M, "\u30CE\u30E9\u306E\u4EE3\u7406\u53D7\u53D6\u308A\u306E\u4E86\u627F\u3092\u4F1D\u3048\u308B", "delivery.allowed", "\u300C\u30CE\u30E9\u304C\u4E86\u627F\u3057\u3066\u3044\u308B\u306E\u306D\u3002\u5C4A\u3051\u305F\u3089\u3001\u53D7\u3051\u53D6\u3063\u305F\u3068\u6559\u3048\u3066\u3061\u3087\u3046\u3060\u3044\u300D");
+  interaction("take.package", "\u53D6\u308A\u7F6E\u304D\u306E\u5305\u307F\u3092\u9810\u304B\u308B", { who: M }, all(knows(M, "delivery.allowed"), knows(M, "order.details"), held("package", place("market"))), [transfer("package", place("market"), actor(P)), set("package.collected")], "\u5305\u307F\u3092\u9810\u304B\u3063\u305F\u3002\u5C4A\u3051\u305F\u5F8C\u306F\u53D7\u9818\u306E\u8FD4\u4E8B\u3092\u30E1\u30A4\u30D9\u30EB\u3078\u3002");
+  interaction("deliver.package", "\u91CE\u83DC\u306E\u5305\u307F\u3092\u624B\u6E21\u3059", { who: N }, held("package", actor(P)), [transfer("package", actor(P), actor(N)), set("ingredients.received")], "\u30CE\u30E9\u304C\u5305\u307F\u3092\u53D7\u3051\u53D6\u3063\u305F\u3002\u6599\u7406\u3092\u59CB\u3081\u3089\u308C\u308B\u3002");
+  interaction("shelf.package", "\u7559\u5B88\u306E\u53D7\u53D6\u68DA\u306B\u5305\u307F\u3092\u7F6E\u304F", { location: "home" }, all(held("package", actor(P)), not(at(N, "home"))), [transfer("package", actor(P), place("home"))], "\u5305\u307F\u3092\u53D7\u53D6\u68DA\u3078\u7F6E\u3044\u305F\u3002\u53D7\u9818\u306E\u8FD4\u4E8B\u306F\u3001\u30CE\u30E9\u304C\u53D7\u3051\u53D6\u3063\u3066\u304B\u3089\u3002");
+  tell("tell.receipt", M, "\u30CE\u30E9\u304C\u5305\u307F\u3092\u53D7\u3051\u53D6\u3063\u305F\u3068\u4F1D\u3048\u308B", "ingredients.received", "\u300C\u53D7\u3051\u53D6\u3063\u305F\u306E\u306D\u3002\u3053\u308C\u3067\u4ECA\u65E5\u306E\u5E97\u3058\u307E\u3044\u304C\u3067\u304D\u308B\u308F\u300D");
+  propose("mabel.delivery", "\u30E1\u30A4\u30D9\u30EB\u81EA\u8EAB\u306B\u914D\u9054\u3092\u983C\u3080", [M], { who: M }, "\u5E97\u3092\u65BD\u9320\u3057\u3066\u5305\u307F\u3092\u904B\u3076\u3002\u30CE\u30E9\u306E\u53D7\u9818\u3092\u78BA\u304B\u3081\u305F\u5F8C\u3067\u5E97\u3058\u307E\u3044\u3092\u7D42\u3048\u308B\u3002", all(knows(M, "delivery.allowed"), held("package", place("market"))));
+  auto(M, "mabel.take", "\u914D\u9054\u3059\u308B\u5305\u307F\u3092\u6301\u3064", "market", ca(accepted("mabel.delivery"), cn(b("package.collected"))), held("package", place("market")), [transfer("package", place("market"), actor(M)), set("package.collected")]);
+  auto(M, "mabel.lock", "\u5916\u51FA\u524D\u306B\u5E97\u3092\u65BD\u9320\u3059\u308B", "market", ca(b("mabel.package"), cn(b("mabel.locked"))), all(held("package", actor(M)), fact("mabel.locked", false)), [set("mabel.locked")]);
+  travel(M, "home", ca(accepted("mabel.delivery"), b("mabel.package"), b("mabel.locked"), cn(b("mabel.empty"))));
+  auto(M, "mabel.deliver", "\u30CE\u30E9\u306B\u5305\u307F\u3092\u624B\u6E21\u3059", "home", accepted("mabel.delivery"), all(held("package", actor(M)), at(N, "home")), [transfer("package", actor(M), actor(N)), set("ingredients.received")]);
+  auto(M, "mabel.shelf", "\u30CE\u30E9\u306E\u53D7\u53D6\u68DA\u306B\u5305\u307F\u3092\u7F6E\u304F", "home", accepted("mabel.delivery"), all(held("package", actor(M)), not(at(N, "home"))), [transfer("package", actor(M), place("home"))]);
+  travel(M, "market", ca(b("mabel.empty"), b("ingredients.received")));
+  auto(M, "mabel.close", "\u53D7\u9818\u3092\u78BA\u8A8D\u3057\u3066\u5E97\u3058\u307E\u3044\u3092\u7D42\u3048\u308B", "market", ca(b("ingredients.received"), cn(b("mabel.closed"))), fact("mabel.closed", false), [set("mabel.closed"), emit("life.C005", [M], "market")], 20);
+  auto(N, "nora.shelf", "\u53D7\u53D6\u68DA\u306E\u5305\u307F\u3092\u53D7\u3051\u53D6\u308B", "home", b("home.package"), held("package", place("home")), [transfer("package", place("home"), actor(N)), set("ingredients.received")], 8, 90);
+  auto(N, "nora.ownShoes", "\u68DA\u306E\u5916\u5C65\u304D\u3092\u53D7\u3051\u53D6\u308B", "home", b("home.shoes"), held("shoes", place("home")), [transfer("shoes", place("home"), actor(N))], 8, 90);
+  for (const obj of ["shoes", "loanShoes"]) interaction(`give.${obj}`, `${obj === "shoes" ? "\u5916\u5C65\u304D" : "\u8CB8\u3057\u9774"}\u3092\u6E21\u3059`, { who: N }, held(obj, actor(P)), [transfer(obj, actor(P), actor(N))], "\u30CE\u30E9\u306B\u9774\u3092\u624B\u6E21\u3057\u305F\u3002");
+  interaction("shelf.shoes", "\u30CE\u30E9\u306E\u5916\u5C65\u304D\u3092\u53D7\u53D6\u68DA\u306B\u8FD4\u3059", { location: "home" }, held("shoes", actor(P)), [transfer("shoes", actor(P), place("home"))], "\u5916\u5C65\u304D\u3092\u3044\u3064\u3082\u306E\u53D7\u53D6\u68DA\u3078\u8FD4\u3057\u305F\u3002");
+  travel(N, "market", ca(b("nora.shoes"), cn(b("ingredients.received")), cn(b("package.collected"))));
+  auto(N, "nora.collect", "\u53D6\u308A\u7F6E\u3044\u305F\u91CE\u83DC\u3092\u53D7\u3051\u53D6\u308B", "market", b("nora.shoes"), held("package", place("market")), [transfer("package", place("market"), actor(N)), set("package.collected"), set("ingredients.received"), { op: "observe", actorIds: [N], propositionId: "ingredients.received", locationId: "market", sourceId: "own.receipt" }], 12, 80);
+  clue("ingredients.received", "market", void 0, all(at(N, "market"), held("package", actor(N))));
+  travel(N, "home", b("package.collected"));
+  auto(N, "nora.cook", "\u5C0F\u934B\u3067\u5915\u98DF\u3092\u4F5C\u308B", "home", ca(b("ingredients.received"), cn(b("meal.ready"))), all(held("package", actor(N)), fact("meal.ready", false)), [{ op: "consume", objectId: "package", quantity: 1, unit: "\u675F" }, set("meal.ready")], 40, 70);
+  auto(N, "nora.releaseLoan", "\u4F7F\u3044\u7D42\u3048\u305F\u8CB8\u3057\u9774\u3092\u8FD4\u5374\u7528\u306E\u68DA\u3078\u7F6E\u304F", "home", ca(b("loan.held"), b("ingredients.received")), held("loanShoes", actor(N)), [transfer("loanShoes", actor(N), place("home"))], 8, 85);
+  propose("loan.nora", "\u30CE\u30E9\u306B\u8CB8\u3057\u9774\u3092\u63D0\u6848\u3059\u308B", [N], { who: N }, "\u30EC\u30AA\u306E\u901A\u5E38\u8CB8\u51FA\u306E\u9774\u3092\u501F\u308A\u308B\u3002\u5E30\u5B85\u5F8C\u3001\u5E97\u5148\u306E\u8FD4\u5374\u7BB1\u3078\u623B\u3059\u3002");
+  talk("talk.leo", L, "\u8CB8\u51FA\u3068\u8FD4\u5374\u5148\u306B\u3064\u3044\u3066\u805E\u304F", ["leo.policy"], "\u300C\u8CB8\u3057\u9774\u306F\u3042\u306E\u68DA\u3002\u30CE\u30E9\u304C\u4F7F\u3046\u306A\u3089\u69CB\u308F\u306A\u3044\u3002\u8FD4\u5374\u306F\u5E97\u5148\u306E\u7BB1\u3078\u3002\u9589\u5E97\u5F8C\u3082\u4F7F\u3048\u308B\u3088\u300D");
+  propose("loan.leo", "\u30CE\u30E9\u306E\u8CB8\u3057\u9774\u3092\u501F\u308A\u308B\u7D04\u675F\u3092\u3059\u308B", [L], { who: L }, "\u30CE\u30E9\u306B\u8CB8\u3057\u9774\u4E00\u8DB3\u3092\u8CB8\u3059\u3002\u4E3B\u4EBA\u516C\u304C\u904B\u3073\u3001\u9589\u5E97\u5F8C\u3082\u5E97\u5148\u3078\u8FD4\u305B\u308B\u3002", agreement("loan.nora", [P, N]));
+  interaction("borrow.shoes", "\u5408\u610F\u3057\u305F\u8CB8\u3057\u9774\u3092\u9810\u304B\u308B", { location: "shoe" }, all(agreement("loan.nora", [P, N]), agreement("loan.leo", [P, L]), held("loanShoes", place("shoe")), not({ op: "loan", loanId: "shoes", status: "borrowed" })), [transfer("loanShoes", place("shoe"), actor(P)), { op: "loan", loanId: "shoes", status: "borrowed" }], "\u501F\u308A\u305F\u9774\u3092\u9810\u304B\u3063\u305F\u3002\u6240\u6709\u8005\u306F\u30EC\u30AA\u3001\u4F7F\u3046\u4EBA\u306F\u30CE\u30E9\u3002\u8FD4\u5374\u5148\u306F\u5E97\u5148\u306E\u7BB1\u3002");
+  interaction("pickup.loan", "\u8FD4\u5374\u7528\u306E\u68DA\u304B\u3089\u8CB8\u3057\u9774\u3092\u9810\u304B\u308B", { location: "home" }, held("loanShoes", place("home")), [transfer("loanShoes", place("home"), actor(P))], "\u4F7F\u3044\u7D42\u3048\u305F\u8CB8\u3057\u9774\u3092\u9810\u304B\u3063\u305F\u3002");
+  interaction("return.loan", "\u8CB8\u3057\u9774\u3092\u5E97\u5148\u306E\u8FD4\u5374\u7BB1\u3078\u8FD4\u3059", { location: "shoe" }, all(held("loanShoes", actor(P)), { op: "loan", loanId: "shoes", status: "borrowed" }), [transfer("loanShoes", actor(P), place("shoe")), { op: "loan", loanId: "shoes", status: "returned" }], "\u8CB8\u3057\u9774\u3092\u8FD4\u3057\u305F\u3002\u30EC\u30AA\u3092\u4E8C\u968E\u304B\u3089\u547C\u3073\u623B\u3059\u5FC5\u8981\u306F\u306A\u3044\u3002");
+  for (const who of [O, K]) tell(`tell.dinner.${who}`, who, "\u30CE\u30E9\u306E\u5915\u98DF\u306E\u4E88\u5B9A\u3092\u4F1D\u3048\u308B", "dinner.plan", "\u300C\u4E09\u4EBA\u3067\u98DF\u3079\u308B\u3093\u3060\u306D\u3002\u3053\u3053\u304C\u7247\u4ED8\u3044\u305F\u3089\u5E30\u308B\u3088\u300D");
+  action("family.dinner", "\u98DF\u5353\u3067\u98DF\u3079\u3001\u7D19\u4EBA\u5F62\u306E\u8A71\u3092\u805E\u304F", [N, O, K], all(at(N, "home"), at(O, "home"), at(K, "home"), fact("meal.ready"), fact("dinner.done", false), held("kitPuppet", actor(K))), [set("dinner.done"), emit("family.dinner", [N, O, K], "home")], 65, { resources: ["table:home"] });
+  rule(N, "family.dinner", ca(here("home"), b("family.here"), b("meal.ready"), cn(b("dinner.done"))), 40);
+  interaction("dog.watch", "\u8FFD\u308F\u305A\u306B\u7ACB\u3061\u6B62\u307E\u3063\u3066\u72AC\u3092\u898B\u308B", { location: "yard" }, fact("dog.settled", false), [set("dog.looksback")], "\u72AC\u3082\u6B62\u307E\u308A\u3001\u3053\u3061\u3089\u3092\u632F\u308A\u8FD4\u3063\u305F\u3002\u30D9\u30F3\u304C\u8FFD\u3046\u3068\u307E\u305F\u8D70\u308A\u51FA\u3059\u3002", 20);
+  propose("ben.stop", "\u30D9\u30F3\u306B\u3001\u3044\u3063\u305F\u3093\u8FFD\u3046\u306E\u3092\u3084\u3081\u3088\u3046\u3068\u63D0\u6848\u3059\u308B", [B], { who: B }, "\u8FFD\u3044\u304B\u3051\u305A\u306B\u5F85\u3064\u3002\u5EAD\u306E\u6238\u3092\u958B\u3051\u3001\u3044\u3064\u3082\u306E\u73A9\u5177\u3078\u72AC\u3092\u8A98\u3046\u3002");
+  auto(B, "ben.stop", "\u8FFD\u3046\u306E\u3092\u3084\u3081\u3066\u5F85\u3064", "yard", ca(accepted("ben.stop"), b("ben.chasing")), fact("ben.chasing"), [set("ben.chasing", false)], 8, 70);
+  interaction("garden.open", "\u5EAD\u306E\u6238\u3092\u958B\u3051\u308B", { location: "yard" }, fact("garden.open", false), [set("garden.open")], "\u5EAD\u306E\u6238\u3092\u958B\u3051\u305F\u3002");
+  interaction("toy.place", "\u73A9\u5177\u3092\u5EAD\u306E\u5165\u53E3\u304B\u3089\u898B\u3048\u308B\u5834\u6240\u3078\u7F6E\u304F", { location: "garden" }, fact("toy.ready", false), [set("toy.ready")], "\u5EAD\u306B\u3042\u3063\u305F\u3001\u3044\u3064\u3082\u306E\u73A9\u5177\u3092\u898B\u3048\u308B\u4F4D\u7F6E\u3078\u7F6E\u3044\u305F\u3002");
+  rule(D, walkId(D, "yard", "garden"), ca(here("yard"), b("ben.chasing", false), b("garden.open"), b("toy.ready")), 70);
+  var dogwalk = c.actions.find((a) => a.id === walkId(D, "yard", "garden"));
+  dogwalk.startGuard = all(dogwalk.startGuard, fact("ben.chasing", false), fact("toy.ready"));
+  dogwalk.maintainGuard = dogwalk.startGuard;
+  dogwalk.finishGuard = dogwalk.startGuard;
+  auto(D, "dog.drop", "\u5EAD\u3067\u9774\u3092\u653E\u3059", "garden", cn(b("dog.dropped")), held("shoes", actor(D)), [transfer("shoes", actor(D), place("garden")), set("dog.dropped")], 8, 70);
+  interaction("dog.takeShoe", "\u6B62\u307E\u3063\u305F\u72AC\u304B\u3089\u5916\u5C65\u304D\u3092\u305D\u3063\u3068\u53D7\u3051\u53D6\u308B", { location: "yard" }, all(fact("ben.chasing", false), held("shoes", actor(D))), [transfer("shoes", actor(D), actor(P))], "\u5916\u5C65\u304D\u306F\u56DE\u53CE\u3067\u304D\u305F\u3002\u72AC\u3092\u5EAD\u3078\u623B\u3059\u4E16\u8A71\u306F\u307E\u3060\u6B8B\u3063\u3066\u3044\u308B\u3002");
+  auto(D, "dog.noShoe", "\u73A9\u5177\u306E\u305D\u3070\u306B\u843D\u3061\u7740\u304F", "garden", cn(b("dog.dropped")), all(not(held("shoes", actor(D))), fact("dog.dropped", false)), [set("dog.dropped")], 8, 65);
+  rule(B, walkId(B, "yard", "garden"), ca(here("yard"), b("dog.inside"), b("dog.dropped"), b("ben.chasing", false)), 60);
+  auto(B, "ben.close", "\u72AC\u3092\u8FFD\u308F\u305A\u306B\u5EAD\u306E\u6238\u3092\u9589\u3081\u308B", "garden", ca(b("dog.inside"), b("dog.dropped"), cn(b("dog.settled"))), all(at(D, "garden"), fact("dog.dropped"), fact("ben.chasing", false), fact("dog.settled", false)), [set("garden.open", false), set("dog.settled"), emit("life.C004", [B], "garden")], 15);
+  interaction("pickup.shoes", "\u5EAD\u306B\u7F6E\u304B\u308C\u305F\u5916\u5C65\u304D\u3092\u62FE\u3046", { location: "garden" }, held("shoes", place("garden")), [transfer("shoes", place("garden"), actor(P))], "\u30CE\u30E9\u306E\u5916\u5C65\u304D\u3092\u62FE\u3063\u305F\u3002");
+  for (const who of [O, P]) {
+    const pid = who === O ? "quay.owenHolding" : "quay.playerHolding";
+    action(`hold.${who}`, "\u8377\u3092\u4E21\u624B\u3067\u652F\u3048\u308B", [who], all(at(who, "quay"), fact(pid)), [], 1e6, { resources: [`hand:${who}:left`, `hand:${who}:right`] });
+    rule(who, `hold.${who}`, ca(here("quay"), b(pid)), 120);
+  }
+  interaction("quay.takeover", "\u30AA\u30FC\u30A6\u30A7\u30F3\u306E\u4EE3\u308F\u308A\u306B\u8377\u3092\u652F\u3048\u308B", { location: "quay" }, fact("quay.owenHolding"), [set("quay.owenHolding", false), set("quay.playerHolding")], "\u8377\u3092\u652F\u3048\u305F\u3002\u53D7\u3051\u53F0\u3078\u964D\u308D\u3059\u307E\u3067\u3001\u4E21\u624B\u3092\u96E2\u3057\u3066\u6B69\u3051\u306A\u3044\u3002", 12);
+  interaction("quay.clear", "\u7A7A\u7BB1\u3092\u8107\u3078\u5BC4\u305B\u3066\u53D7\u3051\u53F0\u306E\u5834\u6240\u3092\u7A7A\u3051\u308B", { location: "quay" }, fact("quay.clear", false), [transfer("clutter", place("quay"), { kind: "object", id: "basket" }), set("quay.clear")], "\u7A7A\u7BB1\u3092\u8107\u306E\u4FDD\u7BA1\u7C60\u3078\u5BC4\u305B\u3001\u53D7\u3051\u53F0\u306E\u5834\u6240\u3092\u7A7A\u3051\u305F\u3002", 18);
+  interaction("quay.flag", "\u9752\u3044\u5408\u56F3\u672D\u3092\u4E09\u4EBA\u304B\u3089\u898B\u3048\u308B\u4F4D\u7F6E\u306B\u51FA\u3059", { location: "quay" }, fact("quay.flag", false), [set("quay.flag")], "\u5171\u901A\u306E\u5408\u56F3\u672D\u3092\u51FA\u3057\u305F\u3002\u5408\u56F3\u3068\u4E2D\u6B62\u6761\u4EF6\u3092\u4E09\u4EBA\u3068\u78BA\u8A8D\u3057\u3088\u3046\u3002");
+  propose("quay", "\u4E09\u4EBA\u3068\u3001\u540C\u3058\u5408\u56F3\u3068\u4E2D\u6B62\u6761\u4EF6\u3092\u78BA\u8A8D\u3059\u308B", [O, W, T], { location: "quay" }, "\u9752\u672D\u3067\u3086\u3063\u304F\u308A\u4E0B\u308D\u3059\u3002\u53D7\u3051\u53F0\u304C\u52D5\u304F\u3001\u58F0\u304C\u5C4A\u304B\u306A\u3044\u3001\u8AB0\u304B\u304C\u4E2D\u6B62\u3092\u6C42\u3081\u305F\u3089\u652F\u3048\u305F\u307E\u307E\u5F85\u3064\u3002");
+  auto(T, "tassa.clear", "\u53D7\u3051\u53F0\u306E\u5834\u6240\u306E\u7A7A\u7BB1\u3092\u8107\u3078\u5BC4\u305B\u308B", "quay", ca(accepted("quay"), b("quay.clear", false)), fact("quay.clear", false), [transfer("clutter", place("quay"), { kind: "object", id: "basket" }), set("quay.clear")], 18, 80);
+  auto(W, "percy.flag", "\u5408\u610F\u3057\u305F\u9752\u3044\u5408\u56F3\u672D\u3092\u51FA\u3059", "quay", ca(accepted("quay"), b("quay.flag", false)), fact("quay.flag", false), [set("quay.flag")], 12, 80);
+  auto(T, "tassa.stand", "\u53D7\u3051\u53F0\u3092\u636E\u3048\u3066\u811A\u3092\u78BA\u304B\u3081\u308B", "quay", ca(b("quay.clear"), accepted("quay"), cn(b("quay.stand"))), all(fact("quay.clear"), agreement("quay", [P, O, W, T]), fact("quay.stand", false)), [set("quay.stand")], 20, 70);
+  action("quay.lower", "\u5408\u56F3\u3092\u5408\u308F\u305B\u3001\u8377\u3092\u53D7\u3051\u53F0\u3078\u79FB\u3059", [W, T], all(at(W, "quay"), at(T, "quay"), fact("quay.flag"), fact("quay.stand"), agreement("quay", [P, O, W, T]), any(fact("quay.owenHolding"), fact("quay.playerHolding")), fact("quay.stable", false)), [transfer("cargo", place("quay"), { kind: "object", id: "stand" }), set("quay.stable"), set("quay.owenHolding", false), set("quay.playerHolding", false)], 30, { resources: ["work:quay"] });
+  rule(W, "quay.lower", ca(here("quay"), b("quay.flag"), b("quay.stand"), b("quay.agreed"), cn(b("quay.stable"))), 65);
+  auto(W, "percy.finish", "\u6A5F\u69CB\u3092\u7A7A\u3051\u3001\u5171\u901A\u306E\u5408\u56F3\u3092\u63B2\u793A\u3059\u308B", "quay", ca(b("quay.stable"), cn(b("quay.winchFree"))), all(fact("quay.stable"), fact("quay.winchFree", false)), [set("quay.winchFree"), emit("life.C045", [W], "quay")], 18);
+  auto(T, "tassa.finish", "\u88DC\u52A9\u5177\u3092\u53CE\u7D0D\u3059\u308B", "quay", ca(b("quay.stable"), cn(b("quay.toolsAway"))), all(fact("quay.stable"), fact("quay.toolsAway", false)), [set("quay.toolsAway"), emit("life.C054", [T], "quay")], 18);
+  travel(O, "home", ca(b("quay.stable"), b("quay.owenHolding", false), b("dinner.plan")));
+  talk("talk.ralph", F, "\u7D19\u4EBA\u5F62\u306E\u3053\u3068\u3092\u805E\u304F", ["ralph.worry"], "\u300C\u898B\u672C\u3068\u5C11\u3057\u9055\u3046\u3093\u3060\u3002\u3053\u308C\u3058\u3083\u3001\u8A71\u304C\u4F1D\u308F\u3089\u306A\u3044\u304B\u3082\u3057\u308C\u306A\u3044\u300D");
+  propose("school.trial", "\u77ED\u3044\u5834\u9762\u3092\u6F14\u3058\u3066\u78BA\u304B\u3081\u3088\u3046\u3068\u63D0\u6848\u3059\u308B", [F], { who: F }, "\u898B\u672C\u3068\u9055\u3063\u3066\u3082\u3001\u77ED\u3044\u5834\u9762\u3092\u4E00\u5EA6\u6F14\u3058\u3001\u898B\u3066\u3044\u308B\u4EBA\u306B\u4F1D\u308F\u308B\u304B\u78BA\u304B\u3081\u308B\u3002");
+  propose("school.repair", "\u50B7\u3093\u3060\u4E00\u304B\u6240\u3092\u88DC\u4FEE\u3057\u3066\u8A66\u305D\u3046\u3068\u63D0\u6848\u3059\u308B", [F], { who: F }, "\u624B\u5143\u306E\u7D19\u3092\u4E00\u675F\u4F7F\u3044\u3001\u50B7\u3093\u3060\u90E8\u5206\u3060\u3051\u76F4\u3059\u3002\u76F4\u3057\u305F\u5F8C\u306F\u8A66\u6F14\u3057\u3066\u78BA\u304B\u3081\u308B\u3002");
+  propose("school.tomorrow", "\u7D9A\u304D\u306F\u660E\u65E5\u3001\u6301\u3061\u5E30\u308B\u5206\u3092\u5206\u3051\u3088\u3046\u3068\u63D0\u6848\u3059\u308B", [K, F], { location: "school" }, "\u6B8B\u308A\u306F\u660E\u65E5\u4ED5\u4E0A\u3052\u308B\u3002\u30AD\u30C3\u30C8\u306E\u7D19\u4EBA\u5F62\u3092\u5206\u3051\u3066\u6301\u3061\u5E30\u308A\u3001\u30E9\u30EB\u30D5\u306E\u5206\u306F\u3053\u3053\u306B\u6B8B\u3059\u3002", all(at(K, "school"), at(F, "school")));
+  auto(F, "ralph.patch", "\u50B7\u3093\u3060\u7D19\u4EBA\u5F62\u3092\u88DC\u4FEE\u3059\u308B", "school", ca(accepted("school.repair"), cn(b("school.repaired"))), all(fact("school.repaired", false), { op: "quantity", objectId: "paper", minimum: 1 }), [{ op: "consume", objectId: "paper", quantity: 1, unit: "\u675F" }, set("school.repaired")], 20, 80);
+  var trialChoice = { op: "any", conditions: [accepted("school.trial"), b("school.repaired")] };
+  for (const spectator of [K, P]) {
+    const id = `ralph.trial.${spectator}`;
+    action(id, "\u7D19\u4EBA\u5F62\u3067\u77ED\u3044\u5834\u9762\u3092\u6F14\u3058\u308B", [F, spectator], all(at(F, "school"), at(spectator, "school"), fact("school.understood", false), any(agreement("school.trial", [P, F]), fact("school.repaired")), spectator === P ? not(at(K, "school")) : yes), [set("school.understood"), emit("life.C064", [F], "school")], 25);
+    rule(F, id, ca(here("school"), trialChoice, cn(b("school.understood")), b(spectator === K ? "school.kitHere" : "school.playerHere"), ...spectator === P ? [b("school.kitHere", false)] : []), 60);
+  }
+  action("school.partition", "\u6301\u3061\u5E30\u308B\u7D19\u4EBA\u5F62\u3092\u5206\u3051\u308B", [K, F], all(at(K, "school"), at(F, "school"), held("kitPuppet", place("school")), any(fact("school.understood"), agreement("school.tomorrow", [P, K, F]))), [transfer("kitPuppet", place("school"), actor(K)), set("school.portioned")], 12);
+  rule(K, "school.partition", ca(here("school"), cn(b("school.portioned")), { op: "any", conditions: [b("school.understood"), accepted("school.tomorrow")] }), 55);
+  travel(K, "home", ca(b("school.canGo"), b("dinner.plan")));
+  propose("ruth.explain", "\u78E8\u304F\u624B\u3092\u6B62\u3081\u3066\u3001\u4E8B\u60C5\u3092\u8A71\u305D\u3046\u3068\u63D0\u6848\u3059\u308B", [R], { who: R }, "\u5927\u934B\u306F\u305D\u306E\u307E\u307E\u8FD4\u3057\u3001\u67C4\u3092\u7126\u304C\u3057\u305F\u4E8B\u60C5\u3092\u30CE\u30E9\u3078\u81EA\u5206\u306E\u8A00\u8449\u3067\u4F1D\u3048\u308B\u3002");
+  propose("ruth.repair", "\u4EA4\u63DB\u7528\u306E\u67C4\u3067\u76F4\u3057\u3066\u304B\u3089\u8FD4\u305D\u3046\u3068\u63D0\u6848\u3059\u308B", [R], { who: R }, "\u30EB\u30FC\u30B9\u306E\u4E86\u627F\u306E\u3046\u3048\u3001\u624B\u5143\u306E\u4EA4\u63DB\u7528\u306E\u67C4\u3092\u4F7F\u3046\u3002\u305D\u306E\u5F8C\u3001\u30CE\u30E9\u3078\u8FD4\u3057\u3066\u4E8B\u60C5\u3092\u8A71\u3059\u3002");
+  auto(R, "ruth.pause", "\u934B\u3092\u78E8\u304F\u624B\u3092\u6B62\u3081\u308B", "ruth", { op: "any", conditions: [accepted("ruth.explain"), accepted("ruth.repair")] }, fact("ruth.paused", false), [set("ruth.paused")], 8, 80);
+  auto(R, "ruth.repair", "\u5927\u934B\u306E\u67C4\u3092\u53D6\u308A\u66FF\u3048\u308B", "ruth", ca(b("ruth.paused"), accepted("ruth.repair"), cn(b("ruth.repaired"))), all(fact("ruth.repaired", false), { op: "quantity", objectId: "handle", minimum: 1 }), [{ op: "consume", objectId: "handle", quantity: 1, unit: "\u675F" }, set("ruth.repaired")], 30, 70);
+  travel(R, "home", ca(b("ruth.paused"), { op: "any", conditions: [accepted("ruth.explain"), b("ruth.repaired")] }));
+  action("ruth.return", "\u934B\u3092\u8FD4\u3057\u3001\u67C4\u306E\u4E8B\u60C5\u3092\u8A71\u3059", [R, N], all(at(R, "home"), at(N, "home"), held("bigPot", actor(R)), fact("ruth.returned", false)), [transfer("bigPot", actor(R), actor(N)), { op: "loan", loanId: "pot", status: "returned" }, { op: "inform", speakerId: R, recipientId: N, propositionId: "ruth.reason" }, set("ruth.returned"), emit("life.C006", [R], "home")], 25);
+  rule(R, "ruth.return", ca(here("home"), b("ruth.paused"), cn(b("ruth.returned"))), 60);
+  propose("celia.privacy", "\u76EE\u96A0\u3057\u3092\u4E0B\u308D\u3057\u3066\u98DF\u4E8B\u306B\u3057\u3088\u3046\u3068\u63D0\u6848\u3059\u308B", [C], { who: C }, "\u7A93\u306E\u76EE\u96A0\u3057\u3092\u4E0B\u308D\u3059\u3002\u30BB\u30EA\u30A2\u306F\u81EA\u5206\u306E\u5E2D\u3067\u3001\u843D\u3061\u7740\u3044\u3066\u98DF\u3079\u308B\u3002");
+  propose("celia.company", "\u30BB\u30EA\u30A2\u306E\u5E2D\u3067\u98DF\u4E8B\u306B\u4ED8\u304D\u5408\u3046\u3068\u7533\u3057\u51FA\u308B", [C], { who: C }, "\u30BB\u30EA\u30A2\u304C\u671B\u3080\u306A\u3089\u3001\u98DF\u4E8B\u306E\u9593\u3053\u3053\u3067\u4E00\u7DD2\u306B\u904E\u3054\u3059\u3002\u9014\u4E2D\u3067\u96E2\u308C\u305F\u3089\u3001\u5F85\u3063\u3066\u304B\u3089\u3084\u308A\u76F4\u305B\u308B\u3002");
+  propose("celia.callers", "\u98DF\u4E8B\u306E\u9593\u3001\u6765\u5BA2\u306E\u7528\u4EF6\u3092\u53D7\u3051\u308B\u3068\u7533\u3057\u51FA\u308B", [C], { who: C }, "\u4E3B\u4EBA\u516C\u304C\u7384\u95A2\u3067\u7528\u4EF6\u3092\u9810\u304B\u308B\u9593\u3001\u30BB\u30EA\u30A2\u306F\u98DF\u3079\u308B\u3002\u4E3B\u4EBA\u516C\u304C\u96E2\u308C\u305F\u3089\u98DF\u4E8B\u3092\u3044\u3063\u305F\u3093\u6B62\u3081\u308B\u3002");
+  auto(C, "celia.curtain", "\u7A93\u306E\u76EE\u96A0\u3057\u3092\u4E0B\u308D\u3059", "celia", ca(accepted("celia.privacy"), cn(b("celia.curtain"))), fact("celia.curtain", false), [set("celia.curtain")], 12, 70);
+  for (const role of ["company", "callers"]) {
+    interaction(`celia.role.${role}`, role === "company" ? "\u98DF\u4E8B\u306E\u9593\u3001\u4E00\u7DD2\u306B\u5E2D\u306B\u3044\u308B" : "\u98DF\u4E8B\u306E\u9593\u3001\u7384\u95A2\u3067\u7528\u4EF6\u3092\u9810\u304B\u308B", { location: "celia" }, all(agreement(`celia.${role}`, [P, C]), fact("celia.ate", false)), [], "\u3053\u3053\u3067\u3057\u3070\u3089\u304F\u904E\u3054\u3059\u3002\u7528\u4E8B\u304C\u3042\u308C\u3070\u4E2D\u65AD\u3057\u3066\u3001\u3042\u3068\u304B\u3089\u518D\u958B\u3067\u304D\u308B\u3002", 55);
+    const playerRole = c.actions.find((a) => a.id === `celia.role.${role}`);
+    playerRole.maintainGuard = all(at(P, "celia"), agreement(`celia.${role}`, [P, C]));
+    playerRole.finishGuard = playerRole.maintainGuard;
+    const roleActive = { op: "active", actionId: `celia.role.${role}` };
+    action(`celia.eat.${role}`, "\u843D\u3061\u7740\u3044\u3066\u98DF\u4E8B\u3092\u3059\u308B", [C], all(at(C, "celia"), at(P, "celia"), roleActive, fact("celia.ate", false)), [set("celia.ate"), emit("life.C007", [C], "celia")], 32);
+    rule(C, `celia.eat.${role}`, ca(here("celia"), accepted(`celia.${role}`), cn(b("celia.ate"))), 50);
+  }
+  auto(C, "celia.eat.privacy", "\u76EE\u96A0\u3057\u306E\u5185\u5074\u3067\u98DF\u4E8B\u3092\u3059\u308B", "celia", ca(b("celia.curtain"), cn(b("celia.ate"))), all(fact("celia.curtain"), fact("celia.ate", false)), [set("celia.ate"), emit("life.C007", [C], "celia")], 32, 60);
+  propose("leo.box", "\u8FD4\u5374\u7BB1\u3068\u6848\u5185\u3092\u7528\u610F\u3057\u3066\u9589\u5E97\u3057\u3088\u3046\u3068\u63D0\u6848\u3059\u308B", [L], { who: L }, "\u30C0\u30CB\u30A8\u30EB\u306E\u9577\u9774\u306F\u8FD4\u5374\u7BB1\u3078\u3002\u6848\u5185\u3092\u51FA\u3057\u3066\u9589\u5E97\u3057\u3001\u4E8C\u968E\u3067\u8E0A\u308A\u3092\u7DF4\u7FD2\u3067\u304D\u308B\u3002\u8CB8\u3057\u9774\u306E\u8FD4\u5374\u53E3\u3082\u6B8B\u3059\u3002");
+  auto(L, "leo.box", "\u8FD4\u5374\u7BB1\u3068\u9589\u5E97\u5F8C\u306E\u6848\u5185\u3092\u7528\u610F\u3059\u308B", "shoe", ca(accepted("leo.box"), cn(b("leo.box"))), fact("leo.box", false), [set("leo.box")], 18, 70);
+  auto(L, "leo.close", "\u9774\u5E97\u3092\u65BD\u9320\u3059\u308B", "shoe", ca(b("leo.box"), cn(b("leo.closed"))), fact("leo.closed", false), [set("leo.closed")], 15, 60);
+  rule(L, walkId(L, "shoe", "upstairs"), ca(here("shoe"), b("leo.closed")), 50);
+  auto(L, "leo.dance", "\u4E8C\u968E\u3067\u8E0A\u308A\u306E\u7DF4\u7FD2\u3092\u59CB\u3081\u308B", "upstairs", ca(b("leo.closed"), cn(b("leo.danced"))), fact("leo.danced", false), [set("leo.danced"), emit("life.C008", [L], "upstairs")], 30);
+  var greetings = {
+    [N]: "\u300C\u5915\u98DF\u306E\u652F\u5EA6\u3092\u3057\u305F\u3044\u306E\u3002\u4E8C\u4EBA\u306B\u3082\u4ECA\u591C\u306E\u3053\u3068\u3092\u4F1D\u3048\u3089\u308C\u308B\u304B\u3057\u3089\u300D",
+    [O]: "\u300C\u5E30\u308A\u305F\u3044\u3093\u3060\u3051\u3069\u3001\u3053\u306E\u8377\u3092\u652F\u3048\u3066\u3044\u308B\u3002\u53D7\u3051\u53F0\u3068\u3001\u307F\u3093\u306A\u306B\u898B\u3048\u308B\u5408\u56F3\u304C\u8981\u308B\u3093\u3060\u300D",
+    [K]: "\u300C\u3053\u306E\u7D19\u4EBA\u5F62\u3092\u5BB6\u3067\u898B\u305B\u305F\u3044\u3002\u30E9\u30EB\u30D5\u3068\u3001\u6301\u3061\u5E30\u308B\u5206\u3092\u6C7A\u3081\u306A\u304F\u3061\u3083\u300D",
+    [B]: "\u300C\u623B\u3063\u3066\u304A\u3044\u3067\uFF01 \u2026\u2026\u8FFD\u3046\u307B\u3069\u9003\u3052\u308B\u3093\u3060\u3002\u5EAD\u306B\u306F\u3044\u3064\u3082\u306E\u73A9\u5177\u304C\u3042\u308B\u3093\u3060\u3051\u3069\u300D",
+    [M]: "\u300C\u6700\u5F8C\u306E\u53D6\u308A\u7F6E\u304D\u304C\u3001\u3061\u3083\u3093\u3068\u5C4A\u3044\u305F\u3068\u5206\u304B\u3063\u305F\u3089\u5E97\u3058\u307E\u3044\u3067\u304D\u308B\u308F\u300D",
+    [R]: "\u300C\u501F\u308A\u305F\u5927\u934B\u306E\u67C4\u3092\u7126\u304C\u3057\u3066\u3057\u307E\u3063\u3066\u3002\u78E8\u3044\u3066\u3082\u3001\u306A\u304B\u306A\u304B\u2026\u2026\u300D",
+    [C]: "\u300C\u3072\u3068\u308A\u306E\u98DF\u5353\u3092\u898B\u3089\u308C\u308B\u306E\u304C\u6C17\u306B\u306A\u3063\u3066\u3002\u843D\u3061\u7740\u3044\u3066\u98DF\u3079\u305F\u3044\u3060\u3051\u306A\u306E\u300D",
+    [L]: "\u300C\u8FD4\u308B\u9577\u9774\u3092\u5F85\u3063\u3066\u3044\u308B\u3093\u3060\u3002\u9589\u5E97\u3067\u304D\u305F\u3089\u3001\u4E8C\u968E\u3067\u8E0A\u308A\u306E\u7DF4\u7FD2\u3092\u3057\u305F\u3044\u300D",
+    [W]: "\u300C\u3053\u306E\u8377\u3092\u4E0B\u308D\u3057\u3066\u6A5F\u69CB\u3092\u7A7A\u3051\u305F\u3044\u3002\u5408\u56F3\u3092\u305D\u308D\u3048\u3066\u3001\u53D7\u3051\u53F0\u3078\u79FB\u305D\u3046\u300D",
+    [T]: "\u300C\u53F0\u3092\u7F6E\u304F\u5834\u6240\u304C\u7A7A\u3051\u3070\u6E96\u5099\u3067\u304D\u308B\u3002\u4E0B\u308D\u3059\u4EBA\u3068\u652F\u3048\u308B\u4EBA\u304C\u540C\u3058\u5408\u56F3\u3092\u898B\u306A\u304F\u3061\u3083\u300D",
+    [F]: "\u300C\u898B\u672C\u3068\u5C11\u3057\u9055\u3046\u3093\u3060\u3002\u3053\u306E\u7D19\u4EBA\u5F62\u3067\u3001\u8A71\u304C\u4F1D\u308F\u308B\u3060\u308D\u3046\u304B\u300D",
+    [D]: "\u72AC\u306F\u5916\u5C65\u304D\u3092\u304F\u308F\u3048\u3001\u8FFD\u3044\u304B\u3051\u904A\u3073\u3092\u5F85\u3063\u3066\u3044\u308B\u3002"
+  };
+
+  // src/game/main.ts
+  var $ = (id) => document.getElementById(id);
+  var canvas = $("town");
+  var ctx = canvas.getContext("2d");
+  var modal = $("modal");
+  var body = $("modal-body");
+  var sim = new Simulation(dinnerContent);
+  var clock = new FixedClock();
+  var saves = new Saves({ getItem: (key) => localStorage.getItem(key), setItem: (key, value) => localStorage.setItem(key, value) }, "roadonden:dinner:v2:");
+  var state = sim.snapshot();
+  var paused = false;
+  var fast = false;
+  var path = [];
+  var lastFrame = performance.now();
+  var lastTickTime = lastFrame;
+  var seenEvent = 0;
+  var toastTimer = 0;
+  var uiSignature = "";
+  var definitions = new Map(dinnerContent.actions.map((a) => [a.id, a]));
+  var places = new Map(dinnerContent.places.map((p) => [p.id, p]));
+  var descriptions = { inn: "\u8377\u7269\u3092\u7F6E\u3044\u3066\u3001\u8857\u3078\u3002\u5674\u6C34\u306E\u8FBB\u304B\u3089\u3001\u4E2D\u5EAD\u306B\u3082\u5E02\u5834\u306B\u3082\u6B69\u3044\u3066\u3044\u3051\u308B\u3002", street: "\u5BB6\u3005\u3068\u5E02\u5834\u3092\u7D50\u3076\u3001\u5C0F\u3055\u306A\u5674\u6C34\u306E\u8FBB\u3002\u6C34\u97F3\u306E\u5411\u3053\u3046\u3067\u3001\u4EBA\u306E\u66AE\u3089\u3057\u304C\u7D9A\u3044\u3066\u3044\u308B\u3002", home: "\u7A93\u8FBA\u306B\u5C0F\u3055\u306A\u98DF\u5353\u3002\u53D7\u53D6\u68DA\u3068\u3001\u4F7F\u3048\u308B\u5C0F\u934B\u304C\u3042\u308B\u3002", yard: "\u5BB6\u306E\u6A2A\u306E\u4E2D\u5EAD\u3002\u5EAD\u3078\u7D9A\u304F\u6728\u306E\u6238\u304C\u3042\u308B\u3002", garden: "\u5840\u306B\u56F2\u307E\u308C\u305F\u5C0F\u3055\u306A\u5EAD\u3002\u3044\u3064\u3082\u306E\u73A9\u5177\u304C\u8EE2\u304C\u3063\u3066\u3044\u308B\u3002", ruth: "\u78E8\u304D\u5E03\u3068\u3001\u5927\u934B\u306E\u3042\u308B\u53F0\u6240\u3002\u4EA4\u63DB\u7528\u306E\u67C4\u3082\u624B\u5143\u306B\u3042\u308B\u3002", market: "\u9752\u679C\u5E97\u306E\u53D6\u308A\u7F6E\u304D\u68DA\u306B\u306F\u3001\u652F\u6255\u6E08\u307F\u306E\u6CE8\u6587\u672D\u304C\u4E26\u3076\u3002", school: "\u653E\u8AB2\u5F8C\u306E\u5DE5\u4F5C\u5BA4\u3002\u7D19\u4EBA\u5F62\u3068\u3001\u88DC\u4FEE\u7528\u306E\u7D19\u3002", shoe: "\u4FEE\u7406\u53F0\u306E\u3042\u308B\u9774\u5E97\u3002\u901A\u5E38\u8CB8\u51FA\u306E\u9774\u3068\u3001\u8FD4\u5374\u7528\u306E\u5834\u6240\u304C\u3042\u308B\u3002", upstairs: "\u9774\u5E97\u306E\u4E0A\u306E\u5C0F\u90E8\u5C4B\u3002\u5E8A\u306B\u8E0A\u308A\u306E\u7DF4\u7FD2\u8DE1\u304C\u3042\u308B\u3002", celia: "\u901A\u308A\u306B\u9762\u3057\u305F\u98DF\u5353\u3002\u7A93\u306B\u306F\u76EE\u96A0\u3057\u3001\u7384\u95A2\u306B\u306F\u5C0F\u3055\u306A\u547C\u9234\u3002", quay: "\u904B\u6CB3\u306E\u8377\u63DA\u3052\u5834\u3002\u8377\u3092\u652F\u3048\u308B\u4EBA\u3001\u5408\u56F3\u3092\u5F85\u3064\u4EBA\u3001\u53D7\u3051\u53F0\u306E\u7F6E\u304D\u5834\u6240\u3002", post: "\u90F5\u4FBF\u6240\u524D\u306E\u9053\u3002\u3053\u306E\u5148\u306E\u90F5\u4FBF\u306E\u7269\u8A9E\u306F\u3001\u307E\u3060\u5B9F\u88C5\u6E96\u5099\u4E2D\u3002" };
+  var completionWords = { C001: "\u300C\u4E09\u4EBA\u306E\u8A71\u304C\u805E\u3051\u3066\u3088\u304B\u3063\u305F\u3002\u8FD4\u3059\u3082\u306E\u306F\u3001\u3044\u3064\u3082\u306E\u68DA\u3067\u3082\u53D7\u3051\u53D6\u308C\u308B\u308F\u300D", C002: "\u300C\u3088\u3046\u3084\u304F\u5BB6\u65CF\u3068\u98DF\u3079\u3089\u308C\u305F\u3088\u300D", C003: "\u300C\u7D19\u4EBA\u5F62\u306E\u304A\u8A71\u3001\u4E8C\u4EBA\u3068\u3082\u805E\u3044\u3066\u304F\u308C\u305F\uFF01\u300D", C004: "\u300C\u8FFD\u308F\u305A\u306B\u5F85\u3066\u3070\u3088\u304B\u3063\u305F\u3093\u3060\u306D\u3002\u5EAD\u3067\u843D\u3061\u7740\u3044\u305F\u3088\u300D", C005: "\u300C\u5305\u307F\u3082\u5C4A\u3044\u305F\u3057\u3001\u4ECA\u65E5\u306E\u5E97\u3058\u307E\u3044\u306F\u304A\u3057\u307E\u3044\u3002\u68DA\u306E\u53D7\u6E21\u3057\u53E3\u306F\u305D\u306E\u307E\u307E\u3088\u300D", C006: "\u300C\u8FD4\u3057\u3066\u3001\u3061\u3083\u3093\u3068\u8A71\u305B\u305F\u3002\u78E8\u3044\u3066\u3044\u308B\u3060\u3051\u3067\u306F\u4F1D\u308F\u3089\u306A\u304B\u3063\u305F\u306D\u300D", C007: "\u300C\u843D\u3061\u7740\u3044\u3066\u98DF\u3079\u3089\u308C\u305F\u308F\u3002\u3042\u308A\u304C\u3068\u3046\u300D", C008: "\u300C\u3053\u308C\u3067\u8E0A\u308A\u306E\u7DF4\u7FD2\u304C\u3067\u304D\u308B\u3002\u8FD4\u5374\u7BB1\u306F\u3044\u3064\u3067\u3082\u4F7F\u3063\u3066\u306D\u300D", C045: "\u300C\u8377\u3082\u4E0B\u308A\u305F\u3002\u6A5F\u69CB\u306F\u7A7A\u3051\u305F\u3057\u3001\u6B21\u306E\u4EBA\u306B\u3082\u5408\u56F3\u304C\u898B\u3048\u308B\u300D", C054: "\u300C\u53F0\u306F\u5B89\u5B9A\u3057\u3066\u3044\u308B\u3002\u88DC\u52A9\u5177\u3082\u7247\u4ED8\u3044\u305F\u3088\u300D", C064: "\u300C\u898B\u672C\u3068\u9055\u3063\u3066\u3044\u3066\u3082\u3001\u50D5\u306E\u8A71\u306F\u4F1D\u308F\u308B\u3093\u3060\u306D\u300D" };
+  function toast(text, error = false) {
+    const el = $("toast");
+    el.textContent = text;
+    el.className = `show${error ? " error" : ""}`;
+    window.clearTimeout(toastTimer);
+    toastTimer = window.setTimeout(() => el.classList.remove("show"), 6500);
+  }
+  function button(label2, fn, className = "") {
+    const e = document.createElement("button");
+    e.textContent = label2;
+    e.className = className;
+    e.onclick = () => {
+      try {
+        fn();
+      } catch (error) {
+        toast(error instanceof Error ? error.message : String(error), true);
+      }
+    };
+    return e;
+  }
+  function paragraph(text, parent = body) {
+    const e = document.createElement("p");
+    e.textContent = text;
+    parent.append(e);
+    return e;
+  }
+  function moving(who, s = state) {
+    return s.actions.find((a) => definitions.get(a.definitionId)?.movement?.actorId === who);
+  }
+  function occupied() {
+    return state.actions.find((a) => !definitions.get(a.definitionId).concurrent && definitions.get(a.definitionId).actorIds.includes(P));
+  }
+  function syncPause() {
+    clock.setPaused(paused || modal.open || document.hidden);
+    lastFrame = performance.now();
+    $("pause").textContent = paused ? "\u8857\u3092\u52D5\u304B\u3059" : "\u4E00\u6642\u505C\u6B62";
+    $("running").textContent = modal.open || paused || document.hidden ? "\u8857\u306E\u6642\u9593\u306F\u6B62\u307E\u3063\u3066\u3044\u307E\u3059" : fast ? "\u3053\u3053\u3067\u3001\u5C11\u3057\u5F85\u3063\u3066\u3044\u307E\u3059" : "\u8857\u306F\u52D5\u3044\u3066\u3044\u307E\u3059";
+  }
+  function open(title, kicker = "\u65C5\u4EBA\u306E\u624B\u5143") {
+    path = [];
+    fast = false;
+    $("modal-title").textContent = title;
+    $("modal-kicker").textContent = kicker;
+    body.replaceChildren();
+    if (!modal.open) modal.showModal();
+    syncPause();
+  }
+  function close() {
+    modal.close();
+    syncPause();
+    canvas.focus();
+  }
+  $("close-modal").onclick = close;
+  modal.addEventListener("cancel", (e) => {
+    e.preventDefault();
+    close();
+  });
+  function act(i) {
+    close();
+    fast = false;
+    sim.enqueue({ kind: "start", actorId: P, actionId: i.id });
+    toast("\u58F0\u3068\u624B\u304C\u5C4A\u304F\u3068\u3053\u308D\u3067\u3001\u8A66\u3057\u3066\u307F\u308B\u3002");
+  }
+  function talk2(who) {
+    if (moving(P) || moving(who)) {
+      toast("\u6B69\u304D\u7D42\u3048\u3066\u304B\u3089\u58F0\u3092\u304B\u3051\u3088\u3046\u3002");
+      return;
+    }
+    const person2 = dinnerContent.actors.find((a) => a.id === who);
+    open(person2.displayName, "\u58F0\u3092\u304B\u3051\u308B");
+    paragraph(state.completions[who] ? completionWords[who] ?? greetings[who] : greetings[who] ?? person2.normalLife);
+    if (state.completions[who] && !state.knownCompletions[who]) sim.enqueue({ kind: "askCompletion", actorId: P, recipientId: who });
+    const options = document.createElement("div");
+    options.className = "stack";
+    for (const i of interactions.filter((i2) => i2.who === who && check(i2.visible, state))) options.append(button(i.label, () => act(i)));
+    if (!options.children.length) paragraph("\u4ECA\u306F\u3001\u69D8\u5B50\u3092\u898B\u5B88\u308D\u3046\u3002");
+    body.append(options, button("\u8A71\u3092\u7D42\u3048\u308B", close, "subtle"));
+  }
+  function contextAction(i) {
+    open(i.label, "\u3042\u305F\u308A\u3092\u898B\u308B");
+    paragraph(i.text.startsWith("\u300C") ? "\u76F8\u624B\u306B\u58F0\u3092\u304B\u3051\u3066\u307F\u3088\u3046\u3002" : `\u3053\u3053\u3067\u300C${i.label}\u300D\u3092\u8A66\u305B\u307E\u3059\u3002`);
+    body.append(button("\u3084\u3063\u3066\u307F\u308B", () => act(i), "primary"));
+  }
+  function walk(to) {
+    if (state.facts["quay.playerHolding"]) {
+      toast("\u8377\u3092\u652F\u3048\u3066\u3044\u308B\u3002\u53D7\u3051\u53F0\u3078\u4E0B\u308D\u3059\u307E\u3067\u306F\u96E2\u308C\u3089\u308C\u306A\u3044\u3002");
+      return;
+    }
+    if (occupied()) {
+      toast("\u3044\u307E\u306E\u884C\u52D5\u304C\u7D42\u308F\u3063\u3066\u304B\u3089\u6B69\u3053\u3046\u3002");
+      return;
+    }
+    path = route(state.actors[P].locationId, to);
+    fast = false;
+    if (path.length) startNextWalk();
+  }
+  function startNextWalk() {
+    if (!path.length || occupied()) return;
+    const from = state.actors[P].locationId, to = path.shift(), id = walkId(P, from, to), a = definitions.get(id);
+    if (!check(a.startGuard, state)) {
+      path = [];
+      toast("\u6238\u304C\u9589\u3058\u3066\u3044\u308B\u3002\u5165\u53E3\u3067\u3067\u304D\u308B\u3053\u3068\u3092\u63A2\u3057\u3066\u307F\u3088\u3046\u3002");
+      return;
+    }
+    sim.enqueue({ kind: "start", actorId: P, actionId: id });
+  }
+  function inventory() {
+    open("\u6301\u3061\u7269");
+    const held2 = dinnerContent.objects.filter((o) => state.objects[o.id].custody.kind === "actor" && state.objects[o.id].custody.id === P);
+    if (!held2.length) paragraph("\u3044\u307E\u3001\u9810\u304B\u3063\u3066\u3044\u308B\u3082\u306E\u306F\u3042\u308A\u307E\u305B\u3093\u3002");
+    for (const o of held2) {
+      const row = document.createElement("div");
+      row.className = "journal-entry";
+      paragraph(o.name, row);
+      const owner = dinnerContent.actors.find((a) => a.id === o.ownerId).displayName;
+      const sub = document.createElement("small");
+      sub.textContent = `\u6301\u3061\u4E3B\uFF1A${owner}\u3000\u6570\u91CF\uFF1A${state.objects[o.id].quantity}`;
+      row.append(sub);
+      body.append(row);
+    }
+    for (const l of dinnerContent.loans ?? []) if (l.id === "shoes" && state.loans[l.id]?.status === "borrowed" && state.actors[P].accepted["loan.leo"]) paragraph(`\u8CB8\u51FA\u306E\u7D04\u675F\uFF1A${l.policy}`);
+    paragraph("\u624B\u6E21\u3057\u3084\u8FD4\u5374\u306F\u3001\u76F8\u624B\u3084\u8FD4\u5374\u5834\u6240\u306E\u305D\u3070\u3067\u884C\u3048\u307E\u3059\u3002");
+  }
+  function notebook() {
+    open("\u65C5\u4EBA\u306E\u624B\u5E33", "\u898B\u805E\u304D\u3057\u305F\u3053\u3068");
+    const known = Object.keys(state.knownCompletions);
+    if (known.length) {
+      const e = paragraph(`\u66AE\u3089\u3057\u304C\u9032\u3093\u3060\u3068\u78BA\u304B\u3081\u305F\u4EBA\uFF1A${known.length}\u4EBA`);
+      e.className = "confirmed";
+      for (const id of known) paragraph(`${dinnerContent.actors.find((a) => a.id === id).displayName} \u2014 ${dinnerContent.actors.find((a) => a.id === id).goal}`);
+    }
+    const beliefs = Object.values(state.actors[P].beliefs).filter((b2) => b2.stance === "believe").sort((a, b2) => b2.acquiredAt - a.acquiredAt);
+    if (!beliefs.length) paragraph("\u307E\u3060\u3001\u4F55\u3082\u66F8\u304B\u308C\u3066\u3044\u307E\u305B\u3093\u3002\u8FD1\u304F\u306E\u4EBA\u306B\u8A71\u3057\u304B\u3051\u305F\u308A\u3001\u3042\u305F\u308A\u3092\u898B\u305F\u308A\u3057\u3066\u307F\u307E\u3057\u3087\u3046\u3002");
+    for (const b2 of beliefs) {
+      const row = document.createElement("div");
+      row.className = "journal-entry";
+      const source = dinnerContent.actors.find((a) => a.id === b2.sourceId)?.displayName;
+      const small = document.createElement("small");
+      const evidence = state.events.find((e) => b2.evidenceEventIds.includes(e.id));
+      const where = evidence ? places.get(evidence.locationId)?.name : void 0;
+      small.textContent = `${where ? where + " \u30FB " : ""}${b2.sourceKind === "testimony" ? `${source ?? "\u4F4F\u6C11"}\u304B\u3089\u805E\u3044\u305F\u3053\u3068` : "\u305D\u306E\u5834\u3067\u78BA\u304B\u3081\u305F\u3053\u3068"}`;
+      row.append(small);
+      paragraph(dinnerContent.propositions.find((p) => p.id === b2.propositionId).description, row);
+      body.append(row);
+    }
+  }
+  function mapMenu() {
+    open("\u6B69\u3044\u305F\u9053", "\u8857\u306E\u5730\u56F3");
+    const visited = /* @__PURE__ */ new Set([dinnerContent.actors.find((a) => a.id === P).locationId]);
+    for (const event of state.events) if (event.type === "engine.effect.move" && event.actorIds.includes(P)) {
+      const effect2 = JSON.parse(String(event.payload.detail));
+      visited.add(effect2.to);
+    }
+    paragraph("\u8A2A\u308C\u305F\u5834\u6240\u3068\u3001\u305D\u3053\u3067\u898B\u3064\u3051\u305F\u9053\u3002\u5834\u6240\u3092\u9078\u3076\u3068\u6B69\u3044\u3066\u5411\u304B\u3044\u307E\u3059\u3002");
+    const list = document.createElement("div");
+    list.className = "stack";
+    for (const id of /* @__PURE__ */ new Set([...visited, ...[...visited].flatMap((id2) => places.get(id2).links)])) list.append(button(`${places.get(id).name}${visited.has(id) ? "" : "\uFF08\u9053\u306E\u5148\uFF09"}`, () => {
+      close();
+      walk(id);
+    }));
+    body.append(list);
+  }
+  function saveMenu() {
+    open("\u4FDD\u5B58\u30FB\u518D\u958B");
+    paragraph("\u8857\u306E\u6642\u9593\u3001\u4EBA\u7269\u306E\u79FB\u52D5\u3001\u9014\u4E2D\u306E\u4ED5\u4E8B\u3001\u805E\u3044\u305F\u8A71\u3001\u8CB8\u3057\u501F\u308A\u3092\u307E\u3068\u3081\u3066\u4FDD\u5B58\u3057\u307E\u3059\u3002");
+    for (const slot of [1, 2, 3]) {
+      const row = document.createElement("div");
+      row.className = "save-row";
+      const label3 = document.createElement("span");
+      label3.textContent = `\u624B\u52D5\u4FDD\u5B58 ${slot}`;
+      row.append(label3, button("\u4FDD\u5B58", () => {
+        saves.write(sim, slot);
+        toast(`\u4FDD\u5B58 ${slot} \u306B\u8A18\u9332\u3057\u307E\u3057\u305F\u3002`);
+      }), button("\u518D\u958B", () => {
+        saves.read(sim, slot);
+        afterLoad();
+      }));
+      body.append(row);
+    }
+    const stack = document.createElement("div");
+    stack.className = "stack";
+    for (const slot of ["auto", "previous"]) stack.append(button(slot === "auto" ? "\u6700\u65B0\u306E\u81EA\u52D5\u4FDD\u5B58\u304B\u3089\u518D\u958B" : "\u4E00\u3064\u524D\u306E\u81EA\u52D5\u4FDD\u5B58\u304B\u3089\u518D\u958B", () => {
+      saves.read(sim, slot);
+      afterLoad();
+    }));
+    stack.append(button("\u30BB\u30FC\u30D6\u3092JSON\u30D5\u30A1\u30A4\u30EB\u3067\u6301\u3061\u51FA\u3059", () => {
+      const blob = new Blob([saves.export(sim)], { type: "application/json" }), url = URL.createObjectURL(blob), a = document.createElement("a");
+      a.href = url;
+      a.download = "roadonden-dinner-save.json";
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1e3);
+    }));
+    body.append(stack);
+    const label2 = document.createElement("label");
+    label2.className = "file-label";
+    label2.textContent = "JSON\u30BB\u30FC\u30D6\u3092\u8AAD\u307F\u8FBC\u3080";
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".json,application/json";
+    input.onchange = async () => {
+      try {
+        const file = input.files?.[0];
+        if (file) {
+          saves.import(sim, await file.text());
+          afterLoad();
+        }
+      } catch (error) {
+        toast(`\u8AAD\u307F\u8FBC\u3081\u307E\u305B\u3093\u3067\u3057\u305F\uFF1A${error instanceof Error ? error.message : String(error)}`, true);
+      }
+    };
+    label2.append(input);
+    body.append(label2);
+    paragraph("\u81EA\u52D5\u4FDD\u5B58\u306F\u901A\u5E38\u901F\u5EA6\u3067\u7D042\u5206\u904A\u3076\u3054\u3068\u3002\u5225\u306E\u7AE0\u30FB\u65E7\u4ED5\u69D8\u306E\u30BB\u30FC\u30D6\u306F\u4E0A\u66F8\u304D\u305B\u305A\u3001\u8AAD\u307F\u8FBC\u307F\u3092\u65AD\u308A\u307E\u3059\u3002");
+    body.append(button("\u6700\u521D\u304B\u3089\u6B69\u304D\u76F4\u3059", () => {
+      open("\u6700\u521D\u304B\u3089\u6B69\u304D\u76F4\u3057\u307E\u3059\u304B");
+      paragraph("\u73FE\u5728\u306E\u9032\u884C\u3060\u3051\u3092\u521D\u671F\u72B6\u614B\u306B\u623B\u3057\u307E\u3059\u3002\u4FDD\u5B58\u67A0\u306B\u6B8B\u3057\u305F\u8A18\u9332\u306F\u6D88\u3048\u307E\u305B\u3093\u3002");
+      body.append(button("\u6700\u521D\u304B\u3089\u59CB\u3081\u308B", () => {
+        sim.load(new Simulation(dinnerContent).save());
+        afterLoad();
+      }, "primary"));
+    }));
+  }
+  function afterLoad() {
+    state = sim.snapshot();
+    path = [];
+    fast = false;
+    seenEvent = state.nextEventId - 1;
+    uiSignature = "";
+    close();
+    renderUI();
+    toast("\u4FDD\u5B58\u3057\u305F\u8857\u304B\u3089\u518D\u958B\u3057\u307E\u3057\u305F\u3002");
+  }
+  function help(welcome = false) {
+    open(welcome ? "\u8857\u3078\u3001\u3088\u3046\u3053\u305D" : "\u6B69\u304D\u65B9", "\u30ED\u30FC\u30C9\u30F3\u30C7\u30F3 \xB7 \u5915\u98DF\u7DE8");
+    paragraph("\u5915\u65B9\u306E\u8857\u3092\u6B69\u304F\u65C5\u4EBA\u3068\u3057\u3066\u3001\u4F4F\u6C11\u306B\u8A71\u3057\u304B\u3051\u3066\u307F\u3066\u304F\u3060\u3055\u3044\u3002\u8AB0\u304B\u306E\u7528\u4E8B\u3092\u52A9\u3051\u3066\u3082\u3001\u305D\u306E\u4EBA\u304C\u81EA\u5206\u3067\u884C\u52D5\u3059\u308B\u307E\u3067\u3001\u66AE\u3089\u3057\u306F\u5148\u3078\u9032\u307F\u307E\u305B\u3093\u3002");
+    paragraph("\u5834\u6240\u3092\u30AF\u30EA\u30C3\u30AF\u3001\u307E\u305F\u306F\u77E2\u5370 / WASD \u3067\u9053\u3092\u6B69\u304D\u307E\u3059\u3002E \u3067\u8FD1\u304F\u306E\u4EBA\u3068\u4F1A\u8A71\u3002\u6301\u3061\u7269\u306F I\u3001\u624B\u5E33\u306F J\u3002\u4F1A\u8A71\u3084\u624B\u5E33\u3092\u958B\u3044\u3066\u3044\u308B\u9593\u306F\u8857\u306E\u6642\u9593\u304C\u6B62\u307E\u308A\u307E\u3059\u3002");
+    paragraph("\u9053\u3068\u5BB6\u306E\u4F4D\u7F6E\u306F\u8A66\u4F5C\u7248\u3067\u3059\u3002\u4ECA\u56DE\u306F\u5915\u98DF\u306B\u3064\u306A\u304C\u308B11\u4EBA\u3068\u72AC\u304C\u66AE\u3089\u3059\u7BC4\u56F2\u3092\u904A\u3079\u307E\u3059\u3002\u307B\u304B\u306E89\u4EBA\u306E\u7269\u8A9E\u306F\u5B9F\u88C5\u6E96\u5099\u4E2D\u3002");
+    const note = paragraph("\u307E\u305A\u306F\u5674\u6C34\u306E\u8FBB\u3078\u3002\u30CE\u30E9\u306E\u5BB6\u3078\u884C\u3063\u3066\u3082\u3001\u72AC\u306E\u3044\u308B\u4E2D\u5EAD\u3084\u5E02\u5834\u3092\u5148\u306B\u8A2A\u306D\u3066\u3082\u69CB\u3044\u307E\u305B\u3093\u3002");
+    note.className = "welcome-note";
+    body.append(button("\u8857\u3092\u6B69\u304F", close, "primary"));
+  }
+  function renderUI() {
+    const where = state.actors[P].locationId, location = places.get(where);
+    const task = occupied();
+    const people = dinnerContent.actors.filter((a) => a.id !== P && state.actors[a.id].locationId === where && !moving(a.id));
+    const available = interactions.filter((i) => !i.who && check(i.visible, state));
+    const observed = dinnerContent.clues.filter((clue2) => clue2.locationId === where && check(clue2.visible, state) && state.actors[P].beliefs[clue2.propositionId]?.stance === "believe" && state.facts[clue2.propositionId] === true);
+    const signature = JSON.stringify([where, people.map((a) => a.id), available.map((a) => a.id), task?.definitionId, fast, !!moving(P), state.actions.map((a) => a.definitionId), observed.map((c2) => c2.id)]);
+    $("time").textContent = `${String((16 + Math.floor(state.tick % 14400 / 600)) % 24).padStart(2, "0")}:${String(Math.floor(state.tick % 600 / 10)).padStart(2, "0")}`;
+    $("day").textContent = `\u7B2C${Math.floor((state.tick + 9600) / 14400) + 1}\u65E5`;
+    if (signature === uiSignature) return;
+    uiSignature = signature;
+    $("place-name").textContent = location.name;
+    $("place-description").textContent = descriptions[where];
+    $("activity").textContent = task ? definitions.get(task.definitionId).label + "\u2026" : fast ? "\u3053\u3053\u3067\u5C11\u3057\u5F85\u3063\u3066\u3044\u307E\u3059\u3002" : "\u8DB3\u3092\u6B62\u3081\u3066\u3001\u3042\u305F\u308A\u3092\u898B\u6E21\u305B\u307E\u3059\u3002";
+    $("people").replaceChildren();
+    for (const person2 of people) {
+      const e = button(person2.displayName, () => talk2(person2.id), "person");
+      const working = state.actions.find((a) => definitions.get(a.definitionId).actorIds.includes(person2.id) && !definitions.get(a.definitionId).concurrent);
+      if (working) {
+        const small = document.createElement("small");
+        small.textContent = definitions.get(working.definitionId).label;
+        e.append(small);
+      }
+      e.disabled = !!moving(P);
+      $("people").append(e);
+    }
+    if (!people.length) paragraph("\u4ECA\u306F\u3001\u305D\u3070\u306B\u8A71\u305B\u308B\u4EBA\u304C\u3044\u307E\u305B\u3093\u3002", $("people")).className = "empty";
+    $("nearby").replaceChildren();
+    for (const i of available) {
+      const e = button(i.label, () => contextAction(i));
+      e.disabled = !!moving(P);
+      $("nearby").append(e);
+    }
+    if (!available.length) paragraph("\u9053\u306E\u5148\u3092\u898B\u3066\u307F\u3088\u3046\u3002", $("nearby")).className = "empty";
+    $("observations").replaceChildren();
+    for (const clue2 of observed.slice(-3)) paragraph(clue2.description, $("observations")).className = "empty";
+    $("exits").replaceChildren();
+    for (const id of location.links) {
+      const e = button(`${places.get(id).name} \u2192`, () => walk(id));
+      e.disabled = !!task;
+      $("exits").append(e);
+    }
+    $("wait").textContent = fast ? "\u5F85\u3064\u306E\u3092\u3084\u3081\u308B" : "\u5C11\u3057\u5F85\u3064";
+    $("cancel").hidden = !task || task.definitionId === `hold.${P}`;
+    $("cancel").textContent = task && definitions.get(task.definitionId).movement ? "\u6B21\u306E\u9053\u3078\u9032\u307E\u306A\u3044" : "\u3044\u307E\u306E\u884C\u52D5\u3092\u4E2D\u65AD";
+  }
+  function tick() {
+    sim.step();
+    state = sim.snapshot();
+    lastTickTime = performance.now();
+    const events = state.events.filter((e) => e.id > seenEvent);
+    seenEvent = state.nextEventId - 1;
+    for (const event of events) {
+      if (event.type === "engine.agreement.accepted" && !event.actorIds.includes(P) && event.locationId === state.actors[P].locationId) toast(`${dinnerContent.actors.find((a) => a.id === event.actorIds[0]).displayName}\u304C\u63D0\u6848\u3092\u53D7\u3051\u5165\u308C\u305F\u3002`);
+      if (event.type === "engine.action.finished" && event.actorIds.includes(P)) {
+        const i = interactions.find((i2) => i2.id === event.payload.actionId);
+        if (i) toast(i.id.startsWith("offer.") ? `\u63D0\u6848\u3057\u305F\u5185\u5BB9\uFF1A${i.text}` : i.text);
+      }
+      if (event.type === "engine.action.rejected" && event.actorIds.includes(P) && state.commandLog.some((c2) => c2.command.kind === "start" && c2.command.actionId === event.payload.actionId && c2.tick === event.tick)) {
+        toast("\u4ECA\u306F\u624B\u304C\u7A7A\u3044\u3066\u3044\u306A\u3044\u304B\u3001\u72B6\u6CC1\u304C\u5909\u308F\u308A\u307E\u3057\u305F\u3002\u5C11\u3057\u5F85\u3063\u3066\u3001\u3082\u3046\u4E00\u5EA6\u3002");
+        path = [];
+      }
+      if (event.type === "engine.information.received" && event.actorIds.includes(P) && event.payload.channel === "completion") {
+        toast("\u305D\u306E\u4EBA\u306E\u66AE\u3089\u3057\u304C\u4E00\u6B69\u9032\u3093\u3060\u3002\u624B\u5E33\u306B\u66F8\u304D\u7559\u3081\u305F\u3002");
+        fast = false;
+      }
+    }
+    if (!occupied() && path.length && !state.pending.length) startNextWalk();
+    if (state.tick % 1200 === 0) try {
+      saves.autosave(sim);
+    } catch (error) {
+      toast(`\u81EA\u52D5\u4FDD\u5B58\u3067\u304D\u307E\u305B\u3093\u3067\u3057\u305F\uFF1A${error instanceof Error ? error.message : String(error)}`, true);
+    }
+    renderUI();
+  }
+  var colors = ["#a95b3f", "#b47554", "#557d86", "#d09a48", "#5d7856", "#c28a62", "#9f8194", "#799c96", "#6b6b8e", "#8e6e49", "#617e72", "#b5a056", "#b5875b"];
+  function ellipse(x, y, rx, ry, color) {
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  function line(points, color, width) {
+    ctx.strokeStyle = color;
+    ctx.lineWidth = width;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.beginPath();
+    points.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y));
+    ctx.stroke();
+  }
+  function tree(x, y, r) {
+    line([[x, y], [x, y + 24]], "#8b9070", 5);
+    ellipse(x, y, r, r * 0.8, "#acbc89");
+    ellipse(x - r * 0.28, y - 7, r * 0.75, r * 0.7, "#bdca9a");
+  }
+  function house(x, y, w, h, roof) {
+    ellipse(x + 8, y + 14, w * 0.64, 12, "#869a6d22");
+    ctx.fillStyle = "#d7d3b5";
+    ctx.fillRect(x - w / 2, y - h, w, h);
+    ctx.fillStyle = "#eee6ca";
+    ctx.fillRect(x - w / 2 + 4, y - h + 4, w - 8, h - 4);
+    ctx.fillStyle = roof;
+    ctx.beginPath();
+    ctx.moveTo(x - w / 2 - 9, y - h);
+    ctx.lineTo(x, y - h - 30);
+    ctx.lineTo(x + w / 2 + 9, y - h);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = "#647b6f";
+    ctx.fillRect(x - 8, y - 24, 16, 24);
+    for (const dx of [-w * 0.29, w * 0.29]) {
+      ctx.fillStyle = "#a4b6a3";
+      ctx.fillRect(x + dx - 7, y - h + 13, 14, 16);
+      line([[x + dx, y - h + 13], [x + dx, y - h + 29]], "#ede6cb", 2);
+    }
+    line([[x - w / 2, y], [x + w / 2, y]], "#b8b79b", 2);
+  }
+  function label(text, x, y) {
+    ctx.font = '13px "Yu Gothic", sans-serif';
+    const width = ctx.measureText(text).width;
+    ctx.fillStyle = "#f7f3e8df";
+    ctx.beginPath();
+    ctx.roundRect(x - width / 2 - 9, y - 13, width + 18, 23, 4);
+    ctx.fill();
+    ctx.fillStyle = "#536052";
+    ctx.textAlign = "center";
+    ctx.fillText(text, x, y + 3);
+  }
+  var staticMap = document.createElement("canvas");
+  staticMap.width = canvas.width;
+  staticMap.height = canvas.height;
+  function background() {
+    ctx.fillStyle = "#e0e5cc";
+    ctx.fillRect(0, 0, 1120, 1020);
+    ctx.fillStyle = "#d6ddc0";
+    ctx.fillRect(0, 961, 1120, 59);
+    line([[0, 983], [1120, 983]], "#a9c3b8", 80);
+    for (let x = 10; x < 1120; x += 74) line([[x, 981], [x + 32, 981]], "#d5e1ce", 2);
+    for (const p of dinnerContent.places) for (const other of p.links) if (p.id < other) {
+      const q = places.get(other);
+      line([[p.x, p.y], [q.x, q.y]], "#c7cdb5", 36);
+      line([[p.x, p.y], [q.x, q.y]], "#f0e9d4", 29);
+      line([[p.x, p.y], [q.x, q.y]], "#e8e1c9", 2);
+    }
+    for (let i = 0; i < 48; i++) {
+      const x = 28 + i * 179 % 1070, y = 92 + i * 263 % 820;
+      if (dinnerContent.places.some((p) => Math.hypot(x - p.x, y - p.y) < 105)) continue;
+      tree(x, y, 14 + i % 10);
+    }
+    house(160, 580, 85, 57, "#9d9d75");
+    house(420, 282, 94, 58, "#ba8e70");
+    house(590, 96, 83, 42, "#9e9c79");
+    house(60, 762, 75, 52, "#ae9c81");
+    house(750, 572, 112, 57, "#b79870");
+    house(1010, 576, 90, 65, "#9a8975");
+    house(1010, 325, 88, 44, "#9a8975");
+    house(750, 280, 120, 58, "#a18c72");
+    house(420, 854, 90, 52, "#9a9c7d");
+    line([[123, 100], [123, 184], [253, 184], [253, 100]], "#a1ad88", 4);
+    line([[122, 273], [122, 362], [256, 362]], "#a1ad88", 4);
+    ellipse(420, 604, 35, 19, "#b8c3a8");
+    ellipse(420, 598, 28, 15, "#8cafaa");
+    ellipse(420, 594, 19, 9, "#bad1bd");
+    line([[420, 592], [420, 574]], "#a3b4a1", 6);
+    ctx.fillStyle = "#b8ae8c";
+    ctx.fillRect(680, 911, 175, 25);
+    line([[700, 910], [700, 826], [771, 826]], "#8a8d72", 6);
+    line([[767, 826], [767, 864]], "#787f6c", 2);
+    for (const p of dinnerContent.places) label(p.name, p.x, p.y + 48);
+    staticMap.getContext("2d").drawImage(canvas, 0, 0);
+  }
+  function position(id, index, now) {
+    const a = state.actors[id], p = places.get(a.locationId), m = moving(id);
+    let x = p.x, y = p.y;
+    if (m) {
+      const def = definitions.get(m.definitionId), q = places.get(def.movement.to);
+      const fraction = Math.min(1, (m.elapsedTicks + (paused || modal.open ? 0 : Math.min(1, (now - lastTickTime) / 100))) / def.durationTicks);
+      x += (q.x - x) * fraction;
+      y += (q.y - y) * fraction;
+    } else {
+      const locals = dinnerContent.actors.filter((a2) => state.actors[a2.id].locationId === p.id && !moving(a2.id));
+      const n = locals.findIndex((a2) => a2.id === id);
+      x += (n - (locals.length - 1) / 2) * 24;
+      y += id === P ? 12 : 0;
+      if ((id === D || id === B) && p.id === "yard" && state.facts["ben.chasing"]) {
+        const time = state.tick / 12 + (paused || modal.open ? 0 : (now - lastTickTime) / 1200);
+        x = p.x + Math.cos(time + (id === D ? 0 : 1.3)) * 36;
+        y = p.y + Math.sin(time + (id === D ? 0 : 1.3)) * 15;
+      }
+    }
+    return { x, y, color: colors[index % colors.length] };
+  }
+  function draw(now) {
+    ctx.drawImage(staticMap, 0, 0);
+    ctx.fillStyle = "#ac9672";
+    ctx.fillRect(740, state.facts["quay.stable"] ? 890 : 864, 38, 25);
+    if (state.facts["quay.stand"]) line([[730, 918], [730, 917], [795, 917]], "#6e7e65", 6);
+    line(state.facts["garden.open"] ? [[180, 184], [180, 162]] : [[180, 184], [205, 184]], "#9d8264", 4);
+    if (state.facts["toy.ready"]) ellipse(200, 145, 5, 5, "#bc8c51");
+    if (state.facts["meal.ready"]) {
+      ellipse(455, 316, 20, 10, "#ac9470");
+      for (const dx of [-10, 10]) ellipse(455 + dx, 316, 6, 4, "#f4edda");
+    }
+    if (path.length) {
+      const p = places.get(state.actors[P].locationId);
+      line([[p.x, p.y], ...path.map((id) => {
+        const q = places.get(id);
+        return [q.x, q.y];
+      })], "#ba785077", 4);
+    }
+    dinnerContent.actors.forEach((actor2, index) => {
+      const { x, y, color } = position(actor2.id, index, now);
+      ellipse(x, y + 8, 11, 4, "#4b61452a");
+      if (actor2.id === D) {
+        ellipse(x, y, 10, 5, "#a17d56");
+        ellipse(x + 7, y - 6, 5, 5, "#af8d63");
+        return;
+      }
+      if (actor2.id === P) {
+        ctx.strokeStyle = "#a95b3f";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.ellipse(x, y + 8, 15, 7, 0, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.roundRect(x - 7, y - 4, 14, 15, 5);
+      ctx.fill();
+      ellipse(x, y - 10, 6, 7, "#d6b38c");
+      ellipse(x, y - 15, 7, 3, color);
+      if (actor2.id === P) {
+        line([[x + 11, y - 5], [x + 11, y + 12]], "#876f4d", 2);
+      }
+    });
+  }
+  background();
+  canvas.onclick = (e) => {
+    if (modal.open) return;
+    const rect = canvas.getBoundingClientRect(), scale = Math.min(rect.width / canvas.width, rect.height / canvas.height), offsetX = (rect.width - canvas.width * scale) / 2, offsetY = (rect.height - canvas.height * scale) / 2, x = (e.clientX - rect.left - offsetX) / scale, y = (e.clientY - rect.top - offsetY) / scale;
+    const nearest = dinnerContent.places.toSorted((a, b2) => Math.hypot(a.x - x, a.y - y) - Math.hypot(b2.x - x, b2.y - y))[0];
+    if (Math.hypot(nearest.x - x, nearest.y - y) < 110) {
+      if (nearest.id === state.actors[P].locationId) {
+        const person2 = dinnerContent.actors.find((a) => a.id !== P && state.actors[a.id].locationId === nearest.id && !moving(a.id));
+        if (person2) talk2(person2.id);
+      } else walk(nearest.id);
+    }
+  };
+  $("map").onclick = mapMenu;
+  $("inventory").onclick = inventory;
+  $("notebook").onclick = notebook;
+  $("save-menu").onclick = saveMenu;
+  $("help").onclick = () => help();
+  $("pause").onclick = () => {
+    paused = !paused;
+    syncPause();
+  };
+  $("wait").onclick = () => {
+    fast = !fast;
+    path = [];
+    syncPause();
+    uiSignature = "";
+    renderUI();
+  };
+  $("cancel").onclick = () => {
+    const a = occupied();
+    if (a) {
+      path = [];
+      if (definitions.get(a.definitionId).movement) toast("\u4ECA\u306E\u9053\u3092\u6B69\u304D\u7D42\u3048\u305F\u3089\u3001\u305D\u3053\u3067\u6B62\u307E\u308A\u307E\u3059\u3002");
+      else sim.enqueue({ kind: "cancel", actorId: P, instanceId: a.id });
+    }
+  };
+  document.addEventListener("keydown", (e) => {
+    if (modal.open || e.repeat) return;
+    const key = e.key.toLowerCase();
+    if (["arrowup", "arrowdown", "arrowleft", "arrowright", "w", "a", "s", "d", " "].includes(key)) e.preventDefault();
+    if (key === "escape") {
+      paused = !paused;
+      syncPause();
+    }
+    if (key === "m") mapMenu();
+    if (key === "i") inventory();
+    if (key === "j") notebook();
+    if (key === "e" || key === "enter") {
+      const person2 = dinnerContent.actors.find((a) => a.id !== P && state.actors[a.id].locationId === state.actors[P].locationId && !moving(a.id));
+      if (person2) talk2(person2.id);
+    }
+    const directions = { arrowup: [0, -1], w: [0, -1], arrowdown: [0, 1], s: [0, 1], arrowleft: [-1, 0], a: [-1, 0], arrowright: [1, 0], d: [1, 0] };
+    const dir = directions[key];
+    if (dir) {
+      const p = places.get(state.actors[P].locationId);
+      const candidates = p.links.map((id) => places.get(id)).map((q) => ({ q, dot: ((q.x - p.x) * dir[0] + (q.y - p.y) * dir[1]) / Math.hypot(q.x - p.x, q.y - p.y) })).sort((a, b2) => b2.dot - a.dot);
+      if (candidates[0].dot > 0.2) walk(candidates[0].q.id);
+    }
+  });
+  document.addEventListener("visibilitychange", syncPause);
+  function frame(now) {
+    const delta = Math.max(0, Math.min(100, now - lastFrame));
+    lastFrame = now;
+    try {
+      clock.advance(delta * (fast ? 4 : 1), tick);
+    } catch (error) {
+      paused = true;
+      syncPause();
+      toast(`\u8857\u3092\u4E00\u6642\u505C\u6B62\u3057\u307E\u3057\u305F\uFF1A${error instanceof Error ? error.message : String(error)}`, true);
+    }
+    draw(now);
+    requestAnimationFrame(frame);
+  }
+  renderUI();
+  help(true);
+  requestAnimationFrame(frame);
+})();
+</script>
+</body></html>

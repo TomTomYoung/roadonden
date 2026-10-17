@@ -24,7 +24,8 @@ function permission(s){offer(s,'delivery');perform(s,'talk.permission');go(s,'ma
 function deliver(s){noraPlan(s);permission(s);perform(s,'take.package');go(s,'home');perform(s,'deliver.package');s.step(50);}
 function dog(s){go(s,'yard');offer(s,'ben.stop');s.step(10);perform(s,'garden.open');go(s,'garden');perform(s,'toy.place');s.step(90);assert.ok(s.snapshot().completions[B]);}
 function borrowed(s){noraPlan(s);offer(s,'loan.nora');go(s,'shoe');perform(s,'talk.leo');offer(s,'loan.leo');perform(s,'borrow.shoes');go(s,'home');perform(s,'give.loanShoes');}
-function finishDinner(s){s.step(200);assert.ok(s.snapshot().facts['dinner.done']);for(const id of [N,O,K])assert.ok(s.snapshot().completions[id]);check(s);}
+function until(s,predicate,limit=800){let ticks=0;while(!predicate(s.snapshot())&&ticks++<limit)s.step();assert.ok(predicate(s.snapshot()),'expected state was not reached');}
+function finishDinner(s){until(s,q=>q.facts['dinner.done']);assert.ok(s.snapshot().facts['dinner.done']);for(const id of [N,O,K])assert.ok(s.snapshot().completions[id]);check(s);}
 
 test('T01 actual delivery: cooked food and homecoming do not count until the shared dinner ends',()=>{
  const s=create();deliver(s);assert.equal(s.snapshot().facts['meal.ready'],true);assert.deepEqual(s.snapshot().completions,{});
@@ -32,16 +33,16 @@ test('T01 actual delivery: cooked food and homecoming do not count until the sha
  assert.ok(!s.snapshot().completions[M]);go(s,'market');perform(s,'tell.receipt');s.step(30);assert.ok(s.snapshot().completions[M]);check(s);
 });
 test('T01 actual dog route: return shoes, Nora walks to collect, then cooks without the big pot',()=>{
- const s=create();noraPlan(s);dog(s);perform(s,'pickup.shoes');go(s,'home');perform(s,'give.shoes');s.step(170);
+ const s=create();noraPlan(s);dog(s);perform(s,'pickup.shoes');go(s,'home');perform(s,'give.shoes');until(s,q=>q.facts['meal.ready']);
  assert.equal(s.snapshot().facts['meal.ready'],true);assert.equal(s.snapshot().objects.bigPot.custody.id,R);familyOthers(s);finishDinner(s);
 });
 test('T01 / T06 actual loan route survives Leo closing and Nora finishing; original dog problem remains',()=>{
- const s=create();borrowed(s);go(s,'shoe');offer(s,'leo.box');s.step(120);assert.ok(s.snapshot().completions[L]);
+ const s=create();borrowed(s);go(s,'shoe');offer(s,'leo.box');until(s,q=>q.completions[L]);assert.ok(s.snapshot().completions[L]);
  familyOthers(s);finishDinner(s);assert.ok(!s.snapshot().completions[B]);assert.equal(s.snapshot().loans.shoes.status,'borrowed');
  go(s,'home');perform(s,'pickup.loan');go(s,'shoe');perform(s,'return.loan');assert.equal(s.snapshot().loans.shoes.status,'returned');check(s);
 });
 test('Mabel can lock up, deliver herself, observe receipt and return to close',()=>{
- const s=create();noraPlan(s);permission(s);offer(s,'mabel.delivery');s.step(230);
+ const s=create();noraPlan(s);permission(s);offer(s,'mabel.delivery');until(s,q=>q.completions[M]&&q.facts['meal.ready']);
  assert.equal(s.snapshot().facts['ingredients.received'],true);assert.equal(s.snapshot().facts['meal.ready'],true);assert.ok(s.snapshot().completions[M]);assert.equal(s.snapshot().actors[M].locationId,'market');check(s);
 });
 test('T06 early Kit departure leaves Ralph unresolved and lets him try with the player after dinner',()=>{
@@ -60,7 +61,7 @@ test('T06 after dinner Ruth returns and speaks, Celia eats privately, Ben still 
 });
 test('T07 cargo takeover leaves the player physically occupied until the stand takes the load',()=>{
  const s=create();go(s,'quay');perform(s,'quay.clear');perform(s,'quay.flag');perform(s,'quay.takeover');
- const from=s.snapshot().actors[P].locationId;s.enqueue({kind:'start',actorId:P,actionId:walkId(P,from,'market')});s.step(30);assert.equal(s.snapshot().actors[P].locationId,'quay');assert.equal(s.snapshot().facts['quay.playerHolding'],true);
+ const from=s.snapshot().actors[P].locationId;s.enqueue({kind:'start',actorId:P,actionId:walkId(P,from,'m1')});s.step(30);assert.equal(s.snapshot().actors[P].locationId,'quay');assert.equal(s.snapshot().facts['quay.playerHolding'],true);
  offer(s,'quay');s.step(100);assert.equal(s.snapshot().facts['quay.playerHolding'],false);go(s,'market');check(s);
 });
 test('Celia company really occupies the player; interruption postpones her meal and retry works',()=>{
@@ -73,7 +74,7 @@ test('repair paths consume finite materials once, then perform and return',()=>{
  go(s,'school');offer(s,'school.repair');s.step(100);assert.ok(s.snapshot().completions[F]);assert.equal(s.snapshot().objects.paper.quantity,2);s.step(50);assert.equal(s.snapshot().objects.paper.quantity,2);check(s);
 });
 test('save/load preserves a real walk, cargo hold, cooking and remaining dinner exactly',()=>{
- const s=create();s.enqueue({kind:'start',actorId:P,actionId:walkId(P,'inn','street')});s.step(8);
+ const s=create();s.enqueue({kind:'start',actorId:P,actionId:walkId(P,'inn','a1')});s.step(8);
  for(const ticks of [30,50]){const restored=create();restored.load(s.save());restored.step(ticks);s.step(ticks);assert.deepEqual(s.snapshot(),restored.snapshot());check(s);}
  noraPlan(s);permission(s);perform(s,'take.package');go(s,'home');perform(s,'deliver.package',0);s.step(12);
  const r=create();r.load(s.save());s.step(60);r.step(60);assert.deepEqual(s.snapshot(),r.snapshot());check(s);
@@ -87,7 +88,7 @@ test('T05 switching from borrowed shoes to delivery keeps the loan and permits r
 });
 test('T05 competing couriers cannot duplicate the package or close twice for repeated receipt reports',()=>{
  const s=create();noraPlan(s);permission(s);offer(s,'mabel.delivery');
- s.enqueue({kind:'start',actorId:P,actionId:'take.package'});s.step(220);
+ s.enqueue({kind:'start',actorId:P,actionId:'take.package'});until(s,q=>q.objects.package.quantity===0);
  assert.equal(s.snapshot().objects.package.quantity,0);assert.equal(s.snapshot().objects.package.custody.kind,'consumed');assert.equal(s.snapshot().events.filter(e=>e.type==='engine.effect.consume'&&String(e.payload.detail).includes('package')).length,1);
  go(s,'home');s.step(5);go(s,'market');perform(s,'tell.receipt');perform(s,'tell.receipt');s.step(30);
  assert.equal(s.snapshot().events.filter(e=>e.type==='engine.goal.completed'&&e.actorIds.includes(M)).length,1);check(s);
@@ -96,13 +97,13 @@ test('T02 / T17 the dinner interval is required; a midway save and leaving after
  const s=create();deliver(s);familyOthers(s);let i=0;while(!s.snapshot().actions.some(a=>a.definitionId==='family.dinner')&&i++<150)s.step();
  assert.ok(s.snapshot().actions.some(a=>a.definitionId==='family.dinner'));for(const who of [N,O,K])assert.ok(!s.snapshot().completions[who]);
  const copy=create();copy.load(s.save());s.step(100);copy.step(100);assert.deepEqual(s.snapshot(),copy.snapshot());
- s.enqueue({kind:'start',actorId:N,actionId:walkId(N,'home','street')});s.step(30);assert.equal(s.snapshot().actors[N].locationId,'street');assert.ok(s.snapshot().completions[N]);check(s);
+ s.enqueue({kind:'start',actorId:N,actionId:walkId(N,'home','a2')});s.step(30);assert.equal(s.snapshot().actors[N].locationId,'a2');assert.ok(s.snapshot().completions[N]);check(s);
 });
 test('T06 / T14 completed Leo can agree a new loan through ordinary service and accept box returns',()=>{
- const s=create();go(s,'shoe');offer(s,'leo.box');s.step(100);noraPlan(s);offer(s,'loan.nora');go(s,'upstairs');perform(s,'talk.leo');offer(s,'loan.leo');go(s,'shoe');perform(s,'borrow.shoes');perform(s,'return.loan');perform(s,'borrow.shoes');perform(s,'return.loan');assert.ok(s.snapshot().completions[L]);check(s);
+ const s=create();go(s,'shoe');offer(s,'leo.box');until(s,q=>q.completions[L]);noraPlan(s);offer(s,'loan.nora');go(s,'upstairs');perform(s,'talk.leo');offer(s,'loan.leo');go(s,'shoe');perform(s,'borrow.shoes');perform(s,'return.loan');perform(s,'borrow.shoes');perform(s,'return.loan');assert.ok(s.snapshot().completions[L]);check(s);
 });
 test('all eleven named residents are reachable in one continuous world, without resetting the family',()=>{
- const s=create();deliver(s);familyOthers(s,true);finishDinner(s);go(s,'market');perform(s,'tell.receipt');go(s,'school');offer(s,'school.trial');s.step(80);dog(s);go(s,'ruth');offer(s,'ruth.repair');s.step(130);go(s,'celia');offer(s,'celia.callers');perform(s,'celia.role.callers');go(s,'shoe');offer(s,'leo.box');s.step(120);
+ const s=create();deliver(s);familyOthers(s,true);finishDinner(s);go(s,'market');perform(s,'tell.receipt');go(s,'school');offer(s,'school.trial');s.step(80);dog(s);go(s,'ruth');offer(s,'ruth.repair');s.step(130);go(s,'celia');offer(s,'celia.callers');perform(s,'celia.role.callers');go(s,'shoe');offer(s,'leo.box');until(s,q=>q.completions[L]);
  assert.deepEqual(Object.keys(s.snapshot().completions).sort(),[N,O,K,B,M,R,C,L,W,T,F].sort());assert.equal(s.snapshot().events.filter(e=>e.type==='engine.goal.completed').length,11);check(s);
 });
 test('T07 taking over before any preparation still lets workers prepare and release the player',()=>{

@@ -56,7 +56,7 @@
 
 共同場面定義は `id`、`kind`（同席・同時作用・置換）、`participants`、`roles`、`entryGuards`、`phases`、`maintainGuards`、`resourceReservations`、`signals`、`abortPolicy`、`recoveryPhases`、`completionEvents` を持ちます。参加者の一部が達成済みでも、合意済みの通常役なら参加できます。
 
-複数人の達成は `completionEvents` ごとに対象を明記します。迎えC065/C066のような共通の完了は同一トランザクション、運河や工場のように時点が違う達成は別イベントです。
+複数人の達成は `completionEvents` ごとに対象を明記します。迎えC065/C066のような共通の完了は同一トランザクション、搬入路や共同工房のように時点が違う達成は別イベントです。
 
 ## 8. 地図と手掛かり
 
