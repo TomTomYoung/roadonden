@@ -11,8 +11,14 @@ interface Proposal { actionId: string; actorId: string; order: number; ruleId: s
 export class Simulation {
   readonly content: Content;
   private state: WorldState;
+  private definitions: Map<string, ActionDefinition>;
+  private orderedActors: Content['actors'];
+  private orderedRules: Map<string, Content['actors'][number]['rules']>;
   constructor(input: Content, seed = 1) {
     validateContent(input); this.content = freeze(clone(input));
+    this.definitions=new Map(this.content.actions.map(a=>[a.id,a]));
+    this.orderedActors=[...this.content.actors].sort((a,b)=>a.id.localeCompare(b.id,'en'));
+    this.orderedRules=new Map(this.content.actors.map(a=>[a.id,[...a.rules].sort((a,b)=>b.priority-a.priority||a.id.localeCompare(b.id,'en'))]));
     requireThat(Number.isSafeInteger(seed) && seed >= 0, '乱数シードが不正です');
     this.state = {
       tick: 0, randomState: seed, nextEventId: 1, nextActionId: 1, nextCommandId: 1,
@@ -48,7 +54,7 @@ export class Simulation {
     requireThat(Number.isSafeInteger(count) && count >= 0, '更新回数は非負整数にしてください');
     for (let i = 0; i < count; i++) this.update();
   }
-  private definition(id: string): ActionDefinition { return this.content.actions.find(a => a.id === id)!; }
+  private definition(id: string): ActionDefinition { return this.definitions.get(id)!; }
   private event(type: string, actorIds: string[], locationId: string, payload: Record<string, Value> = {}, causalEventIds: number[] = [], subjectIds: string[] = []): EventRecord {
     const e = { id: this.state.nextEventId++, tick: this.state.tick, type, actorIds: [...actorIds], subjectIds: [...subjectIds], locationId, payload, causalEventIds: [...causalEventIds] };
     this.state.events.push(e); return e;
@@ -299,10 +305,10 @@ export class Simulation {
       }
       const startSnapshot = clone(this.state);
       let order = this.state.nextCommandId;
-      for (const d of [...this.content.actors].sort((a, b) => a.id.localeCompare(b.id, 'en'))) {
+      for (const d of this.orderedActors) {
         const self = startSnapshot.actors[d.id]!;
         const busy = startSnapshot.actions.some(a => !this.definition(a.definitionId).concurrent && this.definition(a.definitionId).actorIds.includes(d.id));
-        const r = [...d.rules].sort((a, b) => b.priority - a.priority || a.id.localeCompare(b.id, 'en')).find(r => ((r.mode ?? 'problem') === self.routineMode || r.mode === 'always') && (!busy || this.definition(r.actionId).concurrent) && !startSnapshot.actions.some(a => a.definitionId === r.actionId) && (self.retryAt[r.id] ?? 0) <= this.state.tick && choose(r.choiceGuard, self));
+        const r = this.orderedRules.get(d.id)!.find(r => ((r.mode ?? 'problem') === self.routineMode || r.mode === 'always') && (!busy || this.definition(r.actionId).concurrent) && !startSnapshot.actions.some(a => a.definitionId === r.actionId) && (self.retryAt[r.id] ?? 0) <= this.state.tick && choose(r.choiceGuard, self));
         if (r) proposals.push({ actorId: d.id, actionId: r.actionId, order: order++, ruleId: r.id, retryTicks: r.retryTicks });
       }
       this.advance(cancellations);

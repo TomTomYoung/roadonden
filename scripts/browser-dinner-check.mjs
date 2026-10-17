@@ -17,13 +17,20 @@ async function go(id){const from=await page.locator('#town').getAttribute('data-
 async function talkNora(){await page.getByRole('button',{name:'ノラ フィンチ',exact:true}).click();}
 try{
  await page.goto(url);await page.getByRole('button',{name:'街を歩く',exact:true}).click();
- assert.equal(requests.filter(url=>/^https?:/.test(url)).length,0);assert.equal(errors.length,0);assert.equal(await page.locator('#town').getAttribute('data-assets-ready'),'53');pass('standalone block loads every embedded SVG without external requests');await page.click('#zoom-in');await page.click('#zoom-in');await page.screenshot({path:'test-results/block-zoom.png',fullPage:true});
+ assert.equal(requests.filter(url=>/^https?:/.test(url)).length,0);assert.equal(errors.length,0);assert.equal(await page.locator('#town').getAttribute('data-assets-ready'),'168');pass('standalone town loads every embedded pixel asset without external requests');await page.click('#follow');await page.click('#zoom-in');await page.click('#zoom-in');await page.screenshot({path:'test-results/block-zoom.png',fullPage:true});
  const bounds=await page.locator('#town').boundingBox();const scale=bounds.width/1300;
- // At this left-edge camera position, the A1 landing is visible to the right of reception.
- await page.mouse.click(bounds.x+332*2.2*scale,bounds.y+(650*2.2+(450-610*2.2))*scale);
+ const camera=JSON.parse(await page.locator('#town').getAttribute('data-camera'));
+ await page.mouse.click(bounds.x+(332*camera.zoom+camera.x)*scale,bounds.y+(650*camera.zoom+camera.y)*scale);
  await page.waitForFunction(()=>document.querySelector('#town').dataset.location==='a1');
  await page.waitForFunction(()=>document.querySelector('#activity').textContent.includes('足を止め'));
  pass('zoomed canvas hit testing walks to the visible landing');await page.click('#zoom-reset');
+ const location=await page.locator('#town').getAttribute('data-location');
+ await page.locator('[data-district=market]').click();await page.waitForTimeout(150);let view=JSON.parse(await page.locator('#town').getAttribute('data-camera'));assert.equal(view.following,false);assert.ok(view.x<0);assert.equal(await page.locator('#town').getAttribute('data-location'),location);await page.screenshot({path:'test-results/town-market.png',fullPage:true});
+ const pan=await page.locator('#town').boundingBox();await page.mouse.move(pan.x+pan.width*.5,pan.y+pan.height*.5);await page.mouse.down();await page.mouse.move(pan.x+pan.width*.7,pan.y+pan.height*.55,{steps:8});await page.mouse.up();await page.waitForTimeout(150);assert.equal(await page.locator('#town').getAttribute('data-location'),location);const panned=JSON.parse(await page.locator('#town').getAttribute('data-camera'));assert.notEqual(panned.x,view.x);
+ await page.mouse.wheel(0,-150);await page.waitForTimeout(150);assert.ok(JSON.parse(await page.locator('#town').getAttribute('data-camera')).zoom>panned.zoom);pass('district browsing, drag and wheel move only the camera');
+ await page.click('#zoom-reset');await page.waitForTimeout(150);assert.ok(await page.locator('#town').evaluate(e=>e.height<500));await page.screenshot({path:'test-results/town-overview.png',fullPage:true});
+ const mini=await page.locator('#minimap').boundingBox();await page.mouse.click(mini.x+mini.width*.9,mini.y+mini.height*.25);await page.waitForTimeout(150);assert.ok(JSON.parse(await page.locator('#town').getAttribute('data-camera')).x<-5000);await page.click('#follow');pass('overview fits the full town; minimap can inspect the eastern end');
+ await page.click('#map');await page.getByRole('searchbox',{name:'場所を検索'}).fill('送迎便の乗場');assert.match(await page.locator('#modal-body').innerText(),/東口の送迎待合/);await page.click('#close-modal');pass('town search finds a named destination beyond the starting neighborhood');
  await page.screenshot({path:'test-results/block-desktop.png',fullPage:true});await go('aRoof');assert.match(await page.locator('#location-level').innerText(),/屋上/);pass('three floors and the rooftop are reachable through landings');
  await go('home');await talkNora();
  const frozen=await page.locator('#time').innerText();await page.waitForTimeout(450);assert.equal(await page.locator('#time').innerText(),frozen);pass('walking climbs A stairs to room 201; conversation pauses world time');

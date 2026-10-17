@@ -25,7 +25,7 @@ const accepted = (agreementId: string): ChoiceGuard => ({ op: 'accepted', agreem
 const agreement = (agreementId: string, actorIds: string[]): Condition => ({ op: 'agreement', agreementId, version: 1, actorIds });
 
 export const dinnerContent: Content = {
-  version: 'block-0.3.0', namespace: 'redesign-v1', tickMs: 100, ticksPerDay: 14400,
+  version: 'town-0.4.0', namespace: 'redesign-v1', tickMs: 100, ticksPerDay: 14400,
   places: blockPlaces, propositions: [], actors: [], objects: [], resources: ['table:home','work:quay'], services: ['home.receipt','market.shelf','shoe.box'], clues: [], loans: [], agreements: [], actions: [],
 };
 const c = dinnerContent;
@@ -54,7 +54,7 @@ export const interactions:Interaction[]=[];
 function interaction(id:string,label:string,where:{who?:string;location?:string},guard:Condition,effects:ActionEffect[],text:string,duration=8,concurrent=false) {
   const proximity = where.who ? together(P,where.who) : at(P,where.location!);
   const physical=concurrent?yes:fact('quay.playerHolding',false);
-  action(id,label,[P],all(proximity,guard,physical),effects,duration,{concurrent});
+  action(id,label,[P],all(proximity,guard,physical),effects,duration,{concurrent,resources:where.who?[`presence:${where.who}`]:[]});
   interactions.push({id,label,...where,visible:all(proximity,guard,physical),text});
 }
 function talk(id:string,who:string,label:string,props:string[],text:string,guard:Condition=yes) {
@@ -144,18 +144,35 @@ object('cargo','降ろしかけの荷',W,place('quay'));object('stand','荷物�
 c.loans!.push({id:'shoes',objectId:'loanShoes',lenderId:L,borrowerId:N,returnLocationId:'shoe',policy:'帰宅後は家の棚から運び、閉店後もシャッター外の返却箱へ。'});
 c.loans!.push({id:'pot',objectId:'bigPot',lenderId:N,borrowerId:R,returnLocationId:'home',policy:'ノラへ現物を返し、柄のことを話す。',initiallyBorrowed:true});
 
+export const E='C009',DA='C010',BE='C011',AG='C025';
+person(E,'エリアス モス','a1','自分の部屋へ入り椅子に座る','玄関と中庭で鍵を探す',['elias.coat','elias.wantsHome']);
+person(DA,'ドーラ モス','inn','エリアスの入室を確かめ、夜回りを終えて休む','管理当番として表と裏を回る',['dora.spare']);
+person(BE,'ベス ペイン','pawn','預かり先を決め、母と茶を飲む','番号付きの預かり品店を営む',['beth.foundKey']);
+person(AG,'アグネス ペイン','agnes','娘と同じ卓で茶を飲み、休む','こもれび荘で娘の帰りを待つ',['agnes.waits']);
+object('eliasCoat','内ポケットを縫い直したエリアスの上着',E,place('pawn'));
+object('eliasKey','上着に入っていたエリアスの鍵',E,{kind:'object',id:'eliasCoat'});
+object('spareKey','ドーラの予備鍵',DA,actor(DA));
+c.services.push('pawn.box','elias.keyReturn');
+c.actors.find(a=>a.id===BE)!.postGoalContract.serviceIds.push('pawn.box');
+c.actors.find(a=>a.id===E)!.postGoalContract.serviceIds.push('elias.keyReturn');
+c.loans!.push({id:'spareKey',objectId:'spareKey',lenderId:DA,borrowerId:E,returnLocationId:'a301',policy:'入室後、A棟301の施錠された返却口へ。管理当番を休息から呼び戻さない。'});
+
+c.resources.push(...c.actors.map(a=>`presence:${a.id}`));
 // Walks reserve the moving person. No teleporting, no other actor controlled by the UI.
 export function walkId(who:string,from:string,to:string) { return `walk.${who}.${from}.${to}`; }
 for(const who of c.actors.map(a=>a.id)) for(const from of c.places) for(const toId of from.links) {
   const to=c.places.find(p=>p.id===toId)!;
   const gate = (from.id==='yard'&&toId==='garden')||(from.id==='garden'&&toId==='yard');
   const guard=all(at(who,from.id),who===P?fact('quay.playerHolding',false):yes,who===O?fact('quay.owenHolding',false):yes,gate?any(fact('garden.open'),fact('dog.settled')):yes);
-  action(walkId(who,from.id,toId),`${to.name}へ歩く`,[who],guard,[{op:'move',actorId:who,to:toId}],travelTicks(from.id,toId),{movement:{actorId:who,from:from.id,to:toId}});
+  action(walkId(who,from.id,toId),`${to.name}へ歩く`,[who],guard,[{op:'move',actorId:who,to:toId}],travelTicks(from.id,toId),{movement:{actorId:who,from:from.id,to:toId},resources:[`presence:${who}`]});
 }
+const placeIndex=new Map(c.places.map(p=>[p.id,p]));
+const pathsTo=new Map<string,Map<string,string>>();
 export function route(from:string,to:string):string[] {
-  const queue:string[][]=[[from]],seen=new Set([from]);
-  while(queue.length){const path=queue.shift()!,tail=path.at(-1)!;if(tail===to)return path.slice(1);for(const id of c.places.find(p=>p.id===tail)!.links)if(!seen.has(id)){seen.add(id);queue.push([...path,id]);}}
-  return [];
+ if(!placeIndex.has(from)||!placeIndex.has(to))return [];
+ let next=pathsTo.get(to);
+ if(!next){next=new Map();const queue=[to],seen=new Set([to]);for(let i=0;i<queue.length;i++)for(const id of placeIndex.get(queue[i]!)!.links)if(!seen.has(id)){seen.add(id);next.set(id,queue[i]!);queue.push(id);}pathsTo.set(to,next);}
+ const result:string[]=[];let at=from;while(at!==to){const hop=next.get(at);if(!hop)return [];result.push(hop);at=hop;}return result;
 }
 function travel(who:string,to:string,guard:ChoiceGuard,priority=20) { for(const from of c.places) { const next=route(from.id,to)[0];if(next)rule(who,walkId(who,from.id,next),ca(here(from.id),guard),priority); } }
 
@@ -295,3 +312,89 @@ export const greetings:Record<string,string>={
  [F]:'「見本と少し違うんだ。この紙人形で、話が伝わるだろうか」',
  [D]:'犬は外履きをくわえ、追いかけ遊びを待っている。',
 };
+
+// Closed rooms: ownership, a communicated rendezvous, real keys and a shared tea.
+prop('elias.coat','エリアスの上着は紺色で、内ポケットを白い糸で縫い直してある。',true);
+prop('elias.wantsHome','エリアスは自分のA棟301へ帰り、椅子に座りたい。',true);
+prop('dora.spare','ドーラはA棟301の予備鍵を管理している。',true);
+prop('beth.foundKey','預かった紺色の上着の内ポケットから鍵が出た。',true);
+prop('agnes.waits','アグネスは起きていて、娘ベスと茶を飲むのを待っている。',true);
+local('key.matched','縫い直した内ポケットと本人の説明を照合し、鍵の持ち主を確かめた。','pawn');
+local('key.stored','上着と預かり記録を番号付き保管箱へ移した。','coatBox');clue('key.stored','pawn');
+local('beth.closed','受取先を残し、ベスは店じまいを終えた。','pawn');
+local('tea.done','母娘が同じ茶の卓で、互いの話を聞きながら茶を飲んだ。','agnes');
+local('elias.unlocked','エリアスが自分で鍵を使い、部屋の扉を開けた。','a301');
+local('elias.entered','エリアスは自分の椅子に座り、帰宅を終えた。','a301');
+local('dora.rested','ドーラは入室を確認し、夜回りを終えて休んだ。','doraRest');
+prop('front.agreed','エリアスは管理人室で待ち、ドーラから予備鍵を借りると約束した。',false,agreement('elias.wait',[P,E]));
+prop('key.consent','エリアスは本人確認のうえ、上着の鍵を代理で受け取ることを了承した。',false,agreement('elias.key',[P,E]));
+prop('elias.hasKey','エリアスは自分の鍵か管理人の予備鍵を手元に持っている。',false,any(held('eliasKey',actor(E)),held('spareKey',actor(E))));
+// A person notices their own carried object; others still need local observation/testimony.
+for(const location of c.places)clue('elias.hasKey',location.id,[E],at(E,location.id));
+local('beth.atTable','ベスが母の茶の卓へ来た。','agnes',false,at(BE,'agnes'));
+local('dora.lent','ドーラはエリアスへ予備鍵を渡した。','inn');
+local('elias.boxKey','エリアスの鍵がA棟301の返却口に届いている。','a301',false,held('eliasKey',place('a301')));
+local('elias.ownKey','エリアスが元の鍵を受け取っている。','a301',false,held('eliasKey',actor(E)));
+
+talk('talk.elias',E,'最後に上着を着たときのことを聞く',['elias.coat','elias.wantsHome'],'「白い糸で縫った内ポケットの上着を、商店街のベスの店に預けたよ。鍵を落としたのは、そのあとかな……」');
+talk('talk.dora',DA,'予備鍵と見回りについて聞く',['dora.spare'],'「予備鍵は私が持っています。エリアスさんを探して裏へ出ると、今度は表へ戻ったと聞くのです」');
+talk('talk.beth',BE,'上着と鍵の預かり状況を聞く',['beth.foundKey'],'「紺の上着から鍵が出てきたの。持ち主を確かめたい。母はもう寝たかしら……」');
+talk('talk.agnes',AG,'娘を待っているのか聞く',['agnes.waits'],'「まだ起きていますよ。ベスと茶を飲みたいの。忙しいと思うと、声をかけづらくて」');
+propose('elias.key','鍵の本人確認と代理受取りを申し出る',[E],{who:E},'エリアスの説明と上着を照合して鍵を預かる。本人へ渡すか、先に帰宅した場合はA棟301の返却口へ届ける。',knows(P,'elias.coat'));
+propose('elias.wait','管理人室で待ち、予備鍵を借りる約束をする',[E],{who:E},'エリアスは管理人室で待つ。主人公がドーラへ待合せを伝え、本人が来てから予備鍵を借りる。鍵は入室後、A棟301の返却口へ。');
+for(const location of c.places){clue('key.consent',location.id,[E],all(at(E,location.id),agreement('elias.key',[P,E])));clue('front.agreed',location.id,[E],all(at(E,location.id),agreement('elias.wait',[P,E])));}
+talk('confirm.key.consent',E,'鍵の受取りの了承を確かめる',['key.consent'],'「本人確認ができたら、鍵をお願い。先に部屋へ帰れたら、玄関の返却口に入れておいて」',agreement('elias.key',[P,E]));
+talk('talk.front',E,'待合せの場所を確かめる',['front.agreed'],'「管理人室で待つよ。ドーラさんへ伝えてもらえるかな」',agreement('elias.wait',[P,E]));
+tell('tell.front',DA,'エリアスが管理人室で待つと伝える','front.agreed','「本人が待っているのですね。管理人室へ戻ります」');
+tell('tell.coat',BE,'上着の持ち主と内ポケットの特徴を伝える','elias.coat','「白い糸の内ポケットね。現物と照合してみるわ」');
+tell('tell.keyConsent',BE,'鍵の代理受取りの了承を伝える','key.consent','「エリアスさんの了承もあるのね。確認できた鍵を受け取ってください」');
+tell('tell.agnes',BE,'母が起きて茶を待っていると伝える','agnes.waits','「起きて待ってくれているのね。受取場所を残してから、母に会いに行くわ」');
+tell('tell.entered',DA,'エリアスが椅子に座ったと伝える','elias.entered','「部屋へ帰れたのですね。見回りを終えて、私も休めます」');
+
+auto(BE,'beth.compare','内ポケットと本人の説明を照合する','pawn',ca(b('elias.coat'),cn(b('key.matched'))),all(fact('key.matched',false),held('eliasCoat',place('pawn'))),[set('key.matched')],22,80);
+interaction('take.eliasKey','本人確認済みの鍵を預かる',{who:BE},all(fact('key.matched'),knows(BE,'key.consent'),held('eliasKey',{kind:'object',id:'eliasCoat'}),held('eliasCoat',place('pawn'))),[transfer('eliasKey',{kind:'object',id:'eliasCoat'},actor(P))],'エリアスの鍵を預かった。本人へ渡すか、帰宅後の返却口へ。');
+local('beth.carrying','ベスは上着を保管箱へ運んでいる。','pawn',false,held('eliasCoat',actor(BE)));clue('beth.carrying','coatBox',[BE]);
+auto(BE,'beth.prepareStore','上着と記録を保管箱へ運ぶために持つ','pawn',ca(b('agnes.waits'),cn(b('key.stored')),cn(b('beth.carrying'))),all(fact('key.stored',false),held('eliasCoat',place('pawn'))),[transfer('eliasCoat',place('pawn'),actor(BE))],12,70);
+travel(BE,'coatBox',ca(b('beth.carrying'),cn(b('key.stored'))),75);
+auto(BE,'beth.store','上着と記録を番号付き保管箱へ収める','coatBox',ca(b('beth.carrying'),cn(b('key.stored'))),all(fact('key.stored',false),held('eliasCoat',actor(BE))),[transfer('eliasCoat',actor(BE),place('coatBox')),set('key.stored')],25,85);
+travel(BE,'pawn',ca(b('key.stored'),cn(b('beth.closed'))),70);
+auto(BE,'beth.close','受取案内を出して店じまいする','pawn',ca(b('key.stored'),cn(b('beth.closed'))),fact('beth.closed',false),[set('beth.closed')],18,60);
+travel(BE,'agnes',ca(b('beth.closed'),b('agnes.waits')),60);
+interaction('box.identify','預かり記録と内ポケットを照合する',{location:'coatBox'},all(knows(P,'elias.coat'),knows(P,'key.consent'),held('eliasCoat',place('coatBox')),fact('key.matched',false)),[set('key.matched')],'番号と縫い直したポケットが一致した。ベスを母の部屋から呼び戻す必要はない。',18);
+interaction('box.key','保管箱から確認した鍵を預かる',{location:'coatBox'},all(fact('key.matched'),knows(P,'key.consent'),held('eliasCoat',place('coatBox')),held('eliasKey',{kind:'object',id:'eliasCoat'})),[transfer('eliasKey',{kind:'object',id:'eliasCoat'},actor(P))],'保管記録を残して鍵を預かった。');
+interaction('give.eliasKey','元の鍵をエリアスへ手渡す',{who:E},held('eliasKey',actor(P)),[transfer('eliasKey',actor(P),actor(E))],'エリアスは自分の鍵を受け取った。部屋へ帰るところを見届けよう。');
+interaction('return.eliasKey','元の鍵を301号室の返却口へ届ける',{location:'a301'},all(held('eliasKey',actor(P)),fact('elias.entered')),[transfer('eliasKey',actor(P),place('a301'))],'元の鍵を本人の返却口へ。帰宅をやり直してもらう必要はない。');
+travel(E,'inn',ca(accepted('elias.wait'),cn(b('elias.hasKey')),cn(b('elias.entered'))),80);
+travel(DA,'inn',ca(b('front.agreed'),cn(b('dora.lent')),cn(b('elias.entered'))),80);
+action('dora.lend','本人へ予備鍵を渡し、返却口を確認する',[DA,E],all(at(DA,'inn'),at(E,'inn'),knows(DA,'front.agreed'),agreement('elias.wait',[P,E]),held('spareKey',actor(DA)),not(held('eliasKey',actor(E))),fact('elias.entered',false)),[transfer('spareKey',actor(DA),actor(E)),{op:'loan',loanId:'spareKey',status:'borrowed'},set('dora.lent')],18);
+rule(DA,'dora.lend',ca(here('inn'),b('front.agreed'),cn(b('dora.lent')),cn(b('elias.entered'))),100);
+travel(E,'a301',ca(b('elias.hasKey'),cn(b('elias.entered'))),100);
+auto(E,'elias.unlock','自分の鍵で扉を開ける','a301',ca(b('elias.hasKey'),cn(b('elias.unlocked'))),all(any(held('eliasKey',actor(E)),held('spareKey',actor(E))),fact('elias.unlocked',false)),[set('elias.unlocked')],12,90);
+auto(E,'elias.sit','上着掛けの隣の椅子に座り、帰宅を終える','a301',ca(b('elias.unlocked'),cn(b('elias.entered'))),all(fact('elias.unlocked'),fact('elias.entered',false)),[set('elias.entered'),emit('life.C009',[E],'a301')],30,80);
+local('elias.hasSpare','エリアスは予備鍵を持っている。','a301',false,held('spareKey',actor(E)));
+auto(E,'elias.returnSpare','借りた予備鍵を玄関の返却口へ戻す','a301',ca(b('elias.entered'),b('elias.hasSpare')),held('spareKey',actor(E)),[transfer('spareKey',actor(E),place('a301')),{op:'loan',loanId:'spareKey',status:'returned'}],8,75);
+auto(E,'elias.receiveKey','届いた元の鍵を返却口から受け取る','a301',ca(b('elias.entered'),b('elias.boxKey')),held('eliasKey',place('a301')),[transfer('eliasKey',place('a301'),actor(E))],8,85);
+travel(DA,'a301',ca(b('dora.lent'),cn(b('elias.entered'))),70);
+travel(DA,'doraRest',ca(b('elias.entered'),cn(b('dora.rested'))),90);
+auto(DA,'dora.rest','見回りを記録して椅子で休む','doraRest',ca(b('elias.entered'),cn(b('dora.rested'))),all(fact('elias.entered'),fact('dora.rested',false)),[set('dora.rested'),emit('life.C010',[DA],'doraRest')],35,80);
+action('mother.tea','母娘が同じ卓で茶を飲み、今日の話をする',[BE,AG],all(at(BE,'agnes'),at(AG,'agnes'),fact('beth.closed'),fact('key.stored'),fact('tea.done',false)),[set('tea.done'),emit('life.C011',[BE],'agnes'),emit('life.C025',[AG],'agnes')],55);
+rule(AG,'mother.tea',ca(here('agnes'),b('beth.atTable'),cn(b('tea.done'))),80);
+// Their search really follows connected paths. A communicated rendezvous stops it.
+function searchLoop(who:string,points:string[],stop:ChoiceGuard){
+ for(let index=0;index<points.length;index++){
+  const pid=`search.${who}.${index}`,next=`search.${who}.${(index+1)%points.length}`,location=points[index]!;
+  prop(pid,`${c.actors.find(a=>a.id===who)!.displayName}は次の捜索先を確かめている。`,index===0);
+  c.actors.find(a=>a.id===who)!.initialBeliefs.push({propositionId:pid,stance:index===0?'believe':'deny',reason:'自分の捜索順序'});
+  const selfObserve=(propositionId:string):ActionEffect=>({op:'observe',actorIds:[who],propositionId,locationId:location,sourceId:`own.search.${who}`});
+  auto(who,`search.pause.${who}.${index}`,'足元とポケットを調べ、次の場所を思い出す',location,ca(b(pid),cn(stop)),fact(pid),[set(pid,false),set(next),selfObserve(pid),selfObserve(next)],70,10);
+  travel(who,location,ca(b(pid),cn(stop)),10);
+ }
+}
+searchLoop(E,['a1','street','quay'],{op:'any',conditions:[accepted('elias.wait'),accepted('elias.key'),b('elias.hasKey'),b('elias.entered')]});
+searchLoop(DA,['inn','quay','street'],{op:'any',conditions:[b('front.agreed'),b('elias.entered')]});
+Object.assign(greetings,{
+ [E]:'「鍵が見つからない。表でドーラさんを探すと、今度は裏へ回ったって……」',
+ [DA]:'「エリアスさんの帰宅を確かめたら、私も夜回りを終えたいのです」',
+ [BE]:'「上着のポケットから鍵が出たの。どなたの品か、もう一度照合しなくちゃ」',
+ [AG]:'「ベスは忙しいでしょうね。でも今夜は、一緒に茶を飲めたら」',
+});

@@ -1,6 +1,7 @@
+import { extendTown } from './town-layout.ts';
 import type { Content } from '../core/types.ts';
 
-export type Building = 'A' | 'M' | 'B' | 'court';
+export type Building = string;
 export type BlockPlace = Content['places'][number] & {
   building: Building; floor: number; room: string; kind: 'room' | 'hall' | 'roof' | 'outside';
   interior: string; description: string;
@@ -42,11 +43,12 @@ export const blockPlaces: BlockPlace[] = [
  p('b302','B棟 302・居室前','B',3,'302',1100,250,['b3'],'bedroom','玄関脇に小さな受取棚がある。用件は本人が了承した方法で届ける。'),
  p('bRoof','B棟 屋上・共同の鉢置場','B',4,'屋上',1100,112,['b3'],'roofGarden','住民が育てる鉢の並ぶ屋上。大きな鉢と、小さく分けた株が置ける台がある。','roof'),
 ];
+extendTown(blockPlaces,buildingNames);
 export const blockPlaceById = new Map(blockPlaces.map(p=>[p.id,p]));
 export const floorLabel=(floor:number)=>floor===0?'屋外':floor===4?'屋上':`${floor}階`;
 export function travelTicks(from:string,to:string):number {
  const a=blockPlaceById.get(from)!,b=blockPlaceById.get(to)!;
  // Vertical edges exist only between a building's consecutive stair landings.
- if(a.building===b.building&&a.floor!==b.floor)return 16;
- return Math.max(5,Math.min(18,Math.round(Math.hypot(a.x-b.x,a.y-b.y)/22)));
+ if(a.building===b.building&&a.floor!==b.floor)return from.startsWith('lift')&&to.startsWith('lift')?24:16;
+ return Math.max(5,Math.min(a.kind==='outside'&&b.kind==='outside'?36:18,Math.round(Math.hypot(a.x-b.x,a.y-b.y)/22)));
 }

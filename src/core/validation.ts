@@ -148,7 +148,9 @@ export function validateContent(input: unknown): asserts input is Content {
     int(a.durationTicks, 'durationTicks', 1); strings(a.resources, 'action.resources'); a.resources.forEach(r => requireThat(allResources(c).includes(r), `未定義の資源 ${r}`));
     [a.startGuard, a.maintainGuard, a.finishGuard].forEach(g => guard(g, c));
     for (const effects of [a.onSuccess, a.onAbort]) { array(effects, 'effects'); effects.forEach(e => effect(e, c)); }
-    if (a.concurrent) requireThat(!a.movement && !a.recovery && a.resources.length === 0 && [...a.onSuccess,...a.onAbort].every(e => !['move','transfer','consume','loan'].includes(e.op)), '同時会話で物理作業を行えません');
+    // Conversation may hold someone's presence while leaving their hands/work available.
+    // Movement holds the same resource, so an NPC cannot walk away mid-utterance.
+    if (a.concurrent) requireThat(!a.movement && !a.recovery && a.resources.every(r => c.actors.some(actor => r === `presence:${actor.id}`)) && [...a.onSuccess,...a.onAbort].every(e => !['move','transfer','consume','loan'].includes(e.op)), '同時会話で物理作業を行えません');
     requireThat(a.designStatus === 'provisional', '試作値の出典を指定してください'); str(a.rationale, 'rationale'); str(a.presentationId, 'presentationId');
     if (a.recovery !== null) { record(a.recovery, 'recovery'); int(a.recovery.durationTicks, 'recovery.durationTicks', 1); strings(a.recovery.retainResources, 'retainResources'); array(a.recovery.onSuccess, 'recovery.effects'); a.recovery.onSuccess.forEach(e => effect(e, c)); a.recovery.retainResources.forEach(r => requireThat(actionResources(a).includes(r), '未確保の資源を復旧時に保持できません')); }
     if (a.movement !== null) { record(a.movement, 'movement'); ref(a.movement.actorId, c.actors, 'movement.actor'); requireThat(a.actorIds.includes(a.movement.actorId), '移動者が実行者に含まれていません'); ref(a.movement.from, c.places, 'movement.from'); ref(a.movement.to, c.places, 'movement.to'); requireThat(c.places.find(p => p.id === a.movement!.from)!.links.includes(a.movement.to), '移動経路が接続されていません'); requireThat(a.onSuccess.some(e => e.op === 'move' && e.actorId === a.movement!.actorId && e.to === a.movement!.to), '移動終了効果が必要です'); }

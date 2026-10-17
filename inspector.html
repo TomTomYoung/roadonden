@@ -404,7 +404,7 @@
         array(effects, "effects");
         effects.forEach((e) => effect(e, c2));
       }
-      if (a.concurrent) requireThat(!a.movement && !a.recovery && a.resources.length === 0 && [...a.onSuccess, ...a.onAbort].every((e) => !["move", "transfer", "consume", "loan"].includes(e.op)), "\u540C\u6642\u4F1A\u8A71\u3067\u7269\u7406\u4F5C\u696D\u3092\u884C\u3048\u307E\u305B\u3093");
+      if (a.concurrent) requireThat(!a.movement && !a.recovery && a.resources.every((r) => c2.actors.some((actor2) => r === `presence:${actor2.id}`)) && [...a.onSuccess, ...a.onAbort].every((e) => !["move", "transfer", "consume", "loan"].includes(e.op)), "\u540C\u6642\u4F1A\u8A71\u3067\u7269\u7406\u4F5C\u696D\u3092\u884C\u3048\u307E\u305B\u3093");
       requireThat(a.designStatus === "provisional", "\u8A66\u4F5C\u5024\u306E\u51FA\u5178\u3092\u6307\u5B9A\u3057\u3066\u304F\u3060\u3055\u3044");
       str(a.rationale, "rationale");
       str(a.presentationId, "presentationId");
@@ -733,9 +733,15 @@
   var Simulation = class {
     content;
     state;
+    definitions;
+    orderedActors;
+    orderedRules;
     constructor(input, seed = 1) {
       validateContent(input);
       this.content = freeze(clone(input));
+      this.definitions = new Map(this.content.actions.map((a) => [a.id, a]));
+      this.orderedActors = [...this.content.actors].sort((a, b) => a.id.localeCompare(b.id, "en"));
+      this.orderedRules = new Map(this.content.actors.map((a) => [a.id, [...a.rules].sort((a2, b) => b.priority - a2.priority || a2.id.localeCompare(b.id, "en"))]));
       requireThat(Number.isSafeInteger(seed) && seed >= 0, "\u4E71\u6570\u30B7\u30FC\u30C9\u304C\u4E0D\u6B63\u3067\u3059");
       this.state = {
         tick: 0,
@@ -802,7 +808,7 @@
       for (let i = 0; i < count; i++) this.update();
     }
     definition(id) {
-      return this.content.actions.find((a) => a.id === id);
+      return this.definitions.get(id);
     }
     event(type, actorIds, locationId, payload = {}, causalEventIds = [], subjectIds = []) {
       const e = { id: this.state.nextEventId++, tick: this.state.tick, type, actorIds: [...actorIds], subjectIds: [...subjectIds], locationId, payload, causalEventIds: [...causalEventIds] };
@@ -1164,10 +1170,10 @@
         }
         const startSnapshot = clone(this.state);
         let order = this.state.nextCommandId;
-        for (const d of [...this.content.actors].sort((a, b) => a.id.localeCompare(b.id, "en"))) {
+        for (const d of this.orderedActors) {
           const self = startSnapshot.actors[d.id];
           const busy = startSnapshot.actions.some((a) => !this.definition(a.definitionId).concurrent && this.definition(a.definitionId).actorIds.includes(d.id));
-          const r = [...d.rules].sort((a, b) => b.priority - a.priority || a.id.localeCompare(b.id, "en")).find((r2) => ((r2.mode ?? "problem") === self.routineMode || r2.mode === "always") && (!busy || this.definition(r2.actionId).concurrent) && !startSnapshot.actions.some((a) => a.definitionId === r2.actionId) && (self.retryAt[r2.id] ?? 0) <= this.state.tick && choose(r2.choiceGuard, self));
+          const r = this.orderedRules.get(d.id).find((r2) => ((r2.mode ?? "problem") === self.routineMode || r2.mode === "always") && (!busy || this.definition(r2.actionId).concurrent) && !startSnapshot.actions.some((a) => a.definitionId === r2.actionId) && (self.retryAt[r2.id] ?? 0) <= this.state.tick && choose(r2.choiceGuard, self));
           if (r) proposals.push({ actorId: d.id, actionId: r.actionId, order: order++, ruleId: r.id, retryTicks: r.retryTicks });
         }
         this.advance(cancellations);
