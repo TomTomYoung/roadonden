@@ -1,5 +1,5 @@
 {
-  "version": "town-pixel-0.4.0",
+  "version": "town-pixel-0.5.0",
   "notes": "Integer-grid original pixel art; source SVGs in public/assets are preserved. 100 resident sheets do not imply 100 implemented scenarios.",
   "assets": [
     {
@@ -1042,12 +1042,12 @@
       "pixelScale": 4,
       "usage": "人物。個別の配色・髪・服装と6姿勢。シナリオ実装人数とは別。",
       "states": [
-        "idle",
-        "walk-a",
-        "walk-b",
-        "work",
-        "sit",
-        "dance"
+        "cry",
+        "unsettled",
+        "quiet",
+        "held",
+        "asleep",
+        "rest"
       ],
       "source": "scripts/make-town-assets.mjs",
       "license": "Project original"
@@ -3024,6 +3024,141 @@
       "pixelHeight": 16,
       "pixelScale": 4,
       "usage": "ドット絵の小道具: flower",
+      "states": [
+        "static"
+      ],
+      "source": "scripts/make-town-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.pillow",
+      "file": "props/pillow.svg",
+      "width": 64,
+      "height": 64,
+      "pixelWidth": 16,
+      "pixelHeight": 16,
+      "pixelScale": 4,
+      "usage": "ドット絵の小道具: pillow",
+      "states": [
+        "static"
+      ],
+      "source": "scripts/make-town-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.cushion",
+      "file": "props/cushion.svg",
+      "width": 64,
+      "height": 64,
+      "pixelWidth": 16,
+      "pixelHeight": 16,
+      "pixelScale": 4,
+      "usage": "ドット絵の小道具: cushion",
+      "states": [
+        "static"
+      ],
+      "source": "scripts/make-town-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.letter",
+      "file": "props/letter.svg",
+      "width": 64,
+      "height": 64,
+      "pixelWidth": 16,
+      "pixelHeight": 16,
+      "pixelScale": 4,
+      "usage": "ドット絵の小道具: letter",
+      "states": [
+        "static"
+      ],
+      "source": "scripts/make-town-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.ladder",
+      "file": "props/ladder.svg",
+      "width": 64,
+      "height": 64,
+      "pixelWidth": 16,
+      "pixelHeight": 16,
+      "pixelScale": 4,
+      "usage": "ドット絵の小道具: ladder",
+      "states": [
+        "static"
+      ],
+      "source": "scripts/make-town-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.rope",
+      "file": "props/rope.svg",
+      "width": 64,
+      "height": 64,
+      "pixelWidth": 16,
+      "pixelHeight": 16,
+      "pixelScale": 4,
+      "usage": "ドット絵の小道具: rope",
+      "states": [
+        "static"
+      ],
+      "source": "scripts/make-town-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.toolbag",
+      "file": "props/toolbag.svg",
+      "width": 64,
+      "height": 64,
+      "pixelWidth": 16,
+      "pixelHeight": 16,
+      "pixelScale": 4,
+      "usage": "ドット絵の小道具: toolbag",
+      "states": [
+        "static"
+      ],
+      "source": "scripts/make-town-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.cradle",
+      "file": "props/cradle.svg",
+      "width": 64,
+      "height": 64,
+      "pixelWidth": 16,
+      "pixelHeight": 16,
+      "pixelScale": 4,
+      "usage": "ドット絵の小道具: cradle",
+      "states": [
+        "static"
+      ],
+      "source": "scripts/make-town-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.rug",
+      "file": "props/rug.svg",
+      "width": 64,
+      "height": 64,
+      "pixelWidth": 16,
+      "pixelHeight": 16,
+      "pixelScale": 4,
+      "usage": "ドット絵の小道具: rug",
+      "states": [
+        "static"
+      ],
+      "source": "scripts/make-town-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.bell",
+      "file": "props/bell.svg",
+      "width": 64,
+      "height": 64,
+      "pixelWidth": 16,
+      "pixelHeight": 16,
+      "pixelScale": 4,
+      "usage": "ドット絵の小道具: bell",
       "states": [
         "static"
       ],

@@ -166,6 +166,15 @@ import asset164 from '../../public/pixel-assets/props/bicycle.svg';
 import asset165 from '../../public/pixel-assets/props/tree.svg';
 import asset166 from '../../public/pixel-assets/props/lamp.svg';
 import asset167 from '../../public/pixel-assets/props/flower.svg';
+import asset168 from '../../public/pixel-assets/props/pillow.svg';
+import asset169 from '../../public/pixel-assets/props/cushion.svg';
+import asset170 from '../../public/pixel-assets/props/letter.svg';
+import asset171 from '../../public/pixel-assets/props/ladder.svg';
+import asset172 from '../../public/pixel-assets/props/rope.svg';
+import asset173 from '../../public/pixel-assets/props/toolbag.svg';
+import asset174 from '../../public/pixel-assets/props/cradle.svg';
+import asset175 from '../../public/pixel-assets/props/rug.svg';
+import asset176 from '../../public/pixel-assets/props/bell.svg';
 
 export const assets:Record<string,{src:string;width:number;height:number}> = {
   'buildings.apartment-a': {src:asset0,width:350,height:630},
@@ -336,4 +345,13 @@ export const assets:Record<string,{src:string;width:number;height:number}> = {
   'props.tree': {src:asset165,width:64,height:64},
   'props.lamp': {src:asset166,width:64,height:64},
   'props.flower': {src:asset167,width:64,height:64},
+  'props.pillow': {src:asset168,width:64,height:64},
+  'props.cushion': {src:asset169,width:64,height:64},
+  'props.letter': {src:asset170,width:64,height:64},
+  'props.ladder': {src:asset171,width:64,height:64},
+  'props.rope': {src:asset172,width:64,height:64},
+  'props.toolbag': {src:asset173,width:64,height:64},
+  'props.cradle': {src:asset174,width:64,height:64},
+  'props.rug': {src:asset175,width:64,height:64},
+  'props.bell': {src:asset176,width:64,height:64},
 };

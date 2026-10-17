@@ -62,10 +62,14 @@ for(const [index,id]of ['player',...Array.from({length:100},(_,i)=>`C${String(i+
  if(frame===3)p.rect(x+3,by+4,3,2,skin).rect(x+11,by+4,3,2,skin).rect(x+6,by+4,5,3,palette.woodLight);else if(frame===5)p.line(x+3,by+2,x+1,hy,skin).line(x+13,by+2,x+15,hy-1,skin);else p.rect(x+3,by+2,2,4,skin).rect(x+13,by+2,2,4,skin);
  if(frame===4)p.rect(x+4,17,4,2,'#465764').rect(x+10,17,4,2,'#465764');if(id==='player')p.rect(x+2,by+3,3,5,palette.gold);
  }
- await save('residents',id,p,'人物。個別の配色・髪・服装と6姿勢。シナリオ実装人数とは別。',['idle','walk-a','walk-b','work','sit','dance']);
+ if(id==='C020'){
+  p.rows=Array.from({length:20},()=>Array(96).fill(null));
+  for(let f=0;f<6;f++){const x=f*16;p.rect(x+3,11,10,6,palette.cream).rect(x+6,10,6,7,palette.teal).rect(x+8,12,5,3,palette.light).rect(x+2,10,5,5,skin).rect(x+3,9,3,1,hair).rect(x+4,12,f===4?2:1,1,palette.dark);if(f<3)p.dot(x+4,14,palette.red);p.rect(x+11,15,3,1,palette.cream);}
+ }
+ await save('residents',id,p,'人物。個別の配色・髪・服装と6姿勢。シナリオ実装人数とは別。',id==='C020'?['cry','unsettled','quiet','held','asleep','rest']:['idle','walk-a','walk-b','work','sit','dance']);
 }
 p=new Pixels(64,12);for(let f=0;f<4;f++){const x=f*16;p.rect(x+3,6,9,4,'#b18d64').rect(x+10,4,4,4,'#caab7b').rect(x+10,3,2,3,'#87694f').dot(x+13,5,palette.dark).rect(x+4,10,2,2,'#87694f').rect(x+10,10,2,2,'#87694f').line(x+3,7,x+1,f%2?3:5,'#87694f');if(f===3)p.rect(x+12,8,4,2,palette.dark);}await save('residents','dog',p,'犬の4姿勢',['idle','walk','look','carry-shoe']);
-const props=['cargo','stand','flag','gate-open','gate-closed','toy','meal','curtain-closed','shutter-closed','return-box','loanShoes','shoes','pot','package','puppet','key','coat','tea','chair','mail','bicycle','tree','lamp','flower'];
+const props=['cargo','stand','flag','gate-open','gate-closed','toy','meal','curtain-closed','shutter-closed','return-box','loanShoes','shoes','pot','package','puppet','key','coat','tea','chair','mail','bicycle','tree','lamp','flower','pillow','cushion','letter','ladder','rope','toolbag','cradle','rug','bell'];
 for(const id of props){const p=new Pixels(16,16);
  if(['cargo','package','return-box','mail'].includes(id)){p.box(2,5,12,10,palette.wood,palette.woodLight).rect(7,6,2,8,palette.cream).rect(3,9,10,1,palette.cream);if(id==='return-box')p.rect(4,7,8,2,palette.dark);}
  else if(id==='stand'||id==='chair'){p.rect(2,8,12,3,palette.woodLight).rect(3,11,2,5,palette.wood).rect(11,11,2,5,palette.wood);if(id==='chair')p.rect(3,3,10,4,palette.wood);}
@@ -80,13 +84,21 @@ for(const id of props){const p=new Pixels(16,16);
  else if(id==='puppet'){p.rect(7,3,3,3,palette.woodLight).rect(6,6,5,5,palette.red).rect(3,7,11,1,palette.red).rect(7,11,1,5,palette.wood);}
  else if(id==='key')p.box(2,5,5,5,palette.gold,palette.dark).rect(6,7,8,2,palette.gold).rect(11,9,1,2,palette.gold).rect(13,9,1,2,palette.gold);
  else if(id==='coat')p.rect(4,3,8,12,palette.blue).rect(2,4,2,7,palette.blue).rect(12,4,2,7,palette.blue).rect(7,4,1,10,palette.dark);
+ else if(id==='pillow'||id==='cushion'){p.box(1,7,14,7,id==='pillow'?palette.teal:palette.wood,id==='pillow'?palette.light:palette.gold).rect(3,8,10,1,palette.cream);for(let x=3;x<8;x+=2)p.dot(x,12,id==='pillow'?palette.blue:palette.red);}
+ else if(id==='letter')p.box(1,5,14,9,palette.wood,palette.light).line(2,6,8,10,palette.woodLight).line(8,10,14,6,palette.woodLight).rect(11,6,2,2,palette.pink);
+ else if(id==='ladder'){p.rect(3,0,2,16,palette.wood).rect(11,0,2,16,palette.wood);for(let y=2;y<16;y+=4)p.rect(5,y,6,1,palette.woodLight);}
+ else if(id==='rope'){for(let x=2;x<14;x+=4)p.box(x,7,4,5,palette.woodLight,palette.dark);p.rect(1,12,14,1,palette.cream);}
+ else if(id==='toolbag')p.box(1,7,14,8,palette.dark,palette.teal).box(5,4,6,4,palette.dark,palette.cream).rect(3,5,1,6,palette.wood).rect(11,2,2,8,palette.woodLight).rect(10,2,4,2,palette.dark);
+ else if(id==='cradle'){p.rect(1,6,14,7,palette.wood).rect(2,7,12,4,palette.light);for(let x=2;x<15;x+=3)p.rect(x,4,1,9,palette.woodLight);p.rect(1,14,14,1,palette.wood).rect(2,13,2,1,palette.wood).rect(12,13,2,1,palette.wood);}
+ else if(id==='rug'){p.rect(0,7,16,8,palette.red).rect(1,8,14,1,palette.cream).rect(1,13,14,1,palette.cream);for(let x=2;x<15;x+=3)p.rect(x,10,1,2,palette.gold);}
+ else if(id==='bell')p.rect(5,3,6,6,palette.gold).rect(3,8,10,2,palette.gold).rect(7,10,2,2,palette.wood).rect(7,0,1,3,palette.wood).rect(7,12,1,4,palette.cream);
  else if(id==='tree')p.rect(7,9,2,7,palette.wood).rect(3,3,10,7,palette.green).rect(5,1,6,3,palette.leaf).rect(1,5,14,3,palette.green);
  else if(id==='lamp')p.rect(7,3,1,13,palette.dark).rect(4,2,7,2,palette.dark).rect(5,0,5,2,palette.gold);
  else if(id==='flower')p.rect(3,10,10,6,palette.wood).rect(5,6,1,4,palette.green).rect(10,5,1,5,palette.green).rect(4,4,3,3,palette.pink).rect(9,3,3,3,palette.gold);
  else if(id==='bicycle')p.box(0,10,6,5,palette.dark,'#b9c8ac').box(10,10,6,5,palette.dark,'#b9c8ac').line(3,12,7,7,palette.red).line(7,7,13,12,palette.red).line(3,12,13,12,palette.red).rect(10,4,1,5,palette.dark).rect(9,4,4,1,palette.dark);
  await save('props',id,p,`ドット絵の小道具: ${id}`);
 }
-await writeFile(`${root}/manifest.json`,JSON.stringify({version:'town-pixel-0.4.0',notes:'Integer-grid original pixel art; source SVGs in public/assets are preserved. 100 resident sheets do not imply 100 implemented scenarios.',assets:entries},null,2)+'\n');
+await writeFile(`${root}/manifest.json`,JSON.stringify({version:'town-pixel-0.5.0',notes:'Integer-grid original pixel art; source SVGs in public/assets are preserved. 100 resident sheets do not imply 100 implemented scenarios.',assets:entries},null,2)+'\n');
 let imports='',mapping='';for(const [i,e]of entries.entries()){imports+=`import asset${i} from '../../${root}/${e.file}';\n`;mapping+=`  '${e.id}': {src:asset${i},width:${e.width},height:${e.height}},\n`;}
 await writeFile('src/game/assets.ts',imports+`\nexport const assets:Record<string,{src:string;width:number;height:number}> = {\n${mapping}};\n`);
 console.log(`Generated ${entries.length} pixel assets.`);

@@ -1,4 +1,7 @@
 import { blockPlaces, travelTicks } from './block.ts';
+import { registerRoomsAndSleep, installRoomsAndSleep, FINN, SAM, OSCAR } from './rooms-and-sleep.ts';
+import { check } from '../core/conditions.ts';
+import type { WorldState } from '../core/types.ts';
 import type { ActionDefinition, ActionEffect, ChoiceGuard, Condition, Content, Custody, ResidentDefinition } from '../core/types.ts';
 
 // Original character IDs and motives are retained. Times, geometry and dialogue are provisional.
@@ -25,7 +28,7 @@ const accepted = (agreementId: string): ChoiceGuard => ({ op: 'accepted', agreem
 const agreement = (agreementId: string, actorIds: string[]): Condition => ({ op: 'agreement', agreementId, version: 1, actorIds });
 
 export const dinnerContent: Content = {
-  version: 'town-0.4.0', namespace: 'redesign-v1', tickMs: 100, ticksPerDay: 14400,
+  version: 'town-0.5.0', namespace: 'redesign-v1', tickMs: 100, ticksPerDay: 14400,
   places: blockPlaces, propositions: [], actors: [], objects: [], resources: ['table:home','work:quay'], services: ['home.receipt','market.shelf','shoe.box'], clues: [], loans: [], agreements: [], actions: [],
 };
 const c = dinnerContent;
@@ -157,21 +160,25 @@ c.actors.find(a=>a.id===BE)!.postGoalContract.serviceIds.push('pawn.box');
 c.actors.find(a=>a.id===E)!.postGoalContract.serviceIds.push('elias.keyReturn');
 c.loans!.push({id:'spareKey',objectId:'spareKey',lenderId:DA,borrowerId:E,returnLocationId:'a301',policy:'入室後、A棟301の施錠された返却口へ。管理当番を休息から呼び戻さない。'});
 
+registerRoomsAndSleep({person,object,c,actor,place});
 c.resources.push(...c.actors.map(a=>`presence:${a.id}`));
 // Walks reserve the moving person. No teleporting, no other actor controlled by the UI.
 export function walkId(who:string,from:string,to:string) { return `walk.${who}.${from}.${to}`; }
-for(const who of c.actors.map(a=>a.id)) for(const from of c.places) for(const toId of from.links) {
+for(const who of c.actors.map(a=>a.id).filter(id=>id!==FINN)) for(const from of c.places) for(const toId of from.links) {
   const to=c.places.find(p=>p.id===toId)!;
   const gate = (from.id==='yard'&&toId==='garden')||(from.id==='garden'&&toId==='yard');
-  const guard=all(at(who,from.id),who===P?fact('quay.playerHolding',false):yes,who===O?fact('quay.owenHolding',false):yes,gate?any(fact('garden.open'),fact('dog.settled')):yes);
+  const guard=all(at(who,from.id),who===P?fact('quay.playerHolding',false):yes,who===O?fact('quay.owenHolding',false):yes,gate?any(fact('garden.open'),fact('dog.settled')):yes,
+    [from.id,toId].includes('scaffold')&&[from.id,toId].includes('iris')?fact('iris.returnOpen'):yes,
+    who===SAM&&from.id==='scaffold'?fact(toId==='iris'?'iris.returnOpen':'sam.externalReady'):yes,
+    toId==='nell'&&(who===P||who===OSCAR)?any(fact('bell.fixed'),agreement('bell.entry',[P,'C013',OSCAR])):yes);
   action(walkId(who,from.id,toId),`${to.name}へ歩く`,[who],guard,[{op:'move',actorId:who,to:toId}],travelTicks(from.id,toId),{movement:{actorId:who,from:from.id,to:toId},resources:[`presence:${who}`]});
 }
 const placeIndex=new Map(c.places.map(p=>[p.id,p]));
 const pathsTo=new Map<string,Map<string,string>>();
-export function route(from:string,to:string):string[] {
+export function route(from:string,to:string,passable?:(from:string,to:string)=>boolean):string[] {
  if(!placeIndex.has(from)||!placeIndex.has(to))return [];
- let next=pathsTo.get(to);
- if(!next){next=new Map();const queue=[to],seen=new Set([to]);for(let i=0;i<queue.length;i++)for(const id of placeIndex.get(queue[i]!)!.links)if(!seen.has(id)){seen.add(id);next.set(id,queue[i]!);queue.push(id);}pathsTo.set(to,next);}
+ let next=passable?undefined:pathsTo.get(to);
+ if(!next){next=new Map();const queue=[to],seen=new Set([to]);for(let i=0;i<queue.length;i++)for(const id of placeIndex.get(queue[i]!)!.links)if(!seen.has(id)&&(!passable||passable(id,queue[i]!))){seen.add(id);next.set(id,queue[i]!);queue.push(id);}if(!passable)pathsTo.set(to,next);}
  const result:string[]=[];let at=from;while(at!==to){const hop=next.get(at);if(!hop)return [];result.push(hop);at=hop;}return result;
 }
 function travel(who:string,to:string,guard:ChoiceGuard,priority=20) { for(const from of c.places) { const next=route(from.id,to)[0];if(next)rule(who,walkId(who,from.id,next),ca(here(from.id),guard),priority); } }
@@ -398,3 +405,12 @@ Object.assign(greetings,{
  [BE]:'「上着のポケットから鍵が出たの。どなたの品か、もう一度照合しなくちゃ」',
  [AG]:'「ベスは忙しいでしょうね。でも今夜は、一緒に茶を飲めたら」',
 });
+
+// Chapter modules use the same evidence, ownership and path machinery as dinner.
+export const chapterTools={person,object,c,P,yes,all,any,not,fact,at,held,actor,place,set,transfer,emit,together,knows,b,ca,cn,here,accepted,agreement,prop,clue,local,action,rule,auto,interaction,talk,tell,propose,travel,searchLoop,greetings};
+installRoomsAndSleep(chapterTools);
+const movementDefinitions=new Map(c.actions.filter(a=>a.movement?.actorId===P).map(a=>[a.id,a]));
+// Route preview respects today's doors. Every edge is checked again when walked.
+export function playerRoute(from:string,to:string,state:WorldState){
+ return route(from,to,(a,b)=>check(movementDefinitions.get(walkId(P,a,b))!.startGuard,{...state,actors:{...state.actors,[P]:{...state.actors[P]!,locationId:a}}}));
+}

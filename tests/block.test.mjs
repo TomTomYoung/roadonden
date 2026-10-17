@@ -9,7 +9,7 @@ import {dinnerContent as content,route,walkId,P,N,D} from '../src/content/dinner
 function walk(s,to){for(const next of route(s.snapshot().actors[P].locationId,to)){const id=walkId(P,s.snapshot().actors[P].locationId,next),a=content.actions.find(a=>a.id===id);s.enqueue({kind:'start',actorId:P,actionId:id});s.step(a.durationTicks+2);}s.step(3);}
 test('every room is reachable through a real entrance; upper floors connect only through adjacent landings',()=>{
  assert.equal(blockPlaces.length,327);
- for(const p of blockPlaces){assert.ok(p.id==='inn'||route('inn',p.id).length>0,p.id);for(const id of p.links){const q=blockPlaceById.get(id);assert.ok(q.links.includes(p.id));if(p.building===q.building&&p.floor!==q.floor&&!([p.id,q.id].every(id=>id.startsWith('lift')))){assert.equal(Math.abs(p.floor-q.floor),1);assert.ok(['hall','roof'].includes(p.kind)&&['hall','roof'].includes(q.kind));}if(p.building!==q.building)assert.ok((p.kind==='outside'&&(q.floor===1||q.kind==='outside'))||(q.kind==='outside'&&(p.floor===1||p.kind==='outside')));}}
+ for(const p of blockPlaces){assert.ok(p.id==='inn'||route('inn',p.id).length>0,p.id);for(const id of p.links){const q=blockPlaceById.get(id);assert.ok(q.links.includes(p.id));if(p.building===q.building&&p.floor!==q.floor&&!([p.id,q.id].every(id=>id.startsWith('lift')))&&!([p.id,q.id].includes('scaffold')&&[p.id,q.id].includes('dryCloth'))){assert.equal(Math.abs(p.floor-q.floor),1);assert.ok(['hall','roof'].includes(p.kind)&&['hall','roof'].includes(q.kind));}if(p.building!==q.building)assert.ok((p.kind==='outside'&&(q.floor===1||q.kind==='outside'))||(q.kind==='outside'&&(p.floor===1||p.kind==='outside')));}}
  assert.deepEqual(route('home','market'),['a2','a1','street','m1','market']);
  assert.deepEqual(route('shoe','upstairs'),['m1','m2','upstairs']);
  assert.deepEqual(route('home','ruth'),['a2','ruth']);
@@ -35,11 +35,13 @@ test('old block and dinner saves keep separate slots and fail import without rep
  const s=new Simulation(content),old=s.save();old.contentVersion='dinner-0.2.0';
  data.set('roadonden:dinner:v2:manual:1',JSON.stringify(old));
  const oldBlock={...old,contentVersion:'block-0.3.0'};data.set('roadonden:block:v3:manual:1',JSON.stringify(oldBlock));
- const saves=new Saves(store,'roadonden:town:v4:');saves.write(s,1);const before=s.save();
+ const oldTown={...old,contentVersion:'town-0.4.0'};data.set('roadonden:town:v4:manual:1',JSON.stringify(oldTown));
+ const saves=new Saves(store,'roadonden:town:v5:');saves.write(s,1);const before=s.save();
+ assert.throws(()=>saves.import(s,JSON.stringify(oldTown)));assert.equal(JSON.parse(data.get('roadonden:town:v4:manual:1')).contentVersion,'town-0.4.0');assert.match(readFileSync('legacy/town-0.4.0.html','utf8'),/roadonden:town:v4:/);
  assert.throws(()=>saves.import(s,JSON.stringify(oldBlock)));assert.throws(()=>saves.import(s,JSON.stringify(old)));assert.deepEqual(s.save(),before);
  assert.equal(JSON.parse(data.get('roadonden:dinner:v2:manual:1')).contentVersion,'dinner-0.2.0');
  assert.equal(JSON.parse(data.get('roadonden:block:v3:manual:1')).contentVersion,'block-0.3.0');
- assert.equal(JSON.parse(data.get('roadonden:town:v4:manual:1')).contentVersion,'town-0.4.0');
+ assert.equal(JSON.parse(data.get('roadonden:town:v5:manual:1')).contentVersion,'town-0.5.0');
  assert.match(readFileSync('legacy/block-0.3.0.html','utf8'),/roadonden:block:v3:/);
  assert.match(readFileSync('legacy/dinner-0.2.0.html','utf8'),/roadonden:dinner:v2:/);
 });

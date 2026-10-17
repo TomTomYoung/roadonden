@@ -81,6 +81,12 @@ export function extendTown(places:BlockPlace[],names:Record<string,string>){
  link('back.1','pawn');link('back.1','bakery');link('back.2','freightLow');link('back.3','theatreDoor');link('back.4','postDoor');link('back.4','postSide');link('back.5','shuttle');
  // The passenger lift exists independently of the goods lift and is usable from day one.
  link('liftGround','liftUpper');
+ // The scaffold has a resident-controlled window and a separate outside descent.
+ const scaffold=places.find(p=>p.id==='scaffold')!,hall=places.find(p=>p.id==='H.hall3')!;
+ scaffold.links=scaffold.links.filter(id=>id!==hall.id);hall.links=hall.links.filter(id=>id!==scaffold.id);
+ link('scaffold','iris');link('scaffold','dryCloth');
+ scaffold.description='H棟3階の外壁足場。居室側の窓はアイリスの了承が必要。地上の予備布棚へ降りる外梯子は、道具を持って降りる前に固定する。';
+ places.find(p=>p.id==='nellWindow')!.description='H棟201の台所へ声が届く側窓。戸の呼鈴とは別に、住人へ用件を伝えられる。';
  byId.get('a301')!.name='A棟 301・エリアスの部屋';
  byId.get('a301')!.description='エリアスの住戸。入室の用件は本人と確認する。玄関には鍵の返却口があり、椅子と上着掛けが見える。';
  byId.get('street')!.description='最初の三棟が囲む中庭。北の裏通りから長い商店街へ出られる。南にはこもれび荘とあかり荘がある。';

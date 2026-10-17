@@ -137,6 +137,7 @@ export function validateContent(input: unknown): asserts input is Content {
     array(a.rules, 'rules'); unique(a.rules.map(r => r.id), 'rules');
     a.rules.forEach(r => { str(r.id, 'rule.id'); int(r.priority, 'priority'); int(r.retryTicks, 'retryTicks', 1); requireThat(r.mode === undefined || ['problem','ordinary','always'].includes(r.mode), '規則の生活モードが不正です'); ref(r.actionId, c.actions, 'rule.action'); requireThat(c.actions.find(x => x.id === r.actionId)!.actorIds.includes(a.id), '他人だけの行為を規則で選択できません'); guard(r.choiceGuard, c, true); });
     strings(a.goalEvidence, 'goalEvidence'); requireThat(a.goalEvidence.every(t => !t.startsWith('engine.')), '内部イベントを生活の達成に使えません');
+    if (a.completionObservation) guard(a.completionObservation,c);
     record(a.postGoalContract, 'postGoalContract'); int(a.postGoalContract.version, 'postGoalContract.version', 1); strings(a.postGoalContract.serviceIds, 'postGoalContract.serviceIds'); a.postGoalContract.serviceIds.forEach(id => requireThat(c.services.includes(id), '未定義の達成後サービス'));
   }
   for (const o of c.objects) { str(o.name, 'object.name'); ref(o.ownerId, c.actors, 'object.owner'); custody(o.custody, c); int(o.quantity, 'quantity'); str(o.unit, 'unit'); bool(o.portable, 'portable'); bool(o.consumable, 'consumable'); }
@@ -163,7 +164,7 @@ export function validateCommand(x: unknown, c: Content): asserts x is Command {
     case 'cancel': int(x.instanceId, 'instanceId', 1); break;
     case 'inspect': ref(x.clueId, c.clues, 'command.clue'); break;
     case 'say': ref(x.recipientId, c.actors, 'recipient'); ref(x.propositionId, c.propositions, 'proposition'); break;
-    case 'askCompletion': ref(x.recipientId, c.actors, 'recipient'); break;
+    case 'askCompletion': case 'observeCompletion': ref(x.recipientId, c.actors, 'recipient'); break;
     case 'offer': ref(x.recipientId, c.actors, 'recipient'); ref(x.agreementId, c.agreements, 'agreement'); break;
     case 'accept': ref(x.agreementId, c.agreements, 'agreement'); int(x.version, 'version', 1); break;
     default: throw new Error(`未知のコマンド: ${String(x.kind)}`);

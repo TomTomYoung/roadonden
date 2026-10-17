@@ -4,6 +4,11 @@ import { dinnerContent as content, P, D, B } from '../content/dinner.ts';
 import { WORLD_WIDTH, WORLD_HEIGHT, districts, townBuildings } from '../content/town-layout.ts';
 import type { WorldState } from '../core/types.ts';
 
+function objectArt(id:string){
+ const special:Record<string,string>={hesterPillow:'pillow',hesterCoat:'coat',stageCushion:'cushion',nellLetter:'letter',samTools:'toolbag',samLadder:'ladder',cradle:'cradle',irisClothes:'coat',eliasCoat:'coat'};
+ const lower=id.toLowerCase();return special[id]??(lower.includes('puppet')?'puppet':lower.includes('loan')?'loanShoes':lower.includes('pot')?'pot':lower.includes('package')?'package':lower.includes('shoes')?'shoes':lower.includes('key')?'key':undefined);
+}
+
 export class BlockRenderer {
  private ctx:CanvasRenderingContext2D;
  private images=new Map<string,HTMLImageElement>();
@@ -92,13 +97,20 @@ export class BlockRenderer {
   if(s.facts['toy.ready'])prop('toy','garden',30,-30,.4);
   if(s.facts['meal.ready'])prop('meal','home',37,-22,.5);
   if(s.facts['tea.done'])prop('tea','agnes',24,-20,.5);
+  if(s.facts['bee.tea'])prop('tea','vera',42,-24,.45);
+  prop('rug','vera',s.facts['cradle.level']?-40:2,10,.75);
+  prop('bell','H.hall2',-14,-44,.5);
+  if(s.facts['bell.fixed'])prop('rope','H.hall2',-14,-25,.45);
+  prop('ladder','scaffold',48,4,.75);if(s.facts['sam.externalReady'])prop('rope','scaffold',38,-40,.5);
+  if(s.facts['iris.returnOpen'])prop('flag','iris',-48,-52,.45);
+  if(s.facts['hester.coatReady']&&!s.facts['hester.pillowHere'])prop('cushion','hester',-27,-48,.5);
   if(s.facts['celia.curtain'])prop('curtain-closed','celia',-39,-70,.65);
   if(s.facts['mabel.locked']||s.facts['mabel.closed'])prop('shutter-closed','market',0,-22,1.1);
   if(s.facts['leo.closed'])prop('shutter-closed','shoe',0,-22,1.1);
   prop('return-box','shoe',52,10,.55);
   for(const [id,obj]of Object.entries(s.objects)){
-   const asset=id.includes('loan')?'loanShoes':id.toLowerCase().includes('pot')?'pot':id.includes('package')?'package':id.includes('shoes')?'shoes':id.includes('Key')?'key':id==='eliasCoat'?'coat':undefined;
-   if(asset&&obj.quantity>0&&obj.custody.kind==='place'&&blockPlaceById.has(obj.custody.id))prop(asset,obj.custody.id,-35,-22,.48);
+   const asset=objectArt(id);
+   if(asset&&obj.quantity>0&&obj.custody.kind==='place'&&blockPlaceById.has(obj.custody.id))prop(asset,obj.custody.id,id==='cradle'?12:-35,id==='cradle'?8:-22,id==='cradle'?.85:.48);
    // Custody remains simulation data; sprites never decide whether an object was delivered.
   }
   for(const actor of content.actors){
@@ -110,12 +122,19 @@ export class BlockRenderer {
    if(working?.definitionId.includes('dance')||(actor.id==='C008'&&s.facts['leo.danced']&&s.actors[actor.id]!.locationId==='upstairs'))frame=5;
    if((['C001','C002','C003'].includes(actor.id)&&s.completions[actor.id]&&s.actors[actor.id]!.locationId==='home')||(actor.id==='C007'&&s.facts['celia.ate']))frame=4;
    if(['C009','C010','C011','C025'].includes(actor.id)&&s.completions[actor.id]&&!pos.moving)frame=4;
+   if(actor.id==='C021'&&s.facts['bee.rest'])frame=4;
+   if(actor.id==='C013'&&s.facts['nell.sewing']&&!pos.moving)frame=3;
    if(!pos.moving&&held&&!working&&frame===0)frame=3;
    if(actor.id===D)frame=held?3:pos.moving||s.facts['ben.chasing']?Math.floor((s.tick+subtick)/3)%2:2;
+   if(actor.id==='C020'){
+    frame=s.facts['finn.sleeping']?4:s.facts['finn.held']?3:s.facts['finn.quiet']?2:Math.floor((s.tick+subtick)/8)%2;
+    if(s.facts['finn.held']){const bee=this.position('C021',s,subtick);pos.x=bee.x+8;pos.y=bee.y-12;}else{const room=blockPlaceById.get('vera')!;pos.x=room.x+19;pos.y=room.y-10;}
+   }
    const h=actor.id===D?48:80,scale=actor.id===D?.75:.5;
    if(actor.id===P){c.fillStyle='#ad5f3d';c.fillRect(pos.x-17,pos.y+3,34,4);c.fillStyle='#fff1c9';c.fillRect(pos.x-6,pos.y-52,12,4);c.fillRect(pos.x-3,pos.y-48,6,4);}
-   c.drawImage(im,frame*64,0,64,h,pos.x-32*scale,pos.y-(h-7)*scale,64*scale,h*scale);
-   if(actor.id!==D){const held=Object.entries(s.objects).find(([,o])=>o.quantity>0&&o.custody.kind==='actor'&&o.custody.id===actor.id);if(held){const id=held[0].toLowerCase(),kind=id.includes('puppet')?'puppet':id.includes('pot')?'pot':id.includes('loan')?'loanShoes':id==='shoes'?'shoes':id==='package'?'package':undefined;if(kind)this.asset(`props.${kind}`,pos.x-10,pos.y-24,.42);}}
+   if(actor.id==='C017'&&s.facts['hester.lying']&&!pos.moving){const bed=blockPlaceById.get('hester')!;c.save();c.translate(bed.x-22,bed.y-30);c.rotate(-Math.PI/2);c.drawImage(im,0,0,64,80,-16,-20,32,40);c.restore();}
+   else c.drawImage(im,frame*64,0,64,h,pos.x-32*scale,pos.y-(h-7)*scale,64*scale,h*scale);
+   if(actor.id!==D){const carried=Object.entries(s.objects).find(([id,o])=>objectArt(id)&&o.quantity>0&&o.custody.kind==='actor'&&o.custody.id===actor.id);if(carried){const kind=objectArt(carried[0]);if(kind)this.asset(`props.${kind}`,pos.x-10,pos.y-24,.42);}}
   }
   c.restore();
  }

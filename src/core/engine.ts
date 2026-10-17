@@ -122,6 +122,13 @@ export class Simulation {
       const belief = a.beliefs[c.propositionId]; requireThat(belief, 'まだ取得していない情報です');
       const e = this.event('engine.spoken', [c.actorId], a.locationId, { recipientId: c.recipientId, propositionId: c.propositionId, stance: belief.stance }, belief.evidenceEventIds);
       this.queue(e.id, c.recipientId, { kind: 'testimony', propositionId: c.propositionId, stance: belief.stance, sourceId: c.actorId });
+    } else if (c.kind === 'observeCompletion') {
+      requireThat(this.together(c.actorId,c.recipientId), '様子を見られる場所へ近づいてください');
+      const visible=this.content.actors.find(a=>a.id===c.recipientId)!.completionObservation;
+      requireThat(visible&&check(visible,this.state), 'その場で確かめられる達成の様子がありません');
+      const completion=this.state.completions[c.recipientId];requireThat(completion,'生活の実行はまだ終わっていません');
+      this.event('engine.completion.observed',[c.actorId],a.locationId,{subjectId:c.recipientId},[completion.eventId]);
+      this.queue(completion.eventId,c.actorId,{kind:'completion',completionActorId:c.recipientId,sourceId:c.recipientId});
     } else if (c.kind === 'askCompletion') {
       requireThat(this.together(c.actorId, c.recipientId), '相手に届く場所で尋ねてください');
       const completion = this.state.completions[c.recipientId]; requireThat(completion, '相手はまだ生活の目的を終えていません');

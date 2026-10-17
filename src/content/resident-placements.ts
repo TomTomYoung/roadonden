@@ -89,21 +89,21 @@ export const residentPlacements = [
     "name": "ネル ステッチ",
     "initialLocation": "nell",
     "destination": "nell",
-    "implemented": false
+    "implemented": true
   },
   {
     "id": "C014",
     "name": "サム スート",
     "initialLocation": "scaffold",
-    "destination": "washBoots",
-    "implemented": false
+    "destination": "workerHome",
+    "implemented": true
   },
   {
     "id": "C015",
     "name": "アイリス ベール",
     "initialLocation": "iris",
     "destination": "avenue.1",
-    "implemented": false
+    "implemented": true
   },
   {
     "id": "C016",
@@ -117,7 +117,7 @@ export const residentPlacements = [
     "name": "ヘスター ダウン",
     "initialLocation": "hester",
     "destination": "hester",
-    "implemented": false
+    "implemented": true
   },
   {
     "id": "C018",
@@ -138,14 +138,14 @@ export const residentPlacements = [
     "name": "フィン",
     "initialLocation": "vera",
     "destination": "vera",
-    "implemented": false
+    "implemented": true
   },
   {
     "id": "C021",
     "name": "ビー クレイドル",
     "initialLocation": "vera",
     "destination": "vera",
-    "implemented": false
+    "implemented": true
   },
   {
     "id": "C022",
@@ -522,8 +522,8 @@ export const residentPlacements = [
     "id": "C075",
     "name": "テオ プロップ",
     "initialLocation": "theatreProps",
-    "destination": "stage",
-    "implemented": false
+    "destination": "theatreProps",
+    "implemented": true
   },
   {
     "id": "C076",
@@ -584,9 +584,9 @@ export const residentPlacements = [
   {
     "id": "C084",
     "name": "オスカー コード",
-    "initialLocation": "oscar",
-    "destination": "nell",
-    "implemented": false
+    "initialLocation": "H.hall2",
+    "destination": "oscar",
+    "implemented": true
   },
   {
     "id": "C085",

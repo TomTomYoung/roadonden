@@ -61,6 +61,7 @@ export interface ResidentDefinition {
   initialBeliefs: { propositionId: string; stance: Stance; reason: string }[];
   rules: { id: string; priority: number; choiceGuard: ChoiceGuard; actionId: string; retryTicks: number; mode?: 'problem' | 'ordinary' | 'always' }[];
   goalEvidence: string[]; postGoalContract: { version: number; serviceIds: string[] };
+  completionObservation?: Condition;
 }
 export interface Content {
   version: string; namespace: 'redesign-v1'; tickMs: 100; ticksPerDay: number;
@@ -102,6 +103,7 @@ export type Command =
   | { kind: 'inspect'; actorId: string; clueId: string }
   | { kind: 'say'; actorId: string; recipientId: string; propositionId: string }
   | { kind: 'askCompletion'; actorId: string; recipientId: string }
+  | { kind: 'observeCompletion'; actorId: string; recipientId: string }
   | { kind: 'offer'; actorId: string; recipientId: string; agreementId: string }
   | { kind: 'accept'; actorId: string; agreementId: string; version: number };
 export interface CommandRecord { id: number; tick: number; command: Command }
