@@ -77,6 +77,9 @@ export function extendTown(places:BlockPlace[],names:Record<string,string>){
   add(`${id}.roof`,`${name}・屋上`,id,4,'屋上',x+180,y+42,'roofGarden','共用の屋上。物干しと鉢を置く範囲を、歩く通路から分けてある。','roof');link(`${id}.hall3`,`${id}.roof`);
   link(`${id}.hall1`,`${row?'south':'back'}.${section}`);
  }
+ add('bakeYard','パン屋裏・排気口と物干し',districts[1]!.id,0,'屋外',1780,830,'courtyard','パン屋の排気口に寝具が寄っている。洗濯屋とパン屋が同じ場所で空気の通りを確かめられる。','outside');
+ add('smallDry','パン屋裏・小分けの物干し',districts[1]!.id,0,'屋外',2020,830,'courtyard','排気と人の通路を避けた小さな物干し。一束ずつ掛け、乾きを確かめて取り込む。','outside');
+ link('bakeYard','back.1');link('bakeYard','smallDry');link('bakeYard','bakery');
  // A second street entrance makes the residential lanes loops rather than dead ends.
  link('back.1','pawn');link('back.1','bakery');link('back.2','freightLow');link('back.3','theatreDoor');link('back.4','postDoor');link('back.4','postSide');link('back.5','shuttle');
  // The passenger lift exists independently of the goods lift and is usable from day one.

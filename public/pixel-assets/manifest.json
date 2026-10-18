@@ -1,5 +1,5 @@
 {
-  "version": "town-pixel-0.7.0",
+  "version": "town-pixel-0.8.0",
   "notes": "Integer-grid original pixel art; source SVGs in public/assets are preserved. 100 resident sheets do not imply 100 implemented scenarios.",
   "assets": [
     {
@@ -3444,6 +3444,186 @@
       "pixelHeight": 16,
       "pixelScale": 4,
       "usage": "ドット絵の小道具: elevator-car",
+      "states": [
+        "static"
+      ],
+      "source": "scripts/make-town-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.bedding-wet",
+      "file": "props/bedding-wet.svg",
+      "width": 64,
+      "height": 64,
+      "pixelWidth": 16,
+      "pixelHeight": 16,
+      "pixelScale": 4,
+      "usage": "ドット絵の小道具: bedding-wet",
+      "states": [
+        "static"
+      ],
+      "source": "scripts/make-town-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.bedding-dry",
+      "file": "props/bedding-dry.svg",
+      "width": 64,
+      "height": 64,
+      "pixelWidth": 16,
+      "pixelHeight": 16,
+      "pixelScale": 4,
+      "usage": "ドット絵の小道具: bedding-dry",
+      "states": [
+        "static"
+      ],
+      "source": "scripts/make-town-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.bedding-folded",
+      "file": "props/bedding-folded.svg",
+      "width": 64,
+      "height": 64,
+      "pixelWidth": 16,
+      "pixelHeight": 16,
+      "pixelScale": 4,
+      "usage": "ドット絵の小道具: bedding-folded",
+      "states": [
+        "static"
+      ],
+      "source": "scripts/make-town-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.privacy-cloth",
+      "file": "props/privacy-cloth.svg",
+      "width": 64,
+      "height": 64,
+      "pixelWidth": 16,
+      "pixelHeight": 16,
+      "pixelScale": 4,
+      "usage": "ドット絵の小道具: privacy-cloth",
+      "states": [
+        "static"
+      ],
+      "source": "scripts/make-town-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.vibration-pads",
+      "file": "props/vibration-pads.svg",
+      "width": 64,
+      "height": 64,
+      "pixelWidth": 16,
+      "pixelHeight": 16,
+      "pixelScale": 4,
+      "usage": "ドット絵の小道具: vibration-pads",
+      "states": [
+        "static"
+      ],
+      "source": "scripts/make-town-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.oven-gauge",
+      "file": "props/oven-gauge.svg",
+      "width": 64,
+      "height": 64,
+      "pixelWidth": 16,
+      "pixelHeight": 16,
+      "pixelScale": 4,
+      "usage": "ドット絵の小道具: oven-gauge",
+      "states": [
+        "static"
+      ],
+      "source": "scripts/make-town-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.flour-sack",
+      "file": "props/flour-sack.svg",
+      "width": 64,
+      "height": 64,
+      "pixelWidth": 16,
+      "pixelHeight": 16,
+      "pixelScale": 4,
+      "usage": "ドット絵の小道具: flour-sack",
+      "states": [
+        "static"
+      ],
+      "source": "scripts/make-town-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.bread-tray",
+      "file": "props/bread-tray.svg",
+      "width": 64,
+      "height": 64,
+      "pixelWidth": 16,
+      "pixelHeight": 16,
+      "pixelScale": 4,
+      "usage": "ドット絵の小道具: bread-tray",
+      "states": [
+        "static"
+      ],
+      "source": "scripts/make-town-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.bread-slice",
+      "file": "props/bread-slice.svg",
+      "width": 64,
+      "height": 64,
+      "pixelWidth": 16,
+      "pixelHeight": 16,
+      "pixelScale": 4,
+      "usage": "ドット絵の小道具: bread-slice",
+      "states": [
+        "static"
+      ],
+      "source": "scripts/make-town-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.oven-dial",
+      "file": "props/oven-dial.svg",
+      "width": 64,
+      "height": 64,
+      "pixelWidth": 16,
+      "pixelHeight": 16,
+      "pixelScale": 4,
+      "usage": "ドット絵の小道具: oven-dial",
+      "states": [
+        "static"
+      ],
+      "source": "scripts/make-town-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.exhaust-vent",
+      "file": "props/exhaust-vent.svg",
+      "width": 64,
+      "height": 64,
+      "pixelWidth": 16,
+      "pixelHeight": 16,
+      "pixelScale": 4,
+      "usage": "ドット絵の小道具: exhaust-vent",
+      "states": [
+        "static"
+      ],
+      "source": "scripts/make-town-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.drying-rack",
+      "file": "props/drying-rack.svg",
+      "width": 64,
+      "height": 64,
+      "pixelWidth": 16,
+      "pixelHeight": 16,
+      "pixelScale": 4,
+      "usage": "ドット絵の小道具: drying-rack",
       "states": [
         "static"
       ],

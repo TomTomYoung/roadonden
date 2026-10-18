@@ -194,6 +194,18 @@ import asset192 from '../../public/pixel-assets/props/clock.svg';
 import asset193 from '../../public/pixel-assets/props/clock-hook.svg';
 import asset194 from '../../public/pixel-assets/props/quiet-notice.svg';
 import asset195 from '../../public/pixel-assets/props/elevator-car.svg';
+import asset196 from '../../public/pixel-assets/props/bedding-wet.svg';
+import asset197 from '../../public/pixel-assets/props/bedding-dry.svg';
+import asset198 from '../../public/pixel-assets/props/bedding-folded.svg';
+import asset199 from '../../public/pixel-assets/props/privacy-cloth.svg';
+import asset200 from '../../public/pixel-assets/props/vibration-pads.svg';
+import asset201 from '../../public/pixel-assets/props/oven-gauge.svg';
+import asset202 from '../../public/pixel-assets/props/flour-sack.svg';
+import asset203 from '../../public/pixel-assets/props/bread-tray.svg';
+import asset204 from '../../public/pixel-assets/props/bread-slice.svg';
+import asset205 from '../../public/pixel-assets/props/oven-dial.svg';
+import asset206 from '../../public/pixel-assets/props/exhaust-vent.svg';
+import asset207 from '../../public/pixel-assets/props/drying-rack.svg';
 
 export const assets:Record<string,{src:string;width:number;height:number}> = {
   'buildings.apartment-a': {src:asset0,width:350,height:630},
@@ -392,4 +404,16 @@ export const assets:Record<string,{src:string;width:number;height:number}> = {
   'props.clock-hook': {src:asset193,width:64,height:64},
   'props.quiet-notice': {src:asset194,width:64,height:64},
   'props.elevator-car': {src:asset195,width:64,height:64},
+  'props.bedding-wet': {src:asset196,width:64,height:64},
+  'props.bedding-dry': {src:asset197,width:64,height:64},
+  'props.bedding-folded': {src:asset198,width:64,height:64},
+  'props.privacy-cloth': {src:asset199,width:64,height:64},
+  'props.vibration-pads': {src:asset200,width:64,height:64},
+  'props.oven-gauge': {src:asset201,width:64,height:64},
+  'props.flour-sack': {src:asset202,width:64,height:64},
+  'props.bread-tray': {src:asset203,width:64,height:64},
+  'props.bread-slice': {src:asset204,width:64,height:64},
+  'props.oven-dial': {src:asset205,width:64,height:64},
+  'props.exhaust-vent': {src:asset206,width:64,height:64},
+  'props.drying-rack': {src:asset207,width:64,height:64},
 };

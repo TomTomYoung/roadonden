@@ -74,7 +74,7 @@ for(const [index,id]of ['player',...Array.from({length:100},(_,i)=>`C${String(i+
  await save('residents',id,p,'人物。個別の配色・髪・服装と6姿勢。シナリオ実装人数とは別。',id==='C020'?['cry','unsettled','quiet','held','asleep','rest']:id==='C090'?['idle','roll-a','roll-b','sort','rest','reach']:['idle','walk-a','walk-b','work','sit','dance']);
 }
 p=new Pixels(64,12);for(let f=0;f<4;f++){const x=f*16;p.rect(x+3,6,9,4,'#b18d64').rect(x+10,4,4,4,'#caab7b').rect(x+10,3,2,3,'#87694f').dot(x+13,5,palette.dark).rect(x+4,10,2,2,'#87694f').rect(x+10,10,2,2,'#87694f').line(x+3,7,x+1,f%2?3:5,'#87694f');if(f===3)p.rect(x+12,8,4,2,palette.dark);}await save('residents','dog',p,'犬の4姿勢',['idle','walk','look','carry-shoe']);
-const props=['cargo','stand','flag','gate-open','gate-closed','toy','meal','curtain-closed','shutter-closed','return-box','loanShoes','shoes','pot','package','puppet','key','coat','tea','chair','mail','bicycle','tree','lamp','flower','pillow','cushion','letter','ladder','rope','toolbag','cradle','rug','bell','plate-a','plate-h','address-card','mailbag','mail-bundle','post-door-closed','post-door-open','postal-table','watch-lantern','watch-book','route-map','sign-old','sign-new','piano','clock','clock-hook','quiet-notice','elevator-car'];
+const props=['cargo','stand','flag','gate-open','gate-closed','toy','meal','curtain-closed','shutter-closed','return-box','loanShoes','shoes','pot','package','puppet','key','coat','tea','chair','mail','bicycle','tree','lamp','flower','pillow','cushion','letter','ladder','rope','toolbag','cradle','rug','bell','plate-a','plate-h','address-card','mailbag','mail-bundle','post-door-closed','post-door-open','postal-table','watch-lantern','watch-book','route-map','sign-old','sign-new','piano','clock','clock-hook','quiet-notice','elevator-car','bedding-wet','bedding-dry','bedding-folded','privacy-cloth','vibration-pads','oven-gauge','flour-sack','bread-tray','bread-slice','oven-dial','exhaust-vent','drying-rack'];
 for(const id of props){const p=new Pixels(16,16);
  if(['cargo','package','return-box','mail'].includes(id)){p.box(2,5,12,10,palette.wood,palette.woodLight).rect(7,6,2,8,palette.cream).rect(3,9,10,1,palette.cream);if(id==='return-box')p.rect(4,7,8,2,palette.dark);}
  else if(id==='stand'||id==='chair'){p.rect(2,8,12,3,palette.woodLight).rect(3,11,2,5,palette.wood).rect(11,11,2,5,palette.wood);if(id==='chair')p.rect(3,3,10,4,palette.wood);}
@@ -112,13 +112,23 @@ for(const id of props){const p=new Pixels(16,16);
  else if(id==='clock-hook')p.rect(7,1,2,2,palette.wood).rect(8,3,1,3,palette.dark).rect(6,5,3,1,palette.dark);
  else if(id==='quiet-notice')p.box(1,2,14,12,palette.wood,palette.cream).rect(3,4,10,1,palette.teal).rect(3,7,7,1,palette.wood).rect(3,10,10,1,palette.wood);
  else if(id==='elevator-car')p.box(0,0,16,16,palette.dark,palette.teal).rect(2,2,12,12,'#a4bcb5').rect(2,2,12,1,palette.light).rect(1,14,14,2,palette.dark).rect(1,3,1,11,palette.cream).rect(14,3,1,11,palette.cream);
+ else if(id==='bedding-wet'||id==='bedding-dry'){p.rect(1,2,14,1,palette.wood).rect(3,3,10,11,id==='bedding-wet'?palette.blue:palette.cream).rect(4,4,2,9,id==='bedding-wet'?palette.teal:palette.light).rect(2,2,2,3,palette.wood).rect(12,2,2,3,palette.wood);if(id==='bedding-wet')p.rect(7,10,2,3,palette.teal);}
+ else if(id==='bedding-folded'||id==='privacy-cloth'){p.box(1,6,14,8,palette.wood,id==='privacy-cloth'?palette.teal:palette.cream).rect(2,10,12,1,palette.woodLight).rect(3,7,9,1,palette.light).rect(10,11,3,2,palette.gold);}
+ else if(id==='vibration-pads'){for(const [x,y]of [[1,3],[9,3],[1,10],[9,10]])p.box(x,y,6,5,palette.dark,palette.teal).rect(x+1,y+1,4,1,palette.blue);}
+ else if(id==='oven-gauge'){p.box(1,4,14,7,palette.wood,palette.cream);for(let x=3;x<14;x+=2)p.rect(x,5,1,x%4?3:5,palette.dark);p.rect(1,12,14,1,palette.teal);}
+ else if(id==='flour-sack')p.box(3,4,10,11,palette.wood,palette.cream).rect(4,2,8,3,palette.woodLight).rect(6,6,4,6,palette.gold).line(8,7,5,9,palette.wood).line(8,9,11,11,palette.wood);
+ else if(id==='bread-tray'){p.box(0,8,16,7,palette.dark,palette.woodLight);for(const x of [1,6,11])p.rect(x,5,4,7,palette.gold).rect(x+1,4,2,1,palette.cream).rect(x+1,7,1,3,palette.cream);}
+ else if(id==='bread-slice')p.box(3,5,10,9,palette.wood,palette.gold).rect(4,4,8,1,palette.wood).rect(5,6,6,6,palette.cream).dot(7,8,palette.gold).dot(9,10,palette.gold);
+ else if(id==='oven-dial'){p.box(2,2,12,12,palette.dark,palette.cream);for(const [x,y]of [[4,4],[8,3],[11,5],[11,10],[7,12],[4,10]])p.dot(x,y,palette.wood);p.line(8,8,11,5,palette.red).dot(8,8,palette.dark);}
+ else if(id==='exhaust-vent'){p.box(1,2,14,11,palette.dark,palette.teal);for(let y=4;y<12;y+=3)p.rect(3,y,10,1,palette.dark);p.rect(6,0,4,2,palette.woodLight).rect(4,14,8,1,palette.cream);}
+ else if(id==='drying-rack'){p.rect(1,3,14,1,palette.woodLight).rect(2,2,1,13,palette.wood).rect(13,2,1,13,palette.wood).rect(0,14,5,1,palette.wood).rect(11,14,5,1,palette.wood);}
  else if(id==='tree')p.rect(7,9,2,7,palette.wood).rect(3,3,10,7,palette.green).rect(5,1,6,3,palette.leaf).rect(1,5,14,3,palette.green);
  else if(id==='lamp')p.rect(7,3,1,13,palette.dark).rect(4,2,7,2,palette.dark).rect(5,0,5,2,palette.gold);
  else if(id==='flower')p.rect(3,10,10,6,palette.wood).rect(5,6,1,4,palette.green).rect(10,5,1,5,palette.green).rect(4,4,3,3,palette.pink).rect(9,3,3,3,palette.gold);
  else if(id==='bicycle')p.box(0,10,6,5,palette.dark,'#b9c8ac').box(10,10,6,5,palette.dark,'#b9c8ac').line(3,12,7,7,palette.red).line(7,7,13,12,palette.red).line(3,12,13,12,palette.red).rect(10,4,1,5,palette.dark).rect(9,4,4,1,palette.dark);
  await save('props',id,p,`ドット絵の小道具: ${id}`);
 }
-await writeFile(`${root}/manifest.json`,JSON.stringify({version:'town-pixel-0.7.0',notes:'Integer-grid original pixel art; source SVGs in public/assets are preserved. 100 resident sheets do not imply 100 implemented scenarios.',assets:entries},null,2)+'\n');
+await writeFile(`${root}/manifest.json`,JSON.stringify({version:'town-pixel-0.8.0',notes:'Integer-grid original pixel art; source SVGs in public/assets are preserved. 100 resident sheets do not imply 100 implemented scenarios.',assets:entries},null,2)+'\n');
 let imports='',mapping='';for(const [i,e]of entries.entries()){imports+=`import asset${i} from '../../${root}/${e.file}';\n`;mapping+=`  '${e.id}': {src:asset${i},width:${e.width},height:${e.height}},\n`;}
 await writeFile('src/game/assets.ts',imports+`\nexport const assets:Record<string,{src:string;width:number;height:number}> = {\n${mapping}};\n`);
 console.log(`Generated ${entries.length} pixel assets.`);

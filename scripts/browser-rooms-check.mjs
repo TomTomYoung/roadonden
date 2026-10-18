@@ -5,7 +5,7 @@ import path from 'node:path';
 const {chromium}=await import(process.env.PLAYWRIGHT_MODULE??path.join(process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES,'playwright/index.mjs'));
 const browser=await chromium.launch({headless:true,...(process.env.CHROMIUM_EXECUTABLE?{executablePath:process.env.CHROMIUM_EXECUTABLE}:{})});
 const context=await browser.newContext({viewport:{width:1440,height:1100},acceptDownloads:true});
-const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(String(e)));
+context.setDefaultNavigationTimeout(90000);const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(String(e)));
 await mkdir('test-results',{recursive:true});
 const url=pathToFileURL(path.resolve('index.html')).href;
 async function destination(term,id){await page.click('#map');await page.getByRole('searchbox',{name:'場所を検索'}).fill(term);await page.locator('#modal-body .stack button').first().click();await page.waitForFunction(id=>document.querySelector('#town').dataset.location===id,id,{timeout:60000});await idle();}
@@ -20,7 +20,7 @@ try{
  await bee('片脚が敷物の縁に乗っていると伝える');await bee('平らな床で様子を見ることを相談する');await page.waitForTimeout(1000);await page.click('#wait');
  await page.waitForFunction(()=>document.querySelector('#people').textContent.includes('温かい茶を入れ直す'),null,{timeout:30000});await page.screenshot({path:'test-results/town-parent-after-sleep.png',fullPage:true});
  await page.waitForTimeout(7500);await page.click('#save-menu');const pending=page.waitForEvent('download');await page.getByRole('button',{name:'セーブをJSONファイルで持ち出す',exact:true}).click();const download=await pending;await download.saveAs('test-results/rooms-parent-save.json');const save=JSON.parse(await readFile('test-results/rooms-parent-save.json','utf8'));
- assert.ok(save.state.completions.C020.achievedAt<save.state.completions.C021.achievedAt);assert.deepEqual(save.state.actors.C020.beliefs,{});assert.ok(save.state.facts['bee.rest']);assert.equal(save.contentVersion,'town-0.7.0');console.log('PASS real UI route completes child sleep and later parent rest, with valid JSON export');
+ assert.ok(save.state.completions.C020.achievedAt<save.state.completions.C021.achievedAt);assert.deepEqual(save.state.actors.C020.beliefs,{});assert.ok(save.state.facts['bee.rest']);assert.equal(save.contentVersion,'town-0.8.0');console.log('PASS real UI route completes child sleep and later parent rest, with valid JSON export');
  await page.click('#close-modal');await page.locator('#people button').filter({hasText:'フィン'}).click();assert.match(await page.locator('#modal-kicker').innerText(),/様子を見る/);assert.match(await page.locator('#modal-body').innerText(),/安定して眠って/);await page.click('#close-modal');console.log('PASS baby uses observation and a sleeping sprite instead of adult dialogue');
  // Choose the visible corridor explicitly; a closed kitchen is not entered by a map click.
  await destination('干し場のあるアパート・2階共用廊下','H.hall2');await destination('ネルの台所','H.hall2');

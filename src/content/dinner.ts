@@ -3,6 +3,8 @@ import { registerRoomsAndSleep, installRoomsAndSleep, FINN, SAM, OSCAR } from '.
 import { registerPostalAndPlates, installPostalAndPlates, BEATRICE } from './postal-and-plates.ts';
 import {registerNightwatch,installNightwatch} from './nightwatch-and-routes.ts';
 import {registerQuietNeighbours,installQuietNeighbours} from './quiet-neighbours.ts';
+import {registerSupplies,installSupplies} from './supplies-and-calibration.ts';
+import {installBorrowedAlternatives} from './borrowed-alternatives.ts';
 import { check } from '../core/conditions.ts';
 import type { WorldState } from '../core/types.ts';
 import type { ActionDefinition, ActionEffect, ChoiceGuard, Condition, Content, Custody, ResidentDefinition } from '../core/types.ts';
@@ -31,7 +33,7 @@ const accepted = (agreementId: string): ChoiceGuard => ({ op: 'accepted', agreem
 const agreement = (agreementId: string, actorIds: string[]): Condition => ({ op: 'agreement', agreementId, version: 1, actorIds });
 
 export const dinnerContent: Content = {
-  version: 'town-0.7.0', namespace: 'redesign-v1', tickMs: 100, ticksPerDay: 14400,
+  version: 'town-0.8.0', namespace: 'redesign-v1', tickMs: 100, ticksPerDay: 14400,
   places: blockPlaces, propositions: [], actors: [], objects: [], resources: ['table:home','work:quay','lift:O'], services: ['home.receipt','market.shelf','shoe.box'], clues: [], loans: [], agreements: [], actions: [],
 };
 const c = dinnerContent;
@@ -167,6 +169,7 @@ registerRoomsAndSleep({person,object,c,actor,place});
 registerPostalAndPlates({person,object,c,actor,place});
 registerNightwatch({person,object,c,actor,place});
 registerQuietNeighbours({person,object,c,actor,place});
+registerSupplies({person,object,c,actor,place});
 c.resources.push(...c.actors.map(a=>`presence:${a.id}`));
 // Walks reserve the moving person. No teleporting, no other actor controlled by the UI.
 export function walkId(who:string,from:string,to:string) { return `walk.${who}.${from}.${to}`; }
@@ -419,11 +422,14 @@ Object.assign(greetings,{
 });
 
 // Chapter modules use the same evidence, ownership and path machinery as dinner.
-export const chapterTools={person,object,c,P,yes,all,any,not,fact,at,held,actor,place,set,transfer,emit,together,knows,b,ca,cn,here,accepted,agreement,prop,clue,local,action,rule,auto,interaction,talk,tell,propose,travel,searchLoop,greetings,route,walkId};
+export const chapterTools={person,object,c,P,yes,all,any,not,fact,at,held,actor,place,set,transfer,emit,together,knows,b,ca,cn,here,accepted,agreement,prop,clue,local,action,rule,auto,interaction,talk,tell,propose,travel,searchLoop,greetings,route,walkId,interactions};
 installPostalAndPlates(chapterTools);
 installNightwatch(chapterTools);
 installQuietNeighbours(chapterTools);
+installSupplies(chapterTools);
 installRoomsAndSleep(chapterTools);
+installBorrowedAlternatives(chapterTools);
+for(const q of c.clues)if(!q.observerIds)q.observerIds=c.actors.filter(a=>a.id!==FINN).map(a=>a.id);
 const movementDefinitions=new Map(c.actions.filter(a=>a.movement?.actorId===P).map(a=>[a.id,a]));
 // Route preview respects today's doors. Every edge is checked again when walked.
 export function playerRoute(from:string,to:string,state:WorldState){

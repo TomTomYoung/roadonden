@@ -4,8 +4,9 @@ import { dinnerContent as content, P, D, B } from '../content/dinner.ts';
 import { WORLD_WIDTH, WORLD_HEIGHT, districts, townBuildings } from '../content/town-layout.ts';
 import type { WorldState } from '../core/types.ts';
 
-function objectArt(id:string){
- const special:Record<string,string>={watchBell:'bell',watchLantern:'watch-lantern',watchBook:'watch-book',calebMap:'route-map',patrolCopy:'route-map',rosePiano:'piano',noahClock:'clock',quietNotice:'quiet-notice',plateA:'plate-a',plateH:'plate-h',addressElias:'address-card',addressIris:'address-card',postalBag:'mailbag',postalBundle:'mail-bundle',abelTools:'toolbag',hughBrush:'toolbag',hesterPillow:'pillow',hesterCoat:'coat',stageCushion:'cushion',nellLetter:'letter',samTools:'toolbag',samLadder:'ladder',cradle:'cradle',irisClothes:'coat',eliasCoat:'coat'};
+function objectArt(id:string,s:WorldState){
+ if(id==='beddingA'||id==='beddingB'){const key=id.slice(-1);return s.facts[`elsie.${key}.folded`]?'bedding-folded':s.facts[`elsie.${key}.dry`]?'bedding-dry':'bedding-wet';}
+ const special:Record<string,string>={privacyCloth:'privacy-cloth',coverCloth:'privacy-cloth',vibrationPads:'vibration-pads',ovenGauge:'oven-gauge',firstFlour:'flour-sack',breadSample:'bread-slice',breadStock:'bread-tray',ovenDial:'oven-dial',breadNotice:'quiet-notice',referenceClock:'clock',clockA:'clock',clockB:'clock',clockC:'clock',postalClock:'clock',repairOrder:'letter',calibrationReport:'address-card',watchBell:'bell',watchLantern:'watch-lantern',watchBook:'watch-book',calebMap:'route-map',patrolCopy:'route-map',rosePiano:'piano',noahClock:'clock',quietNotice:'quiet-notice',plateA:'plate-a',plateH:'plate-h',addressElias:'address-card',addressIris:'address-card',postalBag:'mailbag',postalBundle:'mail-bundle',abelTools:'toolbag',hughBrush:'toolbag',hesterPillow:'pillow',hesterCoat:'coat',stageCushion:'cushion',nellLetter:'letter',samTools:'toolbag',samLadder:'ladder',cradle:'cradle',irisClothes:'coat',eliasCoat:'coat'};
  const lower=id.toLowerCase();return special[id]??(lower.includes('puppet')?'puppet':lower.includes('loan')?'loanShoes':lower.includes('pot')?'pot':lower.includes('package')?'package':lower.includes('shoes')?'shoes':lower.includes('key')?'key':undefined);
 }
 
@@ -110,6 +111,9 @@ export class BlockRenderer {
   prop('bell','H.hall2',-14,-44,.5);
   if(s.facts['bell.fixed'])prop('rope','H.hall2',-14,-25,.45);
   prop('ladder','scaffold',48,4,.75);if(s.facts['sam.externalReady'])prop('rope','scaffold',38,-40,.5);
+  prop('exhaust-vent','bakeYard',0,-48,.7);prop('drying-rack','smallDry',70,-12,1.4);
+  if(s.facts['cloth.mounted'])prop('curtain-closed','iris',-37,-70,.65);
+  if(s.facts['pad.mounted'])prop('vibration-pads','basil',-35,-5,.7);
   if(s.facts['iris.returnOpen'])prop('flag','iris',-48,-52,.45);
   if(s.facts['hester.coatReady']&&!s.facts['hester.pillowHere'])prop('cushion','hester',-27,-48,.5);
   if(s.facts['celia.curtain'])prop('curtain-closed','celia',-39,-70,.65);
@@ -117,8 +121,10 @@ export class BlockRenderer {
   if(s.facts['leo.closed'])prop('shutter-closed','shoe',0,-22,1.1);
   prop('return-box','shoe',52,10,.55);
   for(const [id,obj]of Object.entries(s.objects)){
-   const asset=objectArt(id);
-   if(asset&&obj.quantity>0&&obj.custody.kind==='place'&&blockPlaceById.has(obj.custody.id))prop(asset,obj.custody.id,id==='cradle'?12:-35,id==='cradle'?8:id==='noahClock'&&s.facts['noah.clockMounted']?-70:-22,id==='cradle'?.85:.48);
+   if((id==='breadSample'||id==='breadStock')&&!s.facts['bread.baked'])continue;
+   if(id==='privacyCloth'&&s.facts['cloth.mounted'])continue;
+   const asset=objectArt(id,s);
+   if(asset&&obj.quantity>0&&obj.custody.kind==='place'&&blockPlaceById.has(obj.custody.id))prop(asset,obj.custody.id,id==='cradle'?12:(id==='beddingA'||id==='beddingB')&&obj.custody.id==='smallDry'?70:id==='beddingB'?28:id==='clockB'?0:id==='clockC'?35:-35,id==='cradle'?8:id==='noahClock'&&s.facts['noah.clockMounted']?-70:-22,id==='cradle'?.85:.48);
    // Custody remains simulation data; sprites never decide whether an object was delivered.
   }
   prop(s.facts['lift.signposted']?'sign-new':'sign-old','liftOld',-36,-45,.6);prop('sign-new','liftGround',45,-45,.5);
@@ -136,6 +142,7 @@ export class BlockRenderer {
    if((['C001','C002','C003'].includes(actor.id)&&s.completions[actor.id]&&s.actors[actor.id]!.locationId==='home')||(actor.id==='C007'&&s.facts['celia.ate']))frame=4;
    if(['C009','C010','C011','C025'].includes(actor.id)&&s.completions[actor.id]&&!pos.moving)frame=4;
    if(actor.id==='C021'&&s.facts['bee.rest'])frame=4;
+   if(['C034','C057'].includes(actor.id)&&s.completions[actor.id]&&!pos.moving)frame=4;
    if(actor.id==='C013'&&s.facts['nell.sewing']&&!pos.moving)frame=3;
    if(!pos.moving&&held&&!working&&frame===0)frame=3;
    if(actor.id===D)frame=held?3:pos.moving||s.facts['ben.chasing']?Math.floor((s.tick+subtick)/3)%2:2;
@@ -147,7 +154,7 @@ export class BlockRenderer {
    if(actor.id===P){c.fillStyle='#ad5f3d';c.fillRect(pos.x-17,pos.y+3,34,4);c.fillStyle='#fff1c9';c.fillRect(pos.x-6,pos.y-52,12,4);c.fillRect(pos.x-3,pos.y-48,6,4);}
    if(!pos.moving&&((actor.id==='C017'&&s.facts['hester.lying'])||(actor.id==='C018'&&s.facts['alf.lying'])||(actor.id==='C024'&&s.facts['noah.lying']))){const bed=blockPlaceById.get(actor.id==='C017'?'hester':actor.id==='C018'?'alfRoom':'martha')!;c.save();c.translate(bed.x-22,bed.y-30);c.rotate(-Math.PI/2);c.drawImage(im,0,0,64,80,-16,-20,32,40);c.restore();}
    else c.drawImage(im,frame*64,0,64,h,pos.x-32*scale,pos.y-(h-7)*scale,64*scale,h*scale);
-   if(actor.id!==D){const priority=['watchLantern','watchBook','calebMap','patrolCopy','noahClock','plateA','plateH','postalBundle','postalBag'];const carried=Object.entries(s.objects).sort(([a],[b])=>(priority.includes(a)?priority.indexOf(a):9)-(priority.includes(b)?priority.indexOf(b):9)).find(([id,o])=>objectArt(id)&&o.quantity>0&&o.custody.kind==='actor'&&o.custody.id===actor.id);if(carried){const kind=objectArt(carried[0]);if(kind)this.asset(`props.${kind}`,pos.x-10,pos.y-24,.42);}}
+   if(actor.id!==D){const priority=['watchLantern','watchBook','calebMap','patrolCopy','noahClock','plateA','plateH','postalBundle','postalBag'];const carried=Object.entries(s.objects).sort(([a],[b])=>(priority.includes(a)?priority.indexOf(a):9)-(priority.includes(b)?priority.indexOf(b):9)).find(([id,o])=>objectArt(id,s)&&o.quantity>0&&o.custody.kind==='actor'&&o.custody.id===actor.id);if(carried){const kind=objectArt(carried[0],s);if(kind)this.asset(`props.${kind}`,pos.x-10,pos.y-24,.42);}}
   }
   c.restore();
  }

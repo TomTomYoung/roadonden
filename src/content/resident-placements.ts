@@ -179,8 +179,8 @@ export const residentPlacements = [
     "id": "C026",
     "name": "ジャイルズ クラスト",
     "initialLocation": "bakery",
-    "destination": "breadTable",
-    "implemented": false
+    "destination": "bakery",
+    "implemented": true
   },
   {
     "id": "C027",
@@ -234,9 +234,9 @@ export const residentPlacements = [
   {
     "id": "C034",
     "name": "エルシー リネン",
-    "initialLocation": "elsie",
+    "initialLocation": "bakeYard",
     "destination": "dryCloth",
-    "implemented": false
+    "implemented": true
   },
   {
     "id": "C035",
@@ -396,8 +396,8 @@ export const residentPlacements = [
     "id": "C057",
     "name": "レナ メジャー",
     "initialLocation": "instruments",
-    "destination": "instruments",
-    "implemented": false
+    "destination": "workersRoom",
+    "implemented": true
   },
   {
     "id": "C058",
