@@ -74,7 +74,7 @@ for(const [index,id]of ['player',...Array.from({length:100},(_,i)=>`C${String(i+
  await save('residents',id,p,'人物。個別の配色・髪・服装と6姿勢。シナリオ実装人数とは別。',id==='C020'?['cry','unsettled','quiet','held','asleep','rest']:id==='C090'?['idle','roll-a','roll-b','sort','rest','reach']:['idle','walk-a','walk-b','work','sit','dance']);
 }
 p=new Pixels(64,12);for(let f=0;f<4;f++){const x=f*16;p.rect(x+3,6,9,4,'#b18d64').rect(x+10,4,4,4,'#caab7b').rect(x+10,3,2,3,'#87694f').dot(x+13,5,palette.dark).rect(x+4,10,2,2,'#87694f').rect(x+10,10,2,2,'#87694f').line(x+3,7,x+1,f%2?3:5,'#87694f');if(f===3)p.rect(x+12,8,4,2,palette.dark);}await save('residents','dog',p,'犬の4姿勢',['idle','walk','look','carry-shoe']);
-const props=['cargo','stand','flag','gate-open','gate-closed','toy','meal','curtain-closed','shutter-closed','return-box','loanShoes','shoes','pot','package','puppet','key','coat','tea','chair','mail','bicycle','tree','lamp','flower','pillow','cushion','letter','ladder','rope','toolbag','cradle','rug','bell','plate-a','plate-h','address-card','mailbag','mail-bundle','post-door-closed','post-door-open','postal-table'];
+const props=['cargo','stand','flag','gate-open','gate-closed','toy','meal','curtain-closed','shutter-closed','return-box','loanShoes','shoes','pot','package','puppet','key','coat','tea','chair','mail','bicycle','tree','lamp','flower','pillow','cushion','letter','ladder','rope','toolbag','cradle','rug','bell','plate-a','plate-h','address-card','mailbag','mail-bundle','post-door-closed','post-door-open','postal-table','watch-lantern','watch-book','route-map','sign-old','sign-new','piano','clock','clock-hook','quiet-notice','elevator-car'];
 for(const id of props){const p=new Pixels(16,16);
  if(['cargo','package','return-box','mail'].includes(id)){p.box(2,5,12,10,palette.wood,palette.woodLight).rect(7,6,2,8,palette.cream).rect(3,9,10,1,palette.cream);if(id==='return-box')p.rect(4,7,8,2,palette.dark);}
  else if(id==='stand'||id==='chair'){p.rect(2,8,12,3,palette.woodLight).rect(3,11,2,5,palette.wood).rect(11,11,2,5,palette.wood);if(id==='chair')p.rect(3,3,10,4,palette.wood);}
@@ -103,13 +103,22 @@ for(const id of props){const p=new Pixels(16,16);
  else if(id==='mail-bundle')p.rect(1,7,14,8,palette.cream).box(2,4,12,9,palette.wood,palette.light).line(3,5,8,9,palette.woodLight).line(8,9,12,5,palette.woodLight).rect(7,4,2,11,palette.blue);
  else if(id.startsWith('post-door-')){p.box(1,0,14,16,palette.dark,'#bdd1bf').rect(2,14,12,2,palette.cream);if(id==='post-door-closed')p.rect(3,1,10,13,palette.teal).rect(4,2,8,6,palette.light).rect(11,10,1,2,palette.gold);else p.rect(2,1,3,13,palette.teal).rect(3,2,1,6,palette.light).dot(4,10,palette.gold);}
  else if(id==='postal-table')p.rect(0,4,16,2,palette.woodLight).rect(1,6,2,10,palette.dark).rect(13,6,2,10,palette.dark).box(3,0,10,4,palette.wood,palette.cream).rect(6,0,1,4,palette.wood).rect(10,0,1,4,palette.wood);
+ else if(id==='watch-lantern')p.box(4,4,8,10,palette.dark,palette.gold).rect(5,6,6,6,palette.light).box(6,1,4,4,palette.dark,palette.cream).rect(3,14,10,1,palette.dark);
+ else if(id==='watch-book')p.box(2,2,12,13,palette.wood,palette.teal).rect(3,3,2,11,palette.dark).rect(7,5,5,1,palette.cream).rect(7,8,4,1,palette.cream);
+ else if(id==='route-map')p.box(1,1,14,14,palette.wood,palette.light).line(3,4,8,4,palette.red).line(8,4,8,11,palette.red).line(8,11,12,11,palette.red).rect(3,7,3,3,palette.teal).rect(10,3,3,5,palette.green).dot(12,11,palette.dark);
+ else if(id==='sign-old'||id==='sign-new'){p.rect(7,10,2,6,palette.wood).box(0,1,16,10,palette.dark,palette.cream);if(id==='sign-old')p.line(4,3,11,8,palette.red).line(4,8,11,3,palette.red);else p.rect(3,5,9,2,palette.teal).line(9,3,12,6,palette.teal).line(12,6,9,9,palette.teal);}
+ else if(id==='piano'){p.box(1,2,14,10,palette.dark,palette.wood).rect(2,9,12,3,palette.light);for(let x=3;x<14;x+=2)p.rect(x,9,1,2,palette.dark);p.rect(2,12,2,4,palette.dark).rect(12,12,2,4,palette.dark).rect(5,4,6,3,palette.cream);}
+ else if(id==='clock')p.box(3,1,10,13,palette.wood,palette.cream).box(4,2,8,8,palette.dark,palette.light).line(8,3,8,6,palette.dark).line(8,6,10,7,palette.dark).rect(7,10,2,3,palette.gold);
+ else if(id==='clock-hook')p.rect(7,1,2,2,palette.wood).rect(8,3,1,3,palette.dark).rect(6,5,3,1,palette.dark);
+ else if(id==='quiet-notice')p.box(1,2,14,12,palette.wood,palette.cream).rect(3,4,10,1,palette.teal).rect(3,7,7,1,palette.wood).rect(3,10,10,1,palette.wood);
+ else if(id==='elevator-car')p.box(0,0,16,16,palette.dark,palette.teal).rect(2,2,12,12,'#a4bcb5').rect(2,2,12,1,palette.light).rect(1,14,14,2,palette.dark).rect(1,3,1,11,palette.cream).rect(14,3,1,11,palette.cream);
  else if(id==='tree')p.rect(7,9,2,7,palette.wood).rect(3,3,10,7,palette.green).rect(5,1,6,3,palette.leaf).rect(1,5,14,3,palette.green);
  else if(id==='lamp')p.rect(7,3,1,13,palette.dark).rect(4,2,7,2,palette.dark).rect(5,0,5,2,palette.gold);
  else if(id==='flower')p.rect(3,10,10,6,palette.wood).rect(5,6,1,4,palette.green).rect(10,5,1,5,palette.green).rect(4,4,3,3,palette.pink).rect(9,3,3,3,palette.gold);
  else if(id==='bicycle')p.box(0,10,6,5,palette.dark,'#b9c8ac').box(10,10,6,5,palette.dark,'#b9c8ac').line(3,12,7,7,palette.red).line(7,7,13,12,palette.red).line(3,12,13,12,palette.red).rect(10,4,1,5,palette.dark).rect(9,4,4,1,palette.dark);
  await save('props',id,p,`ドット絵の小道具: ${id}`);
 }
-await writeFile(`${root}/manifest.json`,JSON.stringify({version:'town-pixel-0.6.0',notes:'Integer-grid original pixel art; source SVGs in public/assets are preserved. 100 resident sheets do not imply 100 implemented scenarios.',assets:entries},null,2)+'\n');
+await writeFile(`${root}/manifest.json`,JSON.stringify({version:'town-pixel-0.7.0',notes:'Integer-grid original pixel art; source SVGs in public/assets are preserved. 100 resident sheets do not imply 100 implemented scenarios.',assets:entries},null,2)+'\n');
 let imports='',mapping='';for(const [i,e]of entries.entries()){imports+=`import asset${i} from '../../${root}/${e.file}';\n`;mapping+=`  '${e.id}': {src:asset${i},width:${e.width},height:${e.height}},\n`;}
 await writeFile('src/game/assets.ts',imports+`\nexport const assets:Record<string,{src:string;width:number;height:number}> = {\n${mapping}};\n`);
 console.log(`Generated ${entries.length} pixel assets.`);

@@ -184,6 +184,16 @@ import asset182 from '../../public/pixel-assets/props/mail-bundle.svg';
 import asset183 from '../../public/pixel-assets/props/post-door-closed.svg';
 import asset184 from '../../public/pixel-assets/props/post-door-open.svg';
 import asset185 from '../../public/pixel-assets/props/postal-table.svg';
+import asset186 from '../../public/pixel-assets/props/watch-lantern.svg';
+import asset187 from '../../public/pixel-assets/props/watch-book.svg';
+import asset188 from '../../public/pixel-assets/props/route-map.svg';
+import asset189 from '../../public/pixel-assets/props/sign-old.svg';
+import asset190 from '../../public/pixel-assets/props/sign-new.svg';
+import asset191 from '../../public/pixel-assets/props/piano.svg';
+import asset192 from '../../public/pixel-assets/props/clock.svg';
+import asset193 from '../../public/pixel-assets/props/clock-hook.svg';
+import asset194 from '../../public/pixel-assets/props/quiet-notice.svg';
+import asset195 from '../../public/pixel-assets/props/elevator-car.svg';
 
 export const assets:Record<string,{src:string;width:number;height:number}> = {
   'buildings.apartment-a': {src:asset0,width:350,height:630},
@@ -372,4 +382,14 @@ export const assets:Record<string,{src:string;width:number;height:number}> = {
   'props.post-door-closed': {src:asset183,width:64,height:64},
   'props.post-door-open': {src:asset184,width:64,height:64},
   'props.postal-table': {src:asset185,width:64,height:64},
+  'props.watch-lantern': {src:asset186,width:64,height:64},
+  'props.watch-book': {src:asset187,width:64,height:64},
+  'props.route-map': {src:asset188,width:64,height:64},
+  'props.sign-old': {src:asset189,width:64,height:64},
+  'props.sign-new': {src:asset190,width:64,height:64},
+  'props.piano': {src:asset191,width:64,height:64},
+  'props.clock': {src:asset192,width:64,height:64},
+  'props.clock-hook': {src:asset193,width:64,height:64},
+  'props.quiet-notice': {src:asset194,width:64,height:64},
+  'props.elevator-car': {src:asset195,width:64,height:64},
 };

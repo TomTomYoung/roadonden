@@ -1,6 +1,8 @@
 import { blockPlaces, blockPlaceById, travelTicks } from './block.ts';
 import { registerRoomsAndSleep, installRoomsAndSleep, FINN, SAM, OSCAR } from './rooms-and-sleep.ts';
 import { registerPostalAndPlates, installPostalAndPlates, BEATRICE } from './postal-and-plates.ts';
+import {registerNightwatch,installNightwatch} from './nightwatch-and-routes.ts';
+import {registerQuietNeighbours,installQuietNeighbours} from './quiet-neighbours.ts';
 import { check } from '../core/conditions.ts';
 import type { WorldState } from '../core/types.ts';
 import type { ActionDefinition, ActionEffect, ChoiceGuard, Condition, Content, Custody, ResidentDefinition } from '../core/types.ts';
@@ -29,8 +31,8 @@ const accepted = (agreementId: string): ChoiceGuard => ({ op: 'accepted', agreem
 const agreement = (agreementId: string, actorIds: string[]): Condition => ({ op: 'agreement', agreementId, version: 1, actorIds });
 
 export const dinnerContent: Content = {
-  version: 'town-0.6.0', namespace: 'redesign-v1', tickMs: 100, ticksPerDay: 14400,
-  places: blockPlaces, propositions: [], actors: [], objects: [], resources: ['table:home','work:quay'], services: ['home.receipt','market.shelf','shoe.box'], clues: [], loans: [], agreements: [], actions: [],
+  version: 'town-0.7.0', namespace: 'redesign-v1', tickMs: 100, ticksPerDay: 14400,
+  places: blockPlaces, propositions: [], actors: [], objects: [], resources: ['table:home','work:quay','lift:O'], services: ['home.receipt','market.shelf','shoe.box'], clues: [], loans: [], agreements: [], actions: [],
 };
 const c = dinnerContent;
 function prop(id: string, description: string, initialValue = false, derived?: Condition) { c.propositions.push({ id, description, initialValue, ...(derived ? { derived } : {}) }); }
@@ -163,6 +165,8 @@ c.loans!.push({id:'spareKey',objectId:'spareKey',lenderId:DA,borrowerId:E,return
 
 registerRoomsAndSleep({person,object,c,actor,place});
 registerPostalAndPlates({person,object,c,actor,place});
+registerNightwatch({person,object,c,actor,place});
+registerQuietNeighbours({person,object,c,actor,place});
 c.resources.push(...c.actors.map(a=>`presence:${a.id}`));
 // Walks reserve the moving person. No teleporting, no other actor controlled by the UI.
 export function walkId(who:string,from:string,to:string) { return `walk.${who}.${from}.${to}`; }
@@ -179,7 +183,7 @@ for(const who of c.actors.map(a=>a.id).filter(id=>id!==FINN)) for(const from of 
   const effects:ActionEffect[]=[{op:'move',actorId:who,to:toId}];
   if(who===BEATRICE&&toId==='sorting'&&(from.id==='postDoor'||from.id==='postSide'))effects.push(set('post.admitted'));
   if(who===BEATRICE&&from.id==='postDoor'&&toId==='sorting')effects.push(set('post.passed'),set('post.open',false),emit('post.selfEntry',[BEATRICE],'sorting'));
-  action(walkId(who,from.id,toId),`${to.name}へ${who===BEATRICE?'車椅子で進む':'歩く'}`,[who],guard,effects,travelTicks(from.id,toId),{movement:{actorId:who,from:from.id,to:toId},resources:[`presence:${who}`]});
+  action(walkId(who,from.id,toId),`${to.name}へ${who===BEATRICE?'車椅子で進む':'歩く'}`,[who],guard,effects,travelTicks(from.id,toId),{movement:{actorId:who,from:from.id,to:toId},resources:[`presence:${who}`,...([from.id,toId].includes('liftGround')&&[from.id,toId].includes('liftUpper')?['lift:O']:[])]});
 }
 const placeIndex=new Map(c.places.map(p=>[p.id,p]));
 const pathsTo=new Map<string,Map<string,string>>();
@@ -417,6 +421,8 @@ Object.assign(greetings,{
 // Chapter modules use the same evidence, ownership and path machinery as dinner.
 export const chapterTools={person,object,c,P,yes,all,any,not,fact,at,held,actor,place,set,transfer,emit,together,knows,b,ca,cn,here,accepted,agreement,prop,clue,local,action,rule,auto,interaction,talk,tell,propose,travel,searchLoop,greetings,route,walkId};
 installPostalAndPlates(chapterTools);
+installNightwatch(chapterTools);
+installQuietNeighbours(chapterTools);
 installRoomsAndSleep(chapterTools);
 const movementDefinitions=new Map(c.actions.filter(a=>a.movement?.actorId===P).map(a=>[a.id,a]));
 // Route preview respects today's doors. Every edge is checked again when walked.

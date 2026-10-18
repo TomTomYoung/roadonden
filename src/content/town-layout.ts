@@ -81,6 +81,9 @@ export function extendTown(places:BlockPlace[],names:Record<string,string>){
  link('back.1','pawn');link('back.1','bakery');link('back.2','freightLow');link('back.3','theatreDoor');link('back.4','postDoor');link('back.4','postSide');link('back.5','shuttle');
  // The passenger lift exists independently of the goods lift and is usable from day one.
  link('liftGround','liftUpper');
+ const liftUp=places.find(p=>p.id==='liftUpper')!,liftLobby=places.find(p=>p.id==='liftNew')!;
+ [liftUp.x,liftLobby.x]=[liftLobby.x,liftUp.x];liftUp.room='202';liftLobby.room='201';
+ liftUp.name='昇降機のあるアパート 202・共用エレベーター・2階';liftLobby.name='昇降機のあるアパート 201・新入口の待合';
  // Postal work is on the ground floor, reachable through either actual entrance.
  // Keep stable place IDs for letters and later postal scenarios.
  const postal=(id:string)=>places.find(p=>p.id===id)!;

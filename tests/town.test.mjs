@@ -8,7 +8,7 @@ import {blockPlaceById,blockPlaces} from '../src/content/block.ts';
 import {townBuildings,districts,WORLD_WIDTH,WORLD_HEIGHT} from '../src/content/town-layout.ts';
 const defs=new Map(content.actions.map(a=>[a.id,a]));
 function stepUntil(s,predicate,limit=1100){for(let i=0;i<limit;i++){if(predicate(s.snapshot()))return;s.step();}assert.ok(predicate(s.snapshot()),'timed out');}
-function perform(s,id,extra=6){const a=defs.get(id),n=s.snapshot().nextEventId;assert.ok(a,id);s.enqueue({kind:'start',actorId:P,actionId:id});s.step(a.durationTicks+extra+1);const events=s.snapshot().events.filter(e=>e.id>=n);assert.ok(events.some(e=>e.type==='engine.action.finished'&&e.payload.actionId===id),`${id}: ${JSON.stringify(events.filter(e=>/abort|reject/.test(e.type)))}`);}
+function perform(s,id,extra=6){const a=defs.get(id),n=s.snapshot().nextEventId;assert.ok(a,id);if(a.movement&&a.resources.includes('lift:O'))stepUntil(s,q=>q.reservations['lift:O']===undefined);s.enqueue({kind:'start',actorId:P,actionId:id});s.step(a.durationTicks+extra+1);const events=s.snapshot().events.filter(e=>e.id>=n);assert.ok(events.some(e=>e.type==='engine.action.finished'&&e.payload.actionId===id),`${id}: ${JSON.stringify(events.filter(e=>/abort|reject/.test(e.type)))}`);}
 function go(s,to){for(const next of route(s.snapshot().actors[P].locationId,to))perform(s,walkId(P,s.snapshot().actors[P].locationId,next),1);s.step(3);}
 function meet(s,who){for(let i=0;i<15;i++){const state=s.snapshot(),loc=state.actors[who].locationId;if(state.actors[P].locationId===loc&&!state.actions.some(a=>defs.get(a.definitionId).movement?.actorId===who))return;go(s,loc);s.step(3);}assert.fail('could not meet '+who);}
 function offer(s,id){perform(s,'offer.'+id,12);}

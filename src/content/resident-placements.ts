@@ -124,14 +124,14 @@ export const residentPlacements = [
     "name": "アルフ ベル",
     "initialLocation": "inn",
     "destination": "alfRoom",
-    "implemented": false
+    "implemented": true
   },
   {
     "id": "C019",
     "name": "ピップ ラウンド",
     "initialLocation": "street",
-    "destination": "street",
-    "implemented": false
+    "destination": "inn",
+    "implemented": true
   },
   {
     "id": "C020",
@@ -152,21 +152,21 @@ export const residentPlacements = [
     "name": "カレブ マップ",
     "initialLocation": "liftOld",
     "destination": "notice",
-    "implemented": false
+    "implemented": true
   },
   {
     "id": "C023",
     "name": "ローズ キー",
     "initialLocation": "basil",
     "destination": "basil",
-    "implemented": false
+    "implemented": true
   },
   {
     "id": "C024",
     "name": "ノア チック",
     "initialLocation": "martha",
     "destination": "martha",
-    "implemented": false
+    "implemented": true
   },
   {
     "id": "C025",
@@ -305,8 +305,8 @@ export const residentPlacements = [
     "id": "C044",
     "name": "ハリエット フェリー",
     "initialLocation": "liftGround",
-    "destination": "liftUpper",
-    "implemented": false
+    "destination": "liftGround",
+    "implemented": true
   },
   {
     "id": "C045",

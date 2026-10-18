@@ -5,7 +5,7 @@ import { WORLD_WIDTH, WORLD_HEIGHT, districts, townBuildings } from '../content/
 import type { WorldState } from '../core/types.ts';
 
 function objectArt(id:string){
- const special:Record<string,string>={plateA:'plate-a',plateH:'plate-h',addressElias:'address-card',addressIris:'address-card',postalBag:'mailbag',postalBundle:'mail-bundle',abelTools:'toolbag',hughBrush:'toolbag',hesterPillow:'pillow',hesterCoat:'coat',stageCushion:'cushion',nellLetter:'letter',samTools:'toolbag',samLadder:'ladder',cradle:'cradle',irisClothes:'coat',eliasCoat:'coat'};
+ const special:Record<string,string>={watchBell:'bell',watchLantern:'watch-lantern',watchBook:'watch-book',calebMap:'route-map',patrolCopy:'route-map',rosePiano:'piano',noahClock:'clock',quietNotice:'quiet-notice',plateA:'plate-a',plateH:'plate-h',addressElias:'address-card',addressIris:'address-card',postalBag:'mailbag',postalBundle:'mail-bundle',abelTools:'toolbag',hughBrush:'toolbag',hesterPillow:'pillow',hesterCoat:'coat',stageCushion:'cushion',nellLetter:'letter',samTools:'toolbag',samLadder:'ladder',cradle:'cradle',irisClothes:'coat',eliasCoat:'coat'};
  const lower=id.toLowerCase();return special[id]??(lower.includes('puppet')?'puppet':lower.includes('loan')?'loanShoes':lower.includes('pot')?'pot':lower.includes('package')?'package':lower.includes('shoes')?'shoes':lower.includes('key')?'key':undefined);
 }
 
@@ -75,10 +75,10 @@ export class BlockRenderer {
  private line(points:number[][],color:string,width:number){const c=this.ctx;c.strokeStyle=color;c.lineWidth=width;c.lineCap='round';c.beginPath();points.forEach(([x,y],i)=>i?c.lineTo(x!,y!):c.moveTo(x!,y!));c.stroke();}
  position(id:string,s:WorldState,subtick:number){
   const a=s.actors[id]!,p=blockPlaceById.get(a.locationId)!;
-  const movement=s.actions.find(a=>this.definitions.get(a.definitionId)?.movement?.actorId===id);
+  const movement=s.actions.find(a=>this.definitions.get(a.definitionId)?.movement&&this.definitions.get(a.definitionId)!.actorIds.includes(id));
   let x=p.x,y=p.y;
-  if(movement){const def=this.definitions.get(movement.definitionId)!,q=blockPlaceById.get(def.movement!.to)!;const f=Math.min(1,(movement.elapsedTicks+subtick)/def.durationTicks);x+=(q.x-x)*f;y+=(q.y-y)*f;}
-  else{const locals=content.actors.filter(a=>s.actors[a.id]!.locationId===p.id&&!s.actions.some(r=>this.definitions.get(r.definitionId)?.movement?.actorId===a.id));x+=(locals.findIndex(a=>a.id===id)-(locals.length-1)/2)*23;
+  if(movement){const def=this.definitions.get(movement.definitionId)!,q=blockPlaceById.get(def.movement!.to)!;const f=Math.min(1,(movement.elapsedTicks+subtick)/def.durationTicks);x+=(q.x-x)*f;y+=(q.y-y)*f;if(def.actorIds.length>1)x+=(def.actorIds.indexOf(id)-(def.actorIds.length-1)/2)*20;}
+  else{const locals=content.actors.filter(a=>s.actors[a.id]!.locationId===p.id&&!s.actions.some(r=>this.definitions.get(r.definitionId)?.movement&&this.definitions.get(r.definitionId)!.actorIds.includes(a.id)));x+=(locals.findIndex(a=>a.id===id)-(locals.length-1)/2)*23;
    if((id===D||id===B)&&p.id==='yard'&&s.facts['ben.chasing']){const t=(s.tick+subtick)/12+(id===D?0:1.3);x=p.x+Math.cos(t)*36;y=p.y+Math.sin(t)*12;}}
   return{x,y,moving:!!movement};
  }
@@ -118,9 +118,14 @@ export class BlockRenderer {
   prop('return-box','shoe',52,10,.55);
   for(const [id,obj]of Object.entries(s.objects)){
    const asset=objectArt(id);
-   if(asset&&obj.quantity>0&&obj.custody.kind==='place'&&blockPlaceById.has(obj.custody.id))prop(asset,obj.custody.id,id==='cradle'?12:-35,id==='cradle'?8:-22,id==='cradle'?.85:.48);
+   if(asset&&obj.quantity>0&&obj.custody.kind==='place'&&blockPlaceById.has(obj.custody.id))prop(asset,obj.custody.id,id==='cradle'?12:-35,id==='cradle'?8:id==='noahClock'&&s.facts['noah.clockMounted']?-70:-22,id==='cradle'?.85:.48);
    // Custody remains simulation data; sprites never decide whether an object was delivered.
   }
+  prop(s.facts['lift.signposted']?'sign-new':'sign-old','liftOld',-36,-45,.6);prop('sign-new','liftGround',45,-45,.5);
+  if(s.actions.some(a=>a.definitionId==='alf.ring'))prop('bell','inn',22,-25,.5);
+  if(s.facts['rose.sounding'])for(const id of ['basil','martha']){const p=blockPlaceById.get(id)!;c.fillStyle='#a77953';for(let i=0;i<3;i++)c.fillRect(p.x-51+i*6,p.y-62-i*4,3,7);}
+  if(!s.facts['noah.clockMounted'])prop('clock-hook','martha',-35,-70,.5);
+  for(const run of s.actions){const d=this.definitions.get(run.definitionId)!;if(d.movement&&[d.movement.from,d.movement.to].includes('liftGround')&&[d.movement.from,d.movement.to].includes('liftUpper')){const pos=this.position(d.movement.actorId,s,subtick);const groupOffset=(d.actorIds.indexOf(d.movement.actorId)-(d.actorIds.length-1)/2)*20;this.asset('props.elevator-car',pos.x-groupOffset-32,pos.y-53,1);}}
   for(const actor of content.actors){
    const pos=this.position(actor.id,s,subtick),im=this.images.get(`residents.${actor.id===D?'dog':actor.id}`)!;
    const working=s.actions.find(a=>this.definitions.get(a.definitionId)!.actorIds.includes(actor.id)&&!this.definitions.get(a.definitionId)!.concurrent);
@@ -140,9 +145,9 @@ export class BlockRenderer {
    }
    const h=actor.id===D?48:80,scale=actor.id===D?.75:.5;
    if(actor.id===P){c.fillStyle='#ad5f3d';c.fillRect(pos.x-17,pos.y+3,34,4);c.fillStyle='#fff1c9';c.fillRect(pos.x-6,pos.y-52,12,4);c.fillRect(pos.x-3,pos.y-48,6,4);}
-   if(actor.id==='C017'&&s.facts['hester.lying']&&!pos.moving){const bed=blockPlaceById.get('hester')!;c.save();c.translate(bed.x-22,bed.y-30);c.rotate(-Math.PI/2);c.drawImage(im,0,0,64,80,-16,-20,32,40);c.restore();}
+   if(!pos.moving&&((actor.id==='C017'&&s.facts['hester.lying'])||(actor.id==='C018'&&s.facts['alf.lying'])||(actor.id==='C024'&&s.facts['noah.lying']))){const bed=blockPlaceById.get(actor.id==='C017'?'hester':actor.id==='C018'?'alfRoom':'martha')!;c.save();c.translate(bed.x-22,bed.y-30);c.rotate(-Math.PI/2);c.drawImage(im,0,0,64,80,-16,-20,32,40);c.restore();}
    else c.drawImage(im,frame*64,0,64,h,pos.x-32*scale,pos.y-(h-7)*scale,64*scale,h*scale);
-   if(actor.id!==D){const priority=['plateA','plateH','postalBundle','postalBag'];const carried=Object.entries(s.objects).sort(([a],[b])=>(priority.includes(a)?priority.indexOf(a):9)-(priority.includes(b)?priority.indexOf(b):9)).find(([id,o])=>objectArt(id)&&o.quantity>0&&o.custody.kind==='actor'&&o.custody.id===actor.id);if(carried){const kind=objectArt(carried[0]);if(kind)this.asset(`props.${kind}`,pos.x-10,pos.y-24,.42);}}
+   if(actor.id!==D){const priority=['watchLantern','watchBook','calebMap','patrolCopy','noahClock','plateA','plateH','postalBundle','postalBag'];const carried=Object.entries(s.objects).sort(([a],[b])=>(priority.includes(a)?priority.indexOf(a):9)-(priority.includes(b)?priority.indexOf(b):9)).find(([id,o])=>objectArt(id)&&o.quantity>0&&o.custody.kind==='actor'&&o.custody.id===actor.id);if(carried){const kind=objectArt(carried[0]);if(kind)this.asset(`props.${kind}`,pos.x-10,pos.y-24,.42);}}
   }
   c.restore();
  }

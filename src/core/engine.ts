@@ -60,7 +60,7 @@ export class Simulation {
     this.state.events.push(e); return e;
   }
   private moving(actorId: string, s = this.state): boolean {
-    return s.actions.some(a => a.phase === 'running' && this.definition(a.definitionId).movement?.actorId === actorId);
+    return s.actions.some(a => a.phase === 'running' && this.definition(a.definitionId).movement && this.definition(a.definitionId).actorIds.includes(actorId));
   }
   private together(a: string, b: string): boolean { return !this.moving(a) && !this.moving(b) && this.state.actors[a]!.locationId === this.state.actors[b]!.locationId; }
   private queue(eventId: number, recipientId: string, fields: Partial<Delivery>): void {
@@ -279,7 +279,7 @@ export class Simulation {
     if (!check(d.startGuard, startSnapshot) || !check(d.maintainGuard, startSnapshot)) reason = '開始条件または持続条件が成立していない';
     // A result committed this tick may invalidate a proposal. It may not enable a new one.
     if (!check(d.startGuard, this.state) || !check(d.maintainGuard, this.state)) reason = '開始時点で条件が変化した';
-    if (d.movement && this.state.actors[d.movement.actorId]!.locationId !== d.movement.from) reason = '移動の出発地点が違う';
+    if (d.movement && d.actorIds.some(id => this.state.actors[id]!.locationId !== d.movement!.from)) reason = '移動の出発地点が違う';
     if (reason) { this.event('engine.action.rejected', [p.actorId], actor.locationId, { actionId: d.id, reason, retryAt: this.state.tick + p.retryTicks }); return; }
     const id = this.state.nextActionId++;
     const e = this.event('engine.action.started', d.actorIds, actor.locationId, { instanceId: id, actionId: d.id, ruleId: p.ruleId ?? 'command' });

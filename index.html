@@ -423,7 +423,7 @@
         ref(a.movement.from, c2.places, "movement.from");
         ref(a.movement.to, c2.places, "movement.to");
         requireThat(c2.places.find((p2) => p2.id === a.movement.from).links.includes(a.movement.to), "\u79FB\u52D5\u7D4C\u8DEF\u304C\u63A5\u7D9A\u3055\u308C\u3066\u3044\u307E\u305B\u3093");
-        requireThat(a.onSuccess.some((e) => e.op === "move" && e.actorId === a.movement.actorId && e.to === a.movement.to), "\u79FB\u52D5\u7D42\u4E86\u52B9\u679C\u304C\u5FC5\u8981\u3067\u3059");
+        requireThat(a.actorIds.every((id) => a.onSuccess.some((e) => e.op === "move" && e.actorId === id && e.to === a.movement.to)), "\u540C\u884C\u8005\u5168\u54E1\u306E\u79FB\u52D5\u7D42\u4E86\u52B9\u679C\u304C\u5FC5\u8981\u3067\u3059");
       }
     }
   }
@@ -559,11 +559,11 @@
       custody(o.custody, c2);
       int(o.quantity, "object.quantity");
       requireThat(o.quantity === 0 === (o.custody.kind === "consumed"), "\u6570\u91CF\u3068\u6D88\u8CBB\u72B6\u614B\u304C\u4E00\u81F4\u3057\u307E\u305B\u3093");
-      const seen = /* @__PURE__ */ new Set([id]);
+      const seen2 = /* @__PURE__ */ new Set([id]);
       let at2 = o.custody;
       while (at2.kind === "object") {
-        requireThat(!seen.has(at2.id), "\u7269\u306E\u53CE\u7D0D\u5148\u304C\u5FAA\u74B0\u3057\u3066\u3044\u307E\u3059");
-        seen.add(at2.id);
+        requireThat(!seen2.has(at2.id), "\u7269\u306E\u53CE\u7D0D\u5148\u304C\u5FAA\u74B0\u3057\u3066\u3044\u307E\u3059");
+        seen2.add(at2.id);
         const parent = s.objects[at2.id];
         requireThat(parent && parent.custody.kind !== "consumed", "\u53CE\u7D0D\u5148\u304C\u6D88\u8CBB\u6E08\u307F\u3067\u3059");
         at2 = parent.custody;
@@ -817,7 +817,7 @@
       return e;
     }
     moving(actorId, s = this.state) {
-      return s.actions.some((a) => a.phase === "running" && this.definition(a.definitionId).movement?.actorId === actorId);
+      return s.actions.some((a) => a.phase === "running" && this.definition(a.definitionId).movement && this.definition(a.definitionId).actorIds.includes(actorId));
     }
     together(a, b2) {
       return !this.moving(a) && !this.moving(b2) && this.state.actors[a].locationId === this.state.actors[b2].locationId;
@@ -941,11 +941,11 @@
       a.resources = retain;
     }
     custodyPlace(custody2, s) {
-      const seen = /* @__PURE__ */ new Set();
+      const seen2 = /* @__PURE__ */ new Set();
       let at2 = custody2;
       while (at2.kind === "object") {
-        requireThat(!seen.has(at2.id), "\u5BB9\u5668\u306E\u5FAA\u74B0\u3067\u3059");
-        seen.add(at2.id);
+        requireThat(!seen2.has(at2.id), "\u5BB9\u5668\u306E\u5FAA\u74B0\u3067\u3059");
+        seen2.add(at2.id);
         at2 = s.objects[at2.id].custody;
       }
       if (at2.kind === "actor") return s.actors[at2.id].locationId;
@@ -1134,7 +1134,7 @@
       let reason = conflict ? `\u4F7F\u7528\u4E2D\u306E\u8CC7\u6E90: ${conflict}` : null;
       if (!check(d.startGuard, startSnapshot) || !check(d.maintainGuard, startSnapshot)) reason = "\u958B\u59CB\u6761\u4EF6\u307E\u305F\u306F\u6301\u7D9A\u6761\u4EF6\u304C\u6210\u7ACB\u3057\u3066\u3044\u306A\u3044";
       if (!check(d.startGuard, this.state) || !check(d.maintainGuard, this.state)) reason = "\u958B\u59CB\u6642\u70B9\u3067\u6761\u4EF6\u304C\u5909\u5316\u3057\u305F";
-      if (d.movement && this.state.actors[d.movement.actorId].locationId !== d.movement.from) reason = "\u79FB\u52D5\u306E\u51FA\u767A\u5730\u70B9\u304C\u9055\u3046";
+      if (d.movement && d.actorIds.some((id2) => this.state.actors[id2].locationId !== d.movement.from)) reason = "\u79FB\u52D5\u306E\u51FA\u767A\u5730\u70B9\u304C\u9055\u3046";
       if (reason) {
         this.event("engine.action.rejected", [p2.actorId], actor2.locationId, { actionId: d.id, reason, retryAt: this.state.tick + p2.retryTicks });
         return;
@@ -1339,6 +1339,12 @@
     link("back.4", "postSide");
     link("back.5", "shuttle");
     link("liftGround", "liftUpper");
+    const liftUp = places2.find((p2) => p2.id === "liftUpper"), liftLobby = places2.find((p2) => p2.id === "liftNew");
+    [liftUp.x, liftLobby.x] = [liftLobby.x, liftUp.x];
+    liftUp.room = "202";
+    liftLobby.room = "201";
+    liftUp.name = "\u6607\u964D\u6A5F\u306E\u3042\u308B\u30A2\u30D1\u30FC\u30C8 202\u30FB\u5171\u7528\u30A8\u30EC\u30D9\u30FC\u30BF\u30FC\u30FB2\u968E";
+    liftLobby.name = "\u6607\u964D\u6A5F\u306E\u3042\u308B\u30A2\u30D1\u30FC\u30C8 201\u30FB\u65B0\u5165\u53E3\u306E\u5F85\u5408";
     const postal = (id) => places2.find((p2) => p2.id === id);
     const unlink = (a, b2) => {
       postal(a).links = postal(a).links.filter((id) => id !== b2);
@@ -1765,6 +1771,222 @@
     });
   }
 
+  // src/content/journeys.ts
+  var seen = (who, pid, where) => ({ op: "observe", actorIds: [who], propositionId: pid, locationId: where, sourceId: `own.${pid}` });
+  function journey(t, options) {
+    const { c: c2, P: P2, prop: prop2, at: at2, all: all2, fact: fact2, set: set2, b: b2, ca: ca2, here: here2, action: action2, rule: rule2, interaction: interaction2 } = t;
+    const { id, actors, leader, points, choice, guard: guard2, label, player = false, cycle = false, finish = [], priority = 70 } = options;
+    for (let i = 0; i < points.length - 1; i++) {
+      const pid = `${id}.step.${i}`;
+      prop2(pid, `${label}\u306E\u7D4C\u8DEF\u3092\u672C\u4EBA\u304C\u78BA\u8A8D\u3057\u3066\u3044\u308B\u3002`, i === 0);
+      c2.actors.find((a) => a.id === leader).initialBeliefs.push({ propositionId: pid, stance: i === 0 ? "believe" : "deny", reason: "\u4E88\u5B9A\u3057\u305F\u7D4C\u8DEF\u306E\u6700\u521D\u306E\u533A\u9593" });
+    }
+    for (let i = 0; i < points.length - 1; i++) {
+      const from = points[i], to = points[i + 1], pid = `${id}.step.${i}`, last = i === points.length - 2, next = `${id}.step.${last ? 0 : i + 1}`;
+      const resources = actors.map((a) => `presence:${a}`);
+      if ([from, to].includes("liftGround") && [from, to].includes("liftUpper")) resources.push("lift:O");
+      const effects = [...actors.map((actorId) => ({ op: "move", actorId, to })), set2(pid, false), seen(leader, pid, to)];
+      if (!last || cycle) effects.push(set2(next), seen(leader, next, to));
+      if (last) effects.push(...finish);
+      const aid = `${id}.${i}`, physical = all2(...actors.map((a) => at2(a, from)), fact2(pid), guard2), text = `${label}\uFF1A${c2.places.find((p2) => p2.id === to).name}\u3078\u9032\u3080`;
+      if (player) {
+        interaction2(aid, text, { location: from }, physical, effects, "\u540C\u3058\u9053\u3092\u4E00\u7DD2\u306B\u901A\u308A\u3001\u5230\u7740\u3057\u305F\u5834\u6240\u3092\u78BA\u304B\u3081\u305F\u3002", travelTicks(from, to));
+        const def = c2.actions.find((a) => a.id === aid);
+        def.actorIds = [...actors];
+        def.movement = { actorId: P2, from, to };
+        def.resources = resources;
+      } else {
+        action2(aid, text, actors, physical, effects, travelTicks(from, to), { movement: { actorId: leader, from, to }, resources });
+        rule2(leader, aid, ca2(here2(from), b2(pid), choice), priority);
+      }
+    }
+  }
+
+  // src/content/nightwatch-and-routes.ts
+  var ALF = "C018";
+  var PIP = "C019";
+  var CALEB = "C022";
+  var HARRIET = "C044";
+  var patrolPoints = ["inn", "a1", "a2", "a1", "street", "b1", "b2", "b1", "street", "a1", "inn"];
+  var liftPoints = ["liftGround", "liftUpper", "O.hall2", "liftNew", "O.hall2", "liftUpper", "liftGround"];
+  function registerNightwatch({ person: person2, object: object2, c: c2, actor: actor2, place: place2 }) {
+    person2(ALF, "\u30A2\u30EB\u30D5 \u30D9\u30EB", "inn", "\u52E4\u52D9\u3092\u5F15\u304D\u7D99\u304E\u3001\u5BDD\u5E8A\u3078\u5E30\u3063\u3066\u7720\u308B", "\u4EA4\u4EE3\u3092\u77E5\u3089\u305B\u308B\u624B\u6301\u3061\u30D9\u30EB\u3092\u9CF4\u3089\u3057\u7D9A\u3051\u308B", ["watch.alfMeaning"]);
+    person2(PIP, "\u30D4\u30C3\u30D7 \u30E9\u30A6\u30F3\u30C9", "street", "\u5F15\u7D99\u304E\u3092\u53D7\u3051\u3001\u81EA\u5206\u3067\u4E00\u5DE1\u3057\u3001\u5F15\u7D99\u304E\u5E33\u3078\u8A18\u9332\u3059\u308B", "\u53E4\u3044\u5DE1\u56DE\u56F3\u3092\u8FBF\u308A\u3001\u9418\u3092\u7D99\u7D9A\u306E\u5408\u56F3\u3068\u53D6\u308A\u9055\u3048\u308B", ["watch.pipMeaning"]);
+    person2(CALEB, "\u30AB\u30EC\u30D6 \u30DE\u30C3\u30D7", "liftOld", "\u5909\u66F4\u3055\u308C\u305F\u7D4C\u8DEF\u3092\u81EA\u5206\u3067\u6B69\u304D\u3001\u8A02\u6B63\u56F3\u3092\u63B2\u793A\u3059\u308B", "\u6539\u88C5\u524D\u306E\u5165\u53E3\u3068\u6D88\u3048\u305F\u76EE\u5370\u3092\u63A2\u3057\u3066\u3044\u308B", ["caleb.oldMap"]);
+    person2(HARRIET, "\u30CF\u30EA\u30A8\u30C3\u30C8 \u30D5\u30A7\u30EA\u30FC", "liftGround", "\u5E0C\u671B\u3059\u308B\u5229\u7528\u8005\u306B\u4ED8\u304D\u6DFB\u3044\u3001\u5F80\u5FA9\u306E\u6848\u5185\u3092\u7D42\u3048\u308B", "\u65B0\u3057\u3044\u4E57\u5834\u3068\u4E0A\u968E\u3092\u7A7A\u306E\u307E\u307E\u5F80\u5FA9\u3057\u3066\u3044\u308B", ["lift.service"]);
+    for (const [id, name, who, custody2] of [
+      ["watchBell", "\u591C\u56DE\u308A\u306E\u624B\u6301\u3061\u30D9\u30EB", ALF, actor2(ALF)],
+      ["watchLantern", "\u5F53\u756A\u306E\u5DE1\u56DE\u706F", ALF, actor2(ALF)],
+      ["watchBook", "\u7BC4\u56F2\u3068\u53D7\u6E21\u3057\u3092\u8A18\u3059\u5F15\u7D99\u304E\u5E33", ALF, place2("inn")],
+      ["calebMap", "\u30AB\u30EC\u30D6\u306E\u539F\u56F3\u3068\u8A02\u6B63\u7528\u7D19", CALEB, actor2(CALEB)],
+      ["patrolCopy", "\u5F53\u756A\u304C\u8AAD\u3081\u308B\u5DE1\u56DE\u56F3\u306E\u5199\u3057", CALEB, { kind: "object", id: "calebMap" }],
+      ["liftSigns", "\u5165\u53E3\u306E\u6848\u5185\u672D\u3068\u53D6\u4ED8\u9053\u5177", HARRIET, actor2(HARRIET)]
+    ]) object2(id, name, who, custody2);
+    for (const [who, id] of [[ALF, "watch.handover"], [PIP, "watch.patrol"], [CALEB, "town.correctedMap"], [HARRIET, "lift.guidance"]]) {
+      c2.services.push(id);
+      c2.actors.find((a) => a.id === who).postGoalContract.serviceIds.push(id);
+    }
+  }
+  function installNightwatch(t) {
+    const { c: c2, P: P2, yes: yes2, all: all2, not: not2, fact: fact2, at: at2, held: held2, actor: actor2, place: place2, set: set2, transfer: transfer2, emit: emit2, knows: knows2, b: b2, ca: ca2, cn: cn2, here: here2, accepted: accepted2, agreement: agreement2, prop: prop2, clue: clue2, local: local2, action: action2, rule: rule2, auto: auto2, interaction: interaction2, talk: talk3, tell: tell2, propose: propose2, travel: travel2, searchLoop: searchLoop2, route: route2, greetings: greetings2 } = t;
+    const either = (...conditions) => ({ op: "any", conditions });
+    prop2("watch.alfMeaning", "\u30A2\u30EB\u30D5\u306E\u9418\u306F\u4EA4\u4EE3\u3057\u3066\u307B\u3057\u3044\u5408\u56F3\u3002\u7BA1\u7406\u4EBA\u5BA4\u3067\u706F\u308A\u3068\u5DE1\u56DE\u7BC4\u56F2\u3092\u6E21\u3057\u305F\u3044\u3002", true);
+    prop2("watch.pipMeaning", "\u30D4\u30C3\u30D7\u306F\u9418\u3092\u300C\u5148\u8F29\u306E\u5DE1\u56DE\u3092\u7D9A\u3051\u308B\u300D\u306E\u5408\u56F3\u3068\u601D\u3044\u3001\u53E4\u3044\u56F3\u306E\u884C\u304D\u6B62\u307E\u308A\u3092\u5F80\u5FA9\u3057\u3066\u3044\u308B\u3002", true);
+    for (const [id, text, loc] of [
+      ["watch.clarified", "\u4E8C\u4EBA\u304C\u76F4\u63A5\u8A71\u3057\u3001\u9418\u306E\u610F\u5473\u3068\u4EA4\u4EE3\u3059\u308B\u5834\u6240\u3092\u78BA\u304B\u3081\u305F\u3002", "inn"],
+      ["watch.handed", "\u5F15\u7D99\u304E\u5E33\u306E\u7BC4\u56F2\u3092\u8AAD\u307F\u5408\u308F\u305B\u3001\u5DE1\u56DE\u706F\u3068\u30D9\u30EB\u3092\u30D4\u30C3\u30D7\u3078\u6E21\u3057\u305F\u3002", "inn"],
+      ["watch.learned", "\u30D4\u30C3\u30D7\u304C\u73FE\u5728\u306E\u5DE1\u56DE\u8DEF\u3092\u78BA\u304B\u3081\u305F\u3002", "inn"],
+      ["watch.lap", "\u30D4\u30C3\u30D7\u304C\u6C7A\u3081\u305F\u7BC4\u56F2\u3092\u5B9F\u969B\u306B\u4E00\u5DE1\u3057\u3066\u623B\u3063\u305F\u3002", "inn"],
+      ["watch.recorded", "\u30D4\u30C3\u30D7\u304C\u4E00\u5DE1\u306E\u7D50\u679C\u3092\u5F15\u7D99\u304E\u5E33\u306B\u8A18\u3057\u305F\u3002", "inn"],
+      ["alf.lying", "\u30A2\u30EB\u30D5\u304C\u81EA\u5206\u306E\u5BDD\u5E8A\u306B\u6A2A\u306B\u306A\u3063\u305F\u3002", "alfRoom"],
+      ["alf.asleep", "\u52E4\u52D9\u3092\u5F15\u304D\u7D99\u3044\u3060\u30A2\u30EB\u30D5\u304C\u843D\u3061\u7740\u3044\u3066\u7720\u3063\u3066\u3044\u308B\u3002", "alfRoom"]
+    ]) local2(id, text, loc);
+    talk3("talk.alf", ALF, "\u9418\u3092\u4F55\u306E\u5408\u56F3\u306B\u3057\u3066\u3044\u308B\u304B\u805E\u304F", ["watch.alfMeaning"], "\u300C\u4EA4\u4EE3\u3057\u3066\u307B\u3057\u304F\u3066\u9CF4\u3089\u3057\u3066\u3044\u308B\u3093\u3060\u3002\u7BA1\u7406\u4EBA\u5BA4\u3067\u706F\u308A\u3068\u5DE1\u56DE\u7BC4\u56F2\u3092\u6E21\u305B\u305F\u3089\u3001\u3082\u3046\u7720\u308A\u305F\u3044\u3088\u300D", fact2("alf.asleep", false));
+    talk3("talk.pip", PIP, "\u9418\u3068\u53E4\u3044\u5DE1\u56DE\u56F3\u306B\u3064\u3044\u3066\u805E\u304F", ["watch.pipMeaning"], "\u300C\u9418\u304C\u9CF4\u308B\u9593\u306F\u5148\u8F29\u306E\u756A\u3060\u3068\u601D\u3063\u3066\u3044\u307E\u3057\u305F\u3002\u56F3\u306E\u89D2\u3092\u66F2\u304C\u3063\u3066\u3082\u884C\u304D\u6B62\u307E\u308A\u3067\u2026\u2026\u300D");
+    propose2("watch.alfMeet", "\u30D4\u30C3\u30D7\u306E\u53D7\u3051\u53D6\u308A\u65B9\u3092\u4F1D\u3048\u3001\u7BA1\u7406\u4EBA\u5BA4\u3067\u5F85\u3063\u3066\u3082\u3089\u3046", [ALF], { who: ALF }, "\u4E8C\u4EBA\u304C\u7BA1\u7406\u4EBA\u5BA4\u3067\u76F4\u63A5\u8A71\u3059\u3002\u6301\u3061\u7269\u3068\u5DE1\u56DE\u7BC4\u56F2\u3092\u5B9F\u969B\u306B\u6E21\u3059\u307E\u3067\u4EA4\u4EE3\u306F\u7D42\u308F\u3089\u306A\u3044\u3002", all2(knows2(P2, "watch.pipMeaning"), fact2("watch.handed", false)));
+    propose2("watch.pipMeet", "\u4EA4\u4EE3\u306E\u547C\u3073\u304B\u3051\u3060\u3068\u4F1D\u3048\u3001\u7BA1\u7406\u4EBA\u5BA4\u3078\u6765\u3066\u3082\u3089\u3046", [PIP], { who: PIP }, "\u30D4\u30C3\u30D7\u304C\u7BA1\u7406\u4EBA\u5BA4\u3078\u884C\u304D\u3001\u5148\u8F29\u672C\u4EBA\u3068\u9418\u306E\u610F\u5473\u3068\u62C5\u5F53\u7BC4\u56F2\u3092\u78BA\u304B\u3081\u308B\u3002", all2(knows2(P2, "watch.alfMeaning"), fact2("watch.handed", false)));
+    auto2(ALF, "alf.ring", "\u4EA4\u4EE3\u3092\u547C\u3076\u30D9\u30EB\u3092\u9CF4\u3089\u3059", "inn", cn2(accepted2("watch.alfMeet")), all2(fact2("watch.handed", false), held2("watchBell", actor2(ALF))), [emit2("watch.bell", [ALF], "inn")], 55, 5);
+    travel2(ALF, "inn", ca2(accepted2("watch.alfMeet"), cn2(b2("watch.handed"))), 60);
+    travel2(PIP, "inn", ca2(accepted2("watch.pipMeet"), cn2(b2("watch.handed"))), 60);
+    searchLoop2(PIP, ["street", "b1", "b2"], accepted2("watch.pipMeet"));
+    action2("watch.clarify", "\u4E8C\u4EBA\u3067\u9418\u306E\u610F\u5473\u3068\u5F15\u7D99\u304E\u5834\u6240\u3092\u8A71\u3057\u76F4\u3059", [ALF, PIP], all2(at2(ALF, "inn"), at2(PIP, "inn"), agreement2("watch.alfMeet", [P2, ALF]), agreement2("watch.pipMeet", [P2, PIP]), fact2("watch.clarified", false)), [{ op: "inform", speakerId: ALF, recipientId: PIP, propositionId: "watch.alfMeaning" }, { op: "inform", speakerId: PIP, recipientId: ALF, propositionId: "watch.pipMeaning" }, set2("watch.clarified")], 22);
+    rule2(ALF, "watch.clarify", ca2(here2("inn"), accepted2("watch.alfMeet"), cn2(b2("watch.clarified"))), 90);
+    action2("watch.handover", "\u7BC4\u56F2\u3092\u8AAD\u307F\u5408\u308F\u305B\u3001\u706F\u308A\u30FB\u30D9\u30EB\u30FB\u5F15\u7D99\u304E\u5E33\u3092\u6E21\u3059", [ALF, PIP], all2(at2(ALF, "inn"), at2(PIP, "inn"), fact2("watch.clarified"), held2("watchLantern", actor2(ALF)), held2("watchBell", actor2(ALF)), held2("watchBook", place2("inn")), fact2("watch.handed", false)), [transfer2("watchLantern", actor2(ALF), actor2(PIP)), transfer2("watchBell", actor2(ALF), actor2(PIP)), transfer2("watchBook", place2("inn"), actor2(PIP)), set2("watch.handed")], 32);
+    rule2(ALF, "watch.handover", ca2(here2("inn"), b2("watch.clarified"), cn2(b2("watch.handed"))), 95);
+    travel2(ALF, "alfRoom", ca2(b2("watch.handed"), cn2(b2("alf.asleep"))), 60);
+    auto2(ALF, "alf.lie", "\u5F15\u7D99\u304E\u3092\u7D42\u3048\u3001\u81EA\u5206\u306E\u5BDD\u5E8A\u3078\u6A2A\u306B\u306A\u308B", "alfRoom", ca2(b2("watch.handed"), cn2(b2("alf.lying"))), all2(fact2("watch.handed"), fact2("alf.lying", false)), [set2("alf.lying")], 20, 80);
+    auto2(ALF, "alf.sleep", "\u843D\u3061\u7740\u3044\u305F\u5BDD\u606F\u3067\u7720\u308B", "alfRoom", ca2(b2("alf.lying"), cn2(b2("alf.asleep"))), all2(fact2("alf.lying"), fact2("alf.asleep", false)), [set2("alf.asleep"), emit2("life.C018", [ALF], "alfRoom")], 55, 80);
+    c2.actors.find((a) => a.id === ALF).completionObservation = fact2("alf.asleep");
+    propose2("watch.walk", "\u5DE1\u56DE\u7BC4\u56F2\u3092\u30D4\u30C3\u30D7\u3068\u4E00\u5EA6\u6B69\u3044\u3066\u78BA\u304B\u3081\u308B", [PIP], { who: PIP }, "\u7BA1\u7406\u4EBA\u5BA4\u304B\u3089A\u68DF2\u968E\u3001\u4E2D\u5EAD\u3001B\u68DF2\u968E\u3092\u56DE\u3063\u3066\u623B\u308B\u3002\u305D\u306E\u5F8C\u30D4\u30C3\u30D7\u81EA\u8EAB\u304C\u4E00\u5DE1\u3057\u3066\u8A18\u9332\u3059\u308B\u3002\u8A02\u6B63\u56F3\u306E\u5B8C\u6210\u306F\u5F85\u305F\u306A\u3044\u3002", all2(at2(PIP, "inn"), fact2("watch.handed"), fact2("watch.learned", false)));
+    journey(t, { id: "watch.guide", actors: [P2, PIP], leader: PIP, points: patrolPoints, choice: { op: "always" }, guard: all2(agreement2("watch.walk", [P2, PIP]), fact2("watch.handed"), fact2("watch.learned", false)), label: "\u30D4\u30C3\u30D7\u3068\u5DE1\u56DE\u8DEF\u3092\u78BA\u304B\u3081\u308B", player: true, finish: [set2("watch.learned"), seen(PIP, "watch.learned", "inn")] });
+    interaction2("map.takeCopy", "\u63B2\u793A\u3055\u308C\u305F\u6848\u5185\u306B\u5F93\u3044\u3001\u5F53\u756A\u7528\u306E\u5199\u3057\u3092\u9810\u304B\u308B", { location: "notice" }, all2(fact2("caleb.posted"), held2("patrolCopy", place2("notice"))), [transfer2("patrolCopy", place2("notice"), actor2(P2))], "\u30AB\u30EC\u30D6\u306F\u5F53\u756A\u7528\u306E\u5199\u3057\u3092\u7F6E\u3044\u3066\u3044\u308B\u3002\u7BA1\u7406\u4EBA\u5BA4\u306E\u30D4\u30C3\u30D7\u3078\u73FE\u7269\u3092\u5C4A\u3051\u3089\u308C\u308B\u3002");
+    interaction2("map.givePip", "\u8A02\u6B63\u3055\u308C\u305F\u5DE1\u56DE\u56F3\u306E\u5199\u3057\u3092\u30D4\u30C3\u30D7\u3078\u6E21\u3059", { who: PIP }, held2("patrolCopy", actor2(P2)), [transfer2("patrolCopy", actor2(P2), actor2(PIP))], "\u30D4\u30C3\u30D7\u304C\u5199\u3057\u3092\u53D7\u3051\u53D6\u3063\u305F\u3002\u8AAD\u3093\u3067\u9053\u9806\u3092\u78BA\u304B\u3081\u308B\u3002");
+    prop2("watch.hasMap", "\u30D4\u30C3\u30D7\u306E\u624B\u5143\u306B\u8A02\u6B63\u56F3\u306E\u5199\u3057\u304C\u3042\u308B\u3002", false, held2("patrolCopy", actor2(PIP)));
+    for (const p2 of c2.places) clue2("watch.hasMap", p2.id, [PIP], at2(PIP, p2.id));
+    auto2(PIP, "pip.readMap", "\u8A02\u6B63\u56F3\u306E\u76EE\u5370\u3068\u5DE1\u56DE\u7BC4\u56F2\u3092\u8AAD\u307F\u5408\u308F\u305B\u308B", "inn", ca2(b2("watch.hasMap"), cn2(b2("watch.learned"))), all2(held2("patrolCopy", actor2(PIP)), fact2("caleb.posted"), fact2("watch.learned", false)), [set2("watch.learned")], 24, 90);
+    journey(t, { id: "watch.patrol", actors: [PIP], leader: PIP, points: patrolPoints, choice: ca2(b2("watch.handed"), b2("watch.learned"), cn2(b2("watch.lap"))), guard: all2(fact2("watch.handed"), fact2("watch.learned"), fact2("watch.lap", false), held2("watchLantern", actor2(PIP))), label: "\u81EA\u5206\u306E\u62C5\u5F53\u3092\u5DE1\u56DE\u3059\u308B", cycle: true, finish: [set2("watch.lap"), seen(PIP, "watch.lap", "inn")] });
+    auto2(PIP, "pip.record", "\u6700\u521D\u306E\u4E00\u5DE1\u3092\u5F15\u7D99\u304E\u5E33\u3078\u8A18\u3057\u3001\u5E33\u9762\u3092\u68DA\u3078\u623B\u3059", "inn", ca2(b2("watch.lap"), cn2(b2("watch.recorded"))), all2(fact2("watch.lap"), held2("watchBook", actor2(PIP)), fact2("watch.recorded", false)), [transfer2("watchBook", actor2(PIP), place2("inn")), set2("watch.recorded"), set2("watch.lap", false), seen(PIP, "watch.lap", "inn"), emit2("life.C019", [PIP], "inn")], 30, 95);
+    auto2(PIP, "pip.ordinaryRecord", "\u901A\u5E38\u306E\u5DE1\u56DE\u3092\u5E33\u9762\u3078\u8A18\u3057\u3001\u6B21\u306E\u5F53\u756A\u4ED5\u4E8B\u3078\u623B\u308B", "inn", ca2(b2("watch.lap"), b2("watch.recorded")), all2(fact2("watch.lap"), held2("watchBook", place2("inn"))), [set2("watch.lap", false), seen(PIP, "watch.lap", "inn"), emit2("watch.regularRound", [PIP], "inn")], 100, 90);
+    prop2("caleb.oldMap", "\u30AB\u30EC\u30D6\u306F\u6539\u88C5\u524D\u306E\u5165\u53E3\u3092\u4FE1\u3058\u3001\u6D88\u3048\u305F\u76EE\u5370\u3092\u63A2\u3057\u3066\u3044\u308B\u3002", true);
+    prop2("lift.service", "\u5171\u7528\u30A8\u30EC\u30D9\u30FC\u30BF\u30FC\u306F\u65B0\u5165\u53E3\u304B\u3089\u5229\u7528\u3067\u304D\u308B\u3002\u30CF\u30EA\u30A8\u30C3\u30C8\u306F\u5E0C\u671B\u3059\u308B\u5229\u7528\u8005\u306B\u4E00\u5F80\u5FA9\u4ED8\u304D\u6DFB\u3048\u308B\u3002", true);
+    local2("lift.oldSign", "\u65E7\u5F85\u5408\u306E\u63B2\u793A\u306F\u3001\u73FE\u5728\u306F\u9589\u3058\u305F\u5074\u306E\u5165\u53E3\u3092\u6307\u3057\u3066\u3044\u308B\u3002", "liftOld");
+    local2("lift.newSign", "\u65B0\u5165\u53E3\u306E\u672D\u3068\u4E0A\u968E\u306E\u76EE\u5370\u304C\u3001\u73FE\u5728\u306E\u4E57\u5834\u3092\u793A\u3057\u3066\u3044\u308B\u3002", "liftGround");
+    for (const id of ["lift.oldSign", "lift.newSign"]) c2.clues.find((q) => q.propositionId === id).observerIds = [P2];
+    for (const [id, text, loc] of [
+      ["lift.signposted", "\u30CF\u30EA\u30A8\u30C3\u30C8\u304C\u65E7\u5F85\u5408\u306E\u6848\u5185\u3092\u65B0\u5165\u53E3\u3078\u5411\u3051\u3066\u76F4\u3057\u305F\u3002", "liftOld"],
+      ["lift.requested", "\u30AB\u30EC\u30D6\u304C\u672C\u4EBA\u306E\u5E0C\u671B\u3092\u8A71\u3057\u3001\u30CF\u30EA\u30A8\u30C3\u30C8\u3068\u5F80\u5FA9\u3092\u7D04\u675F\u3057\u305F\u3002", "liftGround"],
+      ["lift.roundDone", "\u5E0C\u671B\u3057\u305F\u5229\u7528\u8005\u304C\u6848\u5185\u4FC2\u3068\u4E0A\u968E\u3092\u78BA\u304B\u3081\u3001\u540C\u3058\u5165\u53E3\u3078\u623B\u3063\u305F\u3002", "liftGround"],
+      ["lift.guided", "\u30CF\u30EA\u30A8\u30C3\u30C8\u304C\u5B9F\u969B\u306E\u5F80\u5FA9\u3092\u7D42\u3048\u3066\u6848\u5185\u8A18\u9332\u3092\u6B8B\u3057\u305F\u3002", "liftGround"],
+      ["caleb.liftChecked", "\u30AB\u30EC\u30D6\u304C\u65B0\u5165\u53E3\u3068\u4E0A\u968E\u306E\u76EE\u5370\u3092\u81EA\u5206\u3067\u901A\u308A\u3001\u5730\u4E0A\u3078\u623B\u3063\u305F\u3002", "liftGround"],
+      ["caleb.drawn", "\u30AB\u30EC\u30D6\u304C\u81EA\u5206\u3067\u6B69\u3044\u305F\u7D4C\u8DEF\u3092\u539F\u56F3\u3078\u66F8\u304D\u8DB3\u3057\u305F\u3002", "inn"],
+      ["caleb.posted", "\u30AB\u30EC\u30D6\u304C\u8A02\u6B63\u56F3\u3068\u5F53\u756A\u7528\u306E\u5199\u3057\u3092\u63B2\u793A\u5148\u3078\u7F6E\u3044\u305F\u3002", "notice"]
+    ]) local2(id, text, loc);
+    clue2("lift.signposted", "liftGround");
+    talk3("talk.caleb", CALEB, "\u53E4\u3044\u56F3\u3068\u6D88\u3048\u305F\u76EE\u5370\u306B\u3064\u3044\u3066\u805E\u304F", ["caleb.oldMap"], "\u300C\u3053\u306E\u89D2\u306B\u5165\u53E3\u304C\u3042\u3063\u305F\u306F\u305A\u3060\u3002\u56F3\u3092\u88CF\u8FD4\u3057\u3066\u898B\u3066\u3082\u3001\u540C\u3058\u3068\u3053\u308D\u3078\u623B\u3063\u3066\u3057\u307E\u3046\u300D");
+    talk3("talk.harriet", HARRIET, "\u4ECA\u306E\u4E57\u5834\u3068\u6848\u5185\u306B\u3064\u3044\u3066\u805E\u304F", ["lift.service"], "\u300C\u65B0\u3057\u3044\u5165\u53E3\u3067\u5F85\u3063\u3066\u3044\u308B\u306E\u3067\u3059\u304C\u3001\u5229\u7528\u8005\u304C\u6765\u306A\u3044\u3093\u3067\u3059\u3002\u5E0C\u671B\u304C\u3042\u308C\u3070\u4E0A\u968E\u307E\u3067\u4ED8\u304D\u6DFB\u3063\u3066\u623B\u308C\u307E\u3059\u3088\u300D");
+    interaction2("lift.inspectOld", "\u65E7\u5F85\u5408\u306E\u63B2\u793A\u3068\u9589\u3058\u305F\u5165\u53E3\u3092\u8ABF\u3079\u308B", { location: "liftOld" }, yes2, [set2("lift.oldSign")], "\u6614\u306E\u77E2\u5370\u306E\u5148\u306F\u58C1\u306B\u306A\u3063\u3066\u3044\u308B\u3002\u65B0\u5165\u53E3\u306E\u5B9F\u969B\u306E\u672D\u3068\u7167\u5408\u3057\u3088\u3046\u3002");
+    interaction2("lift.inspectNew", "\u65B0\u5165\u53E3\u306E\u672D\u3068\u4E0A\u968E\u306E\u76EE\u5370\u3092\u8ABF\u3079\u308B", { location: "liftGround" }, yes2, [set2("lift.newSign")], "\u65B0\u3057\u3044\u77E2\u5370\u306F\u3001\u3053\u306E\u5171\u7528\u30A8\u30EC\u30D9\u30FC\u30BF\u30FC\u3068\u4E0A\u968E\u306E\u7DD1\u306E\u76EE\u5370\u3092\u793A\u3057\u3066\u3044\u308B\u3002");
+    tell2("tell.liftOld", HARRIET, "\u65E7\u5F85\u5408\u306B\u6614\u306E\u77E2\u5370\u304C\u6B8B\u3063\u3066\u3044\u308B\u3068\u4F1D\u3048\u308B", "lift.oldSign", "\u300C\u5229\u7528\u8005\u306F\u305D\u3053\u306B\u3044\u305F\u306E\u3067\u3059\u306D\u3002\u65B0\u3057\u3044\u672D\u3068\u78BA\u304B\u3081\u76F4\u3057\u307E\u3057\u3087\u3046\u300D");
+    tell2("tell.liftNew", HARRIET, "\u65B0\u5165\u53E3\u306E\u672D\u3068\u76EE\u5370\u3092\u4F1D\u3048\u308B", "lift.newSign", "\u300C\u3044\u307E\u4F7F\u3048\u308B\u5165\u53E3\u306F\u3053\u3061\u3089\u3067\u3059\u3002\u65E7\u5F85\u5408\u306B\u3082\u540C\u3058\u6848\u5185\u3092\u7F6E\u304D\u307E\u3059\u300D");
+    propose2("lift.signs", "\u65E7\u5F85\u5408\u306E\u6848\u5185\u3092\u76F4\u3059\u3053\u3068\u3092\u76F8\u8AC7\u3059\u308B", [HARRIET], { who: HARRIET }, "\u30CF\u30EA\u30A8\u30C3\u30C8\u304C\u65E7\u5F85\u5408\u3078\u884C\u304D\u3001\u672D\u3092\u4ED8\u3051\u76F4\u3057\u3066\u65B0\u5165\u53E3\u3078\u623B\u308B\u3002\u4E57\u8ECA\u305D\u306E\u3082\u306E\u306F\u6848\u5185\u4FEE\u6B63\u524D\u304B\u3089\u53EF\u80FD\u3002", all2(knows2(HARRIET, "lift.oldSign"), knows2(HARRIET, "lift.newSign")));
+    travel2(HARRIET, "liftOld", ca2(accepted2("lift.signs"), cn2(b2("lift.signposted"))), 80);
+    auto2(HARRIET, "harriet.signs", "\u65E7\u5F85\u5408\u306E\u77E2\u5370\u3068\u5165\u53E3\u306E\u672D\u3092\u53D6\u308A\u4ED8\u3051\u76F4\u3059", "liftOld", ca2(accepted2("lift.signs"), cn2(b2("lift.signposted"))), all2(held2("liftSigns", actor2(HARRIET)), fact2("lift.signposted", false)), [set2("lift.signposted")], 25, 95);
+    travel2(HARRIET, "liftGround", ca2(b2("lift.signposted"), cn2(b2("lift.requested")), cn2(accepted2("lift.playerTrip")), cn2(b2("lift.guided"))), 65);
+    tell2("tell.liftService", CALEB, "\u6848\u5185\u4FC2\u306E\u3044\u308B\u65B0\u5165\u53E3\u3068\u901A\u5E38\u306E\u5229\u7528\u65B9\u6CD5\u3092\u4F1D\u3048\u308B", "lift.service", "\u300C\u65B0\u5165\u53E3\u306E\u76EE\u5370\u3092\u3001\u6848\u5185\u4FC2\u3068\u81EA\u5206\u3067\u78BA\u304B\u3081\u305F\u3044\u300D");
+    propose2("caleb.harriet", "\u6848\u5185\u4FC2\u3068\u65B0\u5165\u53E3\u304B\u3089\u5F80\u5FA9\u3059\u308B\u3053\u3068\u3092\u76F8\u8AC7\u3059\u308B", [CALEB], { who: CALEB }, "\u30AB\u30EC\u30D6\u304C\u65B0\u5165\u53E3\u3078\u884C\u304D\u3001\u30CF\u30EA\u30A8\u30C3\u30C8\u3078\u5E0C\u671B\u3092\u76F4\u63A5\u8A71\u3059\u3002\u4E0A\u968E\u306E\u76EE\u5370\u3092\u78BA\u304B\u3081\u3066\u5730\u4E0A\u3078\u623B\u308B\u3002", all2(knows2(CALEB, "lift.service"), fact2("caleb.liftChecked", false), not2(agreement2("caleb.walk", [P2, CALEB]))));
+    propose2("caleb.walk", "\u78BA\u8A8D\u3057\u305F\u5165\u53E3\u304B\u3089\u30AB\u30EC\u30D6\u3068\u4E00\u7DD2\u306B\u6B69\u304F", [CALEB], { who: CALEB }, "\u4E3B\u4EBA\u516C\u3068\u65E7\u5F85\u5408\u304B\u3089\u65B0\u5165\u53E3\u3001\u4E0A\u968E\u306E\u76EE\u5370\u3078\u6B69\u304D\u3001\u5730\u4E0A\u3078\u623B\u308B\u3002\u6848\u5185\u4FC2\u306E\u9054\u6210\u306F\u5225\u3002", all2(knows2(P2, "lift.oldSign"), knows2(P2, "lift.newSign"), fact2("caleb.liftChecked", false), not2(agreement2("caleb.harriet", [P2, CALEB]))));
+    travel2(CALEB, "liftOld", ca2(accepted2("caleb.walk"), b2("caleb.guide.step.0"), cn2(b2("caleb.liftChecked"))), 60);
+    travel2(CALEB, "liftGround", ca2(accepted2("caleb.harriet"), cn2(b2("lift.requested")), cn2(b2("caleb.liftChecked"))), 65);
+    searchLoop2(CALEB, ["liftOld", "O.hall1"], either(accepted2("caleb.walk"), accepted2("caleb.harriet")));
+    journey(t, { id: "caleb.guide", actors: [P2, CALEB], leader: CALEB, points: ["liftOld", "O.hall1", ...liftPoints], choice: { op: "always" }, guard: all2(agreement2("caleb.walk", [P2, CALEB]), fact2("caleb.liftChecked", false)), label: "\u30AB\u30EC\u30D6\u3068\u76EE\u5370\u3092\u78BA\u304B\u3081\u308B", player: true, finish: [set2("caleb.liftChecked"), seen(CALEB, "caleb.liftChecked", "liftGround")] });
+    action2("lift.request", "\u672C\u4EBA\u306E\u884C\u304D\u5148\u3092\u805E\u304D\u3001\u6848\u5185\u4FC2\u3068\u5F80\u5FA9\u3092\u7D04\u675F\u3059\u308B", [CALEB, HARRIET], all2(at2(CALEB, "liftGround"), at2(HARRIET, "liftGround"), agreement2("caleb.harriet", [P2, CALEB]), fact2("lift.signposted"), fact2("lift.requested", false)), [set2("lift.requested")], 18);
+    rule2(CALEB, "lift.request", ca2(here2("liftGround"), accepted2("caleb.harriet"), cn2(b2("lift.requested")), cn2(b2("caleb.liftChecked"))), 100);
+    journey(t, { id: "lift.calebTrip", actors: [HARRIET, CALEB], leader: HARRIET, points: liftPoints, choice: ca2(b2("lift.requested"), cn2(b2("lift.roundDone"))), guard: all2(fact2("lift.requested"), fact2("lift.roundDone", false)), label: "\u5229\u7528\u8005\u3068\u4E0A\u968E\u3092\u78BA\u304B\u3081\u3066\u623B\u308B", finish: [set2("lift.roundDone"), set2("caleb.liftChecked"), seen(HARRIET, "lift.roundDone", "liftGround"), seen(CALEB, "caleb.liftChecked", "liftGround")] });
+    propose2("lift.playerTrip", "\u4E0A\u968E\u306E\u5F85\u5408\u307E\u3067\u4ED8\u304D\u6DFB\u3063\u3066\u3082\u3089\u3046", [HARRIET], { who: HARRIET }, "\u4E3B\u4EBA\u516C\u81EA\u8EAB\u304C\u5E0C\u671B\u3059\u308B\u5229\u7528\u8005\u3068\u3057\u3066\u4E0A\u968E\u306E\u5F85\u5408\u3078\u884C\u304D\u3001\u6848\u5185\u4FC2\u3068\u5730\u4E0A\u3078\u623B\u308B\u3002", all2(at2(HARRIET, "liftGround"), fact2("lift.signposted"), fact2("lift.requested", false), fact2("lift.roundDone", false)));
+    journey(t, { id: "lift.playerTrip", actors: [P2, HARRIET], leader: HARRIET, points: liftPoints, choice: { op: "always" }, guard: all2(agreement2("lift.playerTrip", [P2, HARRIET]), fact2("lift.requested", false), fact2("lift.roundDone", false)), label: "\u30CF\u30EA\u30A8\u30C3\u30C8\u3068\u5F80\u5FA9\u3059\u308B", player: true, finish: [set2("lift.roundDone"), seen(HARRIET, "lift.roundDone", "liftGround")] });
+    auto2(HARRIET, "harriet.finish", "\u5F80\u5FA9\u306E\u8A18\u9332\u3092\u6B8B\u3057\u3001\u901A\u5E38\u306E\u6848\u5185\u3078\u623B\u308B", "liftGround", ca2(b2("lift.roundDone"), cn2(b2("lift.guided"))), all2(fact2("lift.roundDone"), fact2("lift.guided", false)), [set2("lift.guided"), emit2("life.C044", [HARRIET], "liftGround")], 18, 100);
+    prop2("lift.emptyReady", "\u30CF\u30EA\u30A8\u30C3\u30C8\u304C\u4E57\u5834\u3067\u5F85\u3061\u3001\u6B21\u306E\u7A7A\u306E\u5F80\u5FA9\u3078\u5411\u304B\u3046\u3002");
+    for (const [from, to] of [["liftGround", "liftUpper"], ["liftUpper", "liftGround"]]) {
+      auto2(HARRIET, `harriet.wait.${from}`, "\u4E57\u5834\u3067\u5229\u7528\u8005\u3092\u5F85\u3064", from, ca2(cn2(accepted2("lift.signs")), cn2(b2("lift.oldSign")), cn2(b2("lift.emptyReady"))), all2(not2(agreement2("lift.signs", [P2, HARRIET])), fact2("lift.emptyReady", false)), [set2("lift.emptyReady"), seen(HARRIET, "lift.emptyReady", from)], 40, 4);
+      const id = `harriet.empty.${from}`;
+      action2(id, "\u5229\u7528\u8005\u3092\u5F85\u3061\u306A\u304C\u3089\u4E57\u5834\u3092\u5F80\u5FA9\u3059\u308B", [HARRIET], all2(at2(HARRIET, from), not2(agreement2("lift.signs", [P2, HARRIET])), fact2("lift.emptyReady")), [{ op: "move", actorId: HARRIET, to }, set2("lift.emptyReady", false), seen(HARRIET, "lift.emptyReady", to)], 24, { movement: { actorId: HARRIET, from, to }, resources: [`presence:${HARRIET}`, "lift:O"] });
+      rule2(HARRIET, id, ca2(here2(from), cn2(accepted2("lift.signs")), cn2(b2("lift.oldSign")), b2("lift.emptyReady")), 3);
+    }
+    const survey = ["liftGround", ...route2("liftGround", "inn"), ...patrolPoints.slice(1)];
+    prop2("caleb.surveyed", "\u30AB\u30EC\u30D6\u306F\u65B0\u5165\u53E3\u306B\u52A0\u3048\u3001A\u68DF\u30FBB\u68DF\u30FB\u4E2D\u5EAD\u306E\u5DE1\u56DE\u7BC4\u56F2\u3092\u81EA\u5206\u306E\u8DB3\u3067\u78BA\u304B\u3081\u305F\u3002");
+    clue2("caleb.surveyed", "inn");
+    journey(t, { id: "caleb.survey", actors: [CALEB], leader: CALEB, points: survey, choice: ca2(b2("caleb.liftChecked"), cn2(b2("caleb.surveyed"))), guard: all2(fact2("caleb.liftChecked"), fact2("caleb.surveyed", false)), label: "\u539F\u56F3\u306E\u5DE1\u56DE\u7BC4\u56F2\u3092\u5B9F\u5730\u78BA\u8A8D\u3059\u308B", finish: [set2("caleb.surveyed"), seen(CALEB, "caleb.surveyed", "inn")] });
+    auto2(CALEB, "caleb.draw", "\u6B69\u3044\u305F\u76EE\u5370\u3068\u3064\u306A\u304C\u308B\u9053\u3092\u539F\u56F3\u3078\u66F8\u304D\u8DB3\u3059", "inn", ca2(b2("caleb.surveyed"), cn2(b2("caleb.drawn"))), all2(held2("calebMap", actor2(CALEB)), fact2("caleb.surveyed"), fact2("caleb.drawn", false)), [set2("caleb.drawn")], 32, 90);
+    travel2(CALEB, "notice", ca2(b2("caleb.drawn"), cn2(b2("caleb.posted"))), 65);
+    auto2(CALEB, "caleb.post", "\u8A02\u6B63\u56F3\u3092\u63B2\u793A\u3057\u3001\u5F53\u756A\u7528\u306E\u5199\u3057\u3092\u53D7\u53D6\u53E3\u3078\u7F6E\u304F", "notice", ca2(b2("caleb.drawn"), cn2(b2("caleb.posted"))), all2(held2("calebMap", actor2(CALEB)), held2("patrolCopy", { kind: "object", id: "calebMap" }), fact2("caleb.posted", false)), [transfer2("calebMap", actor2(CALEB), place2("notice")), transfer2("patrolCopy", { kind: "object", id: "calebMap" }, place2("notice")), set2("caleb.posted"), emit2("life.C022", [CALEB], "notice")], 25, 90);
+    Object.assign(greetings2, { [ALF]: "\u300C\u4EA4\u4EE3\u306E\u3064\u3082\u308A\u3067\u9418\u3092\u9CF4\u3089\u3057\u3066\u3044\u308B\u306E\u306B\u3001\u6765\u3066\u3082\u3089\u3048\u306A\u3044\u3093\u3060\u300D", [PIP]: "\u300C\u521D\u3081\u3066\u306E\u591C\u56DE\u308A\u3067\u3059\u3002\u9418\u3082\u9053\u9806\u3082\u3001\u307E\u3060\u3088\u304F\u5206\u304B\u3089\u306A\u304F\u3066\u300D", [CALEB]: "\u300C\u53E4\u3044\u5165\u53E3\u306F\u3053\u306E\u89D2\u3060\u3063\u305F\u306F\u305A\u3002\u81EA\u5206\u3067\u6B69\u3044\u3066\u3001\u56F3\u3092\u76F4\u3057\u305F\u3044\u300D", [HARRIET]: "\u300C\u65B0\u3057\u3044\u4E57\u5834\u306F\u3053\u3061\u3089\u3067\u3059\u3002\u3069\u306A\u305F\u304B\u65E7\u5F85\u5408\u3067\u5F85\u3063\u3066\u3044\u307E\u305B\u3093\u304B\u300D" });
+  }
+
+  // src/content/quiet-neighbours.ts
+  var ROSE = "C023";
+  var NOAH = "C024";
+  function registerQuietNeighbours({ person: person2, object: object2, c: c2, actor: actor2, place: place2 }) {
+    person2(ROSE, "\u30ED\u30FC\u30BA \u30AD\u30FC", "basil", "\u4E00\u66F2\u3092\u901A\u3057\u3001\u96A3\u4EBA\u306E\u4F11\u606F\u3092\u59A8\u3052\u3066\u3044\u306A\u3044\u3053\u3068\u3092\u78BA\u304B\u3081\u308B", "\u5F31\u304F\u5F3E\u3051\u3070\u3088\u3044\u3068\u601D\u3044\u3001\u58C1\u306E\u97F3\u3092\u62CD\u5B50\u3068\u53D7\u3051\u53D6\u308B", ["rose.rhythm"]);
+    person2(NOAH, "\u30CE\u30A2 \u30C1\u30C3\u30AF", "martha", "\u6642\u8A08\u3092\u6B63\u3057\u304F\u639B\u3051\u3001\u53D6\u308A\u6C7A\u3081\u306E\u5B88\u3089\u308C\u305F\u90E8\u5C4B\u3067\u4F11\u3080", "\u6642\u8A08\u3092\u639B\u3051\u76F4\u3057\u3066\u632F\u52D5\u306E\u539F\u56E0\u3092\u63A2\u3059", ["noah.clockWorry"]);
+    object2("rosePiano", "\u30ED\u30FC\u30BA\u306E\u9375\u76E4\u697D\u5668", ROSE, place2("basil"));
+    c2.objects.find((o) => o.id === "rosePiano").portable = false;
+    object2("noahClock", "\u30CE\u30A2\u306E\u639B\u3051\u6642\u8A08", NOAH, place2("martha"));
+    object2("quietNotice", "\u4E8C\u4EBA\u304C\u6B8B\u3059\u7DF4\u7FD2\u3068\u4F11\u606F\u306E\u7D04\u675F\u672D", ROSE, actor2(ROSE));
+    for (const [who, id] of [[ROSE, "quiet.practice"], [NOAH, "quiet.clock"]]) {
+      c2.services.push(id);
+      c2.actors.find((a) => a.id === who).postGoalContract.serviceIds.push(id);
+    }
+  }
+  function installQuietNeighbours(t) {
+    const { c: c2, P: P2, all: all2, any: any2, fact: fact2, at: at2, held: held2, actor: actor2, place: place2, set: set2, transfer: transfer2, emit: emit2, knows: knows2, b: b2, ca: ca2, cn: cn2, here: here2, accepted: accepted2, agreement: agreement2, prop: prop2, clue: clue2, local: local2, action: action2, rule: rule2, auto: auto2, interaction: interaction2, talk: talk3, propose: propose2, travel: travel2, greetings: greetings2 } = t;
+    prop2("rose.rhythm", "\u30ED\u30FC\u30BA\u306F\u58C1\u3092\u53E9\u304F\u97F3\u3092\u62CD\u5B50\u3060\u3068\u601D\u3044\u3001\u5F31\u304F\u5F3E\u3051\u3070\u96A3\u5BA4\u3078\u97FF\u304B\u306A\u3044\u3068\u8003\u3048\u3066\u3044\u308B\u3002", true);
+    prop2("noah.clockWorry", "\u30CE\u30A2\u306F\u58C1\u306E\u632F\u52D5\u3092\u6642\u8A08\u306E\u639B\u3051\u65B9\u306E\u305B\u3044\u3060\u3068\u601D\u3063\u3066\u3044\u308B\u3002", true);
+    local2("noah.clockMounted", "\u30CE\u30A2\u306E\u639B\u3051\u6642\u8A08\u304C\u58C1\u306E\u6B63\u3057\u3044\u4F4D\u7F6E\u3078\u639B\u304B\u3063\u3066\u3044\u308B\u3002", "martha", true);
+    for (const [id, text, loc] of [
+      ["quiet.clockOff", "\u30CE\u30A2\u304C\u6642\u8A08\u3092\u58C1\u304B\u3089\u5916\u3057\u3001\u81EA\u5206\u306E\u624B\u306B\u6301\u3063\u3066\u3044\u308B\u3002", "martha"],
+      ["quiet.tested", "\u6642\u8A08\u3092\u5916\u3057\u305F\u72B6\u614B\u3067\u3082\u3001\u96A3\u306E\u9375\u76E4\u306E\u8A66\u594F\u3068\u5E8A\u306E\u632F\u52D5\u304C\u4E00\u81F4\u3057\u305F\u3002", "martha"],
+      ["quiet.cause", "\u4E8C\u4EBA\u304C\u96A3\u5BA4\u3067\u805E\u3044\u305F\u632F\u52D5\u3068\u8A66\u594F\u306E\u6642\u523B\u3092\u7167\u5408\u3057\u305F\u3002", "martha"],
+      ["quiet.songEnded", "\u30ED\u30FC\u30BA\u304C\u7D04\u675F\u3057\u305F\u4E00\u66F2\u3092\u901A\u3057\u3001\u6F14\u594F\u3092\u7D42\u3048\u305F\u3002", "basil"],
+      ["quiet.closed", "\u30ED\u30FC\u30BA\u304C\u7DF4\u7FD2\u3092\u7D42\u3048\u305F\u3068\u672C\u4EBA\u3078\u4F1D\u3048\u3001\u4F11\u606F\u4E2D\u306F\u5F3E\u304B\u306A\u3044\u7D04\u675F\u672D\u3092\u6B8B\u3057\u305F\u3002", "martha"],
+      ["noah.rehung", "\u30CE\u30A2\u304C\u6642\u8A08\u306E\u639B\u3051\u4F4D\u7F6E\u3068\u52D5\u304D\u3092\u78BA\u304B\u3081\u305F\u3002", "martha"],
+      ["noah.lying", "\u30CE\u30A2\u304C\u6642\u8A08\u306E\u97F3\u3092\u805E\u304D\u306A\u304C\u3089\u5BDD\u5E8A\u306B\u5165\u3063\u305F\u3002", "martha"],
+      ["noah.resting", "\u6642\u8A08\u306F\u52D5\u304D\u3001\u96A3\u306E\u6F14\u594F\u304C\u6B62\u307E\u3063\u305F\u307E\u307E\u3001\u30CE\u30A2\u304C\u843D\u3061\u7740\u3044\u3066\u4F11\u3093\u3067\u3044\u308B\u3002", "martha"],
+      ["rose.respected", "\u4E00\u66F2\u3092\u7D42\u3048\u305F\u30ED\u30FC\u30BA\u304C\u3001\u7D04\u675F\u306E\u5B88\u3089\u308C\u305F\u96A3\u4EBA\u306E\u4F11\u606F\u3092\u78BA\u304B\u3081\u305F\u3002", "martha"]
+    ]) local2(id, text, loc);
+    prop2("rose.sounding", "\u9375\u76E4\u306E\u6F14\u594F\u304C\u5E8A\u3068\u58C1\u3092\u901A\u3057\u3066\u96A3\u5BA4\u306B\u4F1D\u308F\u3063\u3066\u3044\u308B\u3002", false, any2({ op: "active", actionId: "rose.retry" }, { op: "active", actionId: "quiet.test" }, { op: "active", actionId: "rose.song" }));
+    clue2("rose.sounding", "basil");
+    clue2("rose.sounding", "martha");
+    prop2("noah.knocking", "\u6642\u8A08\u3092\u639B\u3051\u76F4\u3059\u4F5C\u696D\u97F3\u304C\u3001\u96A3\u306E\u30ED\u30FC\u30BA\u306B\u306F\u62CD\u5B50\u306E\u3088\u3046\u306B\u805E\u3053\u3048\u308B\u3002", false, { op: "active", actionId: "noah.retry" });
+    clue2("noah.knocking", "basil");
+    clue2("noah.knocking", "martha");
+    talk3("talk.rose", ROSE, "\u58C1\u306E\u97F3\u3068\u5F3E\u304D\u65B9\u306B\u3064\u3044\u3066\u805E\u304F", ["rose.rhythm"], "\u300C\u96A3\u304B\u3089\u62CD\u5B50\u3092\u5408\u308F\u305B\u3066\u304F\u308C\u308B\u306E\u3002\u3082\u3063\u3068\u5F31\u304F\u5F3E\u3051\u3070\u3001\u304D\u3063\u3068\u6C17\u306B\u306A\u3089\u306A\u3044\u3067\u3057\u3087\u3046\u300D");
+    talk3("talk.noah", NOAH, "\u6642\u8A08\u3092\u639B\u3051\u76F4\u3057\u3066\u3044\u308B\u7406\u7531\u3092\u805E\u304F", ["noah.clockWorry"], "\u300C\u639B\u3051\u65B9\u304C\u60AA\u3044\u306E\u304B\u306A\u3002\u5916\u3057\u3066\u78BA\u304B\u3081\u3066\u3082\u3001\u58C1\u304C\u97FF\u304F\u6C17\u304C\u3059\u308B\u3093\u3060\u300D", fact2("noah.resting", false));
+    propose2("quiet.noah", "\u6642\u8A08\u3092\u5916\u3057\u3066\u3001\u96A3\u4EBA\u3068\u805E\u3053\u3048\u65B9\u3092\u78BA\u304B\u3081\u308B", [NOAH], { who: NOAH }, "\u30CE\u30A2\u304C\u6642\u8A08\u3092\u5916\u3057\u3066\u6301\u3064\u3002\u30ED\u30FC\u30BA\u3092\u90E8\u5C4B\u3078\u8FCE\u3048\u3001\u4E3B\u4EBA\u516C\u304C\u96A3\u5BA4\u3067\u5F3E\u304F\u77ED\u3044\u97F3\u3068\u632F\u52D5\u3092\u4E8C\u4EBA\u3067\u78BA\u304B\u3081\u308B\u3002", all2(knows2(P2, "rose.rhythm"), knows2(P2, "noah.clockWorry"), fact2("quiet.tested", false)));
+    propose2("quiet.rose", "\u96A3\u5BA4\u3067\u81EA\u5206\u306E\u6F14\u594F\u306E\u97FF\u304D\u3092\u78BA\u304B\u3081\u3066\u3082\u3089\u3046", [ROSE], { who: ROSE }, "\u4E3B\u4EBA\u516C\u304C\u4E86\u627F\u3057\u305F\u77ED\u3044\u8A66\u594F\u3092\u884C\u3046\u9593\u3001\u30ED\u30FC\u30BA\u672C\u4EBA\u304C\u30CE\u30A2\u306E\u90E8\u5C4B\u3067\u5E8A\u3068\u58C1\u306E\u632F\u52D5\u3092\u78BA\u304B\u3081\u308B\u3002", all2(knows2(P2, "noah.clockWorry"), agreement2("quiet.noah", [P2, NOAH]), fact2("quiet.tested", false)));
+    auto2(ROSE, "rose.retry", "\u5F31\u304F\u5F3E\u304D\u76F4\u3057\u3001\u58C1\u304B\u3089\u306E\u97F3\u3092\u5F85\u3064", "basil", cn2(accepted2("quiet.rose")), all2(fact2("quiet.tested", false), held2("rosePiano", place2("basil"))), [emit2("quiet.weakAttempt", [ROSE], "basil")], 50, 5);
+    auto2(NOAH, "noah.retry", "\u6642\u8A08\u306E\u639B\u3051\u5177\u3092\u63FA\u3089\u3057\u3001\u58C1\u306E\u97F3\u3092\u8ABF\u3079\u308B", "martha", cn2(accepted2("quiet.noah")), all2(held2("noahClock", place2("martha")), fact2("quiet.tested", false)), [emit2("quiet.clockAttempt", [NOAH], "martha")], 55, 5);
+    auto2(NOAH, "noah.unhook", "\u6642\u8A08\u3092\u58C1\u304B\u3089\u5916\u3057\u3001\u81EA\u5206\u306E\u624B\u306B\u6301\u3064", "martha", ca2(accepted2("quiet.noah"), cn2(b2("quiet.clockOff"))), all2(held2("noahClock", place2("martha")), fact2("quiet.clockOff", false)), [transfer2("noahClock", place2("martha"), actor2(NOAH)), set2("noah.clockMounted", false), set2("quiet.clockOff")], 18, 95);
+    travel2(ROSE, "martha", ca2(accepted2("quiet.rose"), cn2(b2("quiet.cause"))), 70);
+    interaction2("quiet.test", "\u96A3\u5BA4\u306E\u4E8C\u4EBA\u306B\u3001\u4E86\u627F\u3055\u308C\u305F\u77ED\u3044\u8A66\u594F\u3092\u805E\u3044\u3066\u3082\u3089\u3046", { location: "basil" }, all2(agreement2("quiet.noah", [P2, NOAH]), agreement2("quiet.rose", [P2, ROSE]), at2(ROSE, "martha"), at2(NOAH, "martha"), held2("noahClock", actor2(NOAH)), held2("rosePiano", place2("basil")), fact2("quiet.tested", false)), [set2("quiet.tested"), seen(ROSE, "quiet.tested", "martha"), seen(NOAH, "quiet.tested", "martha")], "\u6642\u8A08\u3092\u5916\u3057\u3066\u6301\u3064\u4E8C\u4EBA\u304C\u3001\u96A3\u5BA4\u3067\u8A66\u594F\u306E\u6642\u523B\u3068\u632F\u52D5\u3092\u78BA\u304B\u3081\u305F\u3002\u672C\u4EBA\u305F\u3061\u306E\u8A71\u3092\u805E\u3053\u3046\u3002", 32);
+    c2.actions.find((a) => a.id === "quiet.test").resources.push(`presence:${ROSE}`, `presence:${NOAH}`);
+    action2("quiet.compare", "\u4E8C\u4EBA\u3067\u8A66\u594F\u306E\u6642\u523B\u3068\u3001\u6642\u8A08\u3092\u5916\u3057\u305F\u58C1\u306E\u632F\u52D5\u3092\u7167\u5408\u3059\u308B", [ROSE, NOAH], all2(at2(ROSE, "martha"), at2(NOAH, "martha"), fact2("quiet.tested"), held2("noahClock", actor2(NOAH)), fact2("quiet.cause", false)), [set2("quiet.cause")], 22);
+    rule2(ROSE, "quiet.compare", ca2(here2("martha"), b2("quiet.tested"), cn2(b2("quiet.cause"))), 95);
+    talk3("talk.quietResult", ROSE, "\u96A3\u5BA4\u3067\u4E8C\u4EBA\u304C\u78BA\u304B\u3081\u305F\u3053\u3068\u3092\u805E\u304F", ["quiet.cause"], "\u300C\u6642\u8A08\u3092\u5916\u3057\u3066\u3044\u3066\u3082\u3001\u9375\u76E4\u3068\u540C\u3058\u6642\u523B\u306B\u5E8A\u304C\u97FF\u3044\u305F\u308F\u3002\u62CD\u5B50\u3067\u306F\u306A\u304F\u3001\u639B\u3051\u76F4\u3059\u97F3\u3060\u3063\u305F\u306E\u306D\u300D");
+    propose2("quiet.time", "\u4E00\u66F2\u306E\u3042\u3068\u3092\u4F11\u606F\u306E\u6642\u9593\u306B\u3059\u308B\u7D04\u675F\u3092\u3059\u308B", [ROSE, NOAH], { location: "martha" }, "\u4ECA\u306F\u30CE\u30A2\u304C\u8D77\u304D\u3066\u3044\u308B\u9593\u306B\u4E00\u66F2\u3092\u901A\u3057\u3001\u305D\u306E\u5F8C\u306F\u7DF4\u7FD2\u3092\u4F11\u3080\u3002\u30ED\u30FC\u30BA\u306F\u7D42\u308F\u3063\u305F\u3068\u4F1D\u3048\u3066\u7D04\u675F\u672D\u3092\u6B8B\u3059\u3002\u30CE\u30A2\u304C\u6642\u8A08\u3092\u639B\u3051\u76F4\u3057\u3066\u4F11\u3080\u9593\u306F\u5F3E\u304B\u306A\u3044\u3002", all2(at2(ROSE, "martha"), at2(NOAH, "martha"), knows2(P2, "quiet.cause"), knows2(ROSE, "quiet.cause"), knows2(NOAH, "quiet.cause")));
+    travel2(ROSE, "basil", ca2(accepted2("quiet.time"), cn2(b2("quiet.songEnded"))), 70);
+    auto2(ROSE, "rose.song", "\u7D04\u675F\u3057\u305F\u6642\u9593\u306B\u3001\u597D\u304D\u306A\u66F2\u3092\u6700\u5F8C\u307E\u3067\u5F3E\u304F", "basil", ca2(accepted2("quiet.time"), cn2(b2("quiet.songEnded"))), all2(agreement2("quiet.time", [P2, ROSE, NOAH]), held2("rosePiano", place2("basil")), fact2("quiet.songEnded", false), fact2("noah.lying", false)), [set2("quiet.songEnded")], 85, 90);
+    travel2(ROSE, "martha", ca2(b2("quiet.songEnded"), cn2(b2("quiet.closed"))), 70);
+    action2("quiet.closePractice", "\u4E00\u66F2\u3092\u7D42\u3048\u305F\u3053\u3068\u3092\u4F1D\u3048\u3001\u4F11\u606F\u4E2D\u306F\u5F3E\u304B\u306A\u3044\u672D\u3092\u6B8B\u3059", [ROSE, NOAH], all2(at2(ROSE, "martha"), at2(NOAH, "martha"), fact2("quiet.songEnded"), fact2("rose.sounding", false), held2("quietNotice", actor2(ROSE)), fact2("quiet.closed", false)), [transfer2("quietNotice", actor2(ROSE), place2("martha")), { op: "inform", speakerId: ROSE, recipientId: NOAH, propositionId: "quiet.songEnded" }, set2("quiet.closed")], 18);
+    rule2(ROSE, "quiet.closePractice", ca2(here2("martha"), b2("quiet.songEnded"), cn2(b2("quiet.closed"))), 95);
+    auto2(NOAH, "noah.rehang", "\u6642\u8A08\u306E\u639B\u3051\u5177\u3092\u56FA\u5B9A\u3057\u3001\u52D5\u304D\u3092\u78BA\u304B\u3081\u3066\u639B\u3051\u76F4\u3059", "martha", ca2(b2("quiet.closed"), cn2(b2("noah.rehung"))), all2(fact2("quiet.closed"), held2("noahClock", actor2(NOAH)), fact2("noah.rehung", false)), [transfer2("noahClock", actor2(NOAH), place2("martha")), set2("noah.clockMounted"), set2("noah.rehung")], 24, 90);
+    auto2(NOAH, "noah.lie", "\u6642\u8A08\u306E\u97F3\u3092\u805E\u304D\u306A\u304C\u3089\u5BDD\u5E8A\u306B\u5165\u308B", "martha", ca2(b2("noah.rehung"), cn2(b2("noah.lying"))), all2(fact2("quiet.closed"), fact2("noah.clockMounted"), fact2("rose.sounding", false), fact2("noah.lying", false)), [set2("noah.lying")], 20, 80);
+    auto2(NOAH, "noah.rest", "\u53D6\u308A\u6C7A\u3081\u304C\u5B88\u3089\u308C\u305F\u90E8\u5C4B\u3067\u3001\u843D\u3061\u7740\u3044\u3066\u4F11\u3080", "martha", ca2(b2("noah.lying"), cn2(b2("noah.resting"))), all2(fact2("noah.lying"), fact2("noah.clockMounted"), fact2("rose.sounding", false), fact2("noah.resting", false)), [set2("noah.resting"), emit2("life.C024", [NOAH], "martha")], 50, 80);
+    auto2(ROSE, "rose.confirm", "\u4E00\u66F2\u306E\u5F8C\u306E\u96A3\u4EBA\u306E\u4F11\u606F\u3092\u3001\u8D77\u3053\u3055\u305A\u78BA\u304B\u3081\u308B", "martha", ca2(b2("noah.resting"), cn2(b2("rose.respected"))), all2(at2(NOAH, "martha"), fact2("noah.resting"), fact2("quiet.songEnded"), fact2("rose.sounding", false), fact2("rose.respected", false)), [set2("rose.respected"), emit2("life.C023", [ROSE], "martha")], 18, 80);
+    travel2(ROSE, "basil", b2("rose.respected"), 50);
+    c2.actors.find((a) => a.id === NOAH).completionObservation = fact2("noah.resting");
+    Object.assign(greetings2, { [ROSE]: "\u300C\u5F31\u304F\u5F3E\u3051\u3070\u5927\u4E08\u592B\u3067\u3057\u3087\u3046\u3002\u96A3\u304B\u3089\u3082\u62CD\u5B50\u304C\u805E\u3053\u3048\u308B\u306E\u300D", [NOAH]: "\u300C\u6642\u8A08\u3092\u639B\u3051\u76F4\u3057\u3066\u3001\u3044\u3064\u3082\u306E\u97F3\u3092\u805E\u304D\u306A\u304C\u3089\u4F11\u307F\u305F\u3044\u3093\u3060\u300D" });
+  }
+
   // src/content/dinner.ts
   var P = "player";
   var N = "C001";
@@ -1800,7 +2022,7 @@
   var accepted = (agreementId) => ({ op: "accepted", agreementId, version: 1 });
   var agreement = (agreementId, actorIds) => ({ op: "agreement", agreementId, version: 1, actorIds });
   var dinnerContent = {
-    version: "town-0.6.0",
+    version: "town-0.7.0",
     namespace: "redesign-v1",
     tickMs: 100,
     ticksPerDay: 14400,
@@ -1808,7 +2030,7 @@
     propositions: [],
     actors: [],
     objects: [],
-    resources: ["table:home", "work:quay"],
+    resources: ["table:home", "work:quay", "lift:O"],
     services: ["home.receipt", "market.shelf", "shoe.box"],
     clues: [],
     loans: [],
@@ -1981,6 +2203,8 @@
   c.loans.push({ id: "spareKey", objectId: "spareKey", lenderId: DA, borrowerId: E, returnLocationId: "a301", policy: "\u5165\u5BA4\u5F8C\u3001A\u68DF301\u306E\u65BD\u9320\u3055\u308C\u305F\u8FD4\u5374\u53E3\u3078\u3002\u7BA1\u7406\u5F53\u756A\u3092\u4F11\u606F\u304B\u3089\u547C\u3073\u623B\u3055\u306A\u3044\u3002" });
   registerRoomsAndSleep({ person, object, c, actor, place });
   registerPostalAndPlates({ person, object, c, actor, place });
+  registerNightwatch({ person, object, c, actor, place });
+  registerQuietNeighbours({ person, object, c, actor, place });
   c.resources.push(...c.actors.map((a) => `presence:${a.id}`));
   function walkId(who, from, to) {
     return `walk.${who}.${from}.${to}`;
@@ -2003,7 +2227,7 @@
     const effects = [{ op: "move", actorId: who, to: toId }];
     if (who === BEATRICE && toId === "sorting" && (from.id === "postDoor" || from.id === "postSide")) effects.push(set("post.admitted"));
     if (who === BEATRICE && from.id === "postDoor" && toId === "sorting") effects.push(set("post.passed"), set("post.open", false), emit("post.selfEntry", [BEATRICE], "sorting"));
-    action(walkId(who, from.id, toId), `${to.name}\u3078${who === BEATRICE ? "\u8ECA\u6905\u5B50\u3067\u9032\u3080" : "\u6B69\u304F"}`, [who], guard2, effects, travelTicks(from.id, toId), { movement: { actorId: who, from: from.id, to: toId }, resources: [`presence:${who}`] });
+    action(walkId(who, from.id, toId), `${to.name}\u3078${who === BEATRICE ? "\u8ECA\u6905\u5B50\u3067\u9032\u3080" : "\u6B69\u304F"}`, [who], guard2, effects, travelTicks(from.id, toId), { movement: { actorId: who, from: from.id, to: toId }, resources: [`presence:${who}`, ...[from.id, toId].includes("liftGround") && [from.id, toId].includes("liftUpper") ? ["lift:O"] : []] });
   }
   var placeIndex = new Map(c.places.map((p2) => [p2.id, p2]));
   var pathsTo = /* @__PURE__ */ new Map();
@@ -2012,9 +2236,9 @@
     let next = passable ? void 0 : pathsTo.get(to);
     if (!next) {
       next = /* @__PURE__ */ new Map();
-      const queue = [to], seen = /* @__PURE__ */ new Set([to]);
-      for (let i = 0; i < queue.length; i++) for (const id of placeIndex.get(queue[i]).links) if (!seen.has(id) && (!passable || passable(id, queue[i]))) {
-        seen.add(id);
+      const queue = [to], seen2 = /* @__PURE__ */ new Set([to]);
+      for (let i = 0; i < queue.length; i++) for (const id of placeIndex.get(queue[i]).links) if (!seen2.has(id) && (!passable || passable(id, queue[i]))) {
+        seen2.add(id);
         next.set(id, queue[i]);
         queue.push(id);
       }
@@ -2246,6 +2470,8 @@
   });
   var chapterTools = { person, object, c, P, yes, all, any, not, fact, at, held, actor, place, set, transfer, emit, together, knows, b, ca, cn, here, accepted, agreement, prop, clue, local, action, rule, auto, interaction, talk, tell, propose, travel, searchLoop, greetings, route, walkId };
   installPostalAndPlates(chapterTools);
+  installNightwatch(chapterTools);
+  installQuietNeighbours(chapterTools);
   installRoomsAndSleep(chapterTools);
   var movementDefinitions = new Map(c.actions.filter((a) => a.movement?.actorId === P).map((a) => [a.id, a]));
   function playerRoute(from, to, state2) {
@@ -2810,6 +3036,36 @@
   // public/pixel-assets/props/postal-table.svg
   var postal_table_default = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" shape-rendering="crispEdges"><rect x="12" y="0" width="40" height="4" fill="%23aa7953"/><rect x="12" y="4" width="4" height="4" fill="%23aa7953"/><rect x="16" y="4" width="8" height="4" fill="%23eddfba"/><rect x="24" y="4" width="4" height="4" fill="%23aa7953"/><rect x="28" y="4" width="12" height="4" fill="%23eddfba"/><rect x="40" y="4" width="4" height="4" fill="%23aa7953"/><rect x="44" y="4" width="4" height="4" fill="%23eddfba"/><rect x="48" y="4" width="4" height="4" fill="%23aa7953"/><rect x="12" y="8" width="4" height="4" fill="%23aa7953"/><rect x="16" y="8" width="8" height="4" fill="%23eddfba"/><rect x="24" y="8" width="4" height="4" fill="%23aa7953"/><rect x="28" y="8" width="12" height="4" fill="%23eddfba"/><rect x="40" y="8" width="4" height="4" fill="%23aa7953"/><rect x="44" y="8" width="4" height="4" fill="%23eddfba"/><rect x="48" y="8" width="4" height="4" fill="%23aa7953"/><rect x="12" y="12" width="40" height="4" fill="%23aa7953"/><rect x="0" y="16" width="64" height="4" fill="%23d3a475"/><rect x="0" y="20" width="64" height="4" fill="%23d3a475"/><rect x="4" y="24" width="8" height="4" fill="%23435e66"/><rect x="52" y="24" width="8" height="4" fill="%23435e66"/><rect x="4" y="28" width="8" height="4" fill="%23435e66"/><rect x="52" y="28" width="8" height="4" fill="%23435e66"/><rect x="4" y="32" width="8" height="4" fill="%23435e66"/><rect x="52" y="32" width="8" height="4" fill="%23435e66"/><rect x="4" y="36" width="8" height="4" fill="%23435e66"/><rect x="52" y="36" width="8" height="4" fill="%23435e66"/><rect x="4" y="40" width="8" height="4" fill="%23435e66"/><rect x="52" y="40" width="8" height="4" fill="%23435e66"/><rect x="4" y="44" width="8" height="4" fill="%23435e66"/><rect x="52" y="44" width="8" height="4" fill="%23435e66"/><rect x="4" y="48" width="8" height="4" fill="%23435e66"/><rect x="52" y="48" width="8" height="4" fill="%23435e66"/><rect x="4" y="52" width="8" height="4" fill="%23435e66"/><rect x="52" y="52" width="8" height="4" fill="%23435e66"/><rect x="4" y="56" width="8" height="4" fill="%23435e66"/><rect x="52" y="56" width="8" height="4" fill="%23435e66"/><rect x="4" y="60" width="8" height="4" fill="%23435e66"/><rect x="52" y="60" width="8" height="4" fill="%23435e66"/></svg>';
 
+  // public/pixel-assets/props/watch-lantern.svg
+  var watch_lantern_default = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" shape-rendering="crispEdges"><rect x="24" y="4" width="16" height="4" fill="%23435e66"/><rect x="24" y="8" width="4" height="4" fill="%23435e66"/><rect x="28" y="8" width="8" height="4" fill="%23eddfba"/><rect x="36" y="8" width="4" height="4" fill="%23435e66"/><rect x="24" y="12" width="4" height="4" fill="%23435e66"/><rect x="28" y="12" width="8" height="4" fill="%23eddfba"/><rect x="36" y="12" width="4" height="4" fill="%23435e66"/><rect x="16" y="16" width="32" height="4" fill="%23435e66"/><rect x="16" y="20" width="4" height="4" fill="%23435e66"/><rect x="20" y="20" width="24" height="4" fill="%23d8ae59"/><rect x="44" y="20" width="4" height="4" fill="%23435e66"/><rect x="16" y="24" width="4" height="4" fill="%23435e66"/><rect x="20" y="24" width="24" height="4" fill="%23f6edcf"/><rect x="44" y="24" width="4" height="4" fill="%23435e66"/><rect x="16" y="28" width="4" height="4" fill="%23435e66"/><rect x="20" y="28" width="24" height="4" fill="%23f6edcf"/><rect x="44" y="28" width="4" height="4" fill="%23435e66"/><rect x="16" y="32" width="4" height="4" fill="%23435e66"/><rect x="20" y="32" width="24" height="4" fill="%23f6edcf"/><rect x="44" y="32" width="4" height="4" fill="%23435e66"/><rect x="16" y="36" width="4" height="4" fill="%23435e66"/><rect x="20" y="36" width="24" height="4" fill="%23f6edcf"/><rect x="44" y="36" width="4" height="4" fill="%23435e66"/><rect x="16" y="40" width="4" height="4" fill="%23435e66"/><rect x="20" y="40" width="24" height="4" fill="%23f6edcf"/><rect x="44" y="40" width="4" height="4" fill="%23435e66"/><rect x="16" y="44" width="4" height="4" fill="%23435e66"/><rect x="20" y="44" width="24" height="4" fill="%23f6edcf"/><rect x="44" y="44" width="4" height="4" fill="%23435e66"/><rect x="16" y="48" width="4" height="4" fill="%23435e66"/><rect x="20" y="48" width="24" height="4" fill="%23d8ae59"/><rect x="44" y="48" width="4" height="4" fill="%23435e66"/><rect x="16" y="52" width="32" height="4" fill="%23435e66"/><rect x="12" y="56" width="40" height="4" fill="%23435e66"/></svg>';
+
+  // public/pixel-assets/props/watch-book.svg
+  var watch_book_default = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" shape-rendering="crispEdges"><rect x="8" y="8" width="48" height="4" fill="%23aa7953"/><rect x="8" y="12" width="4" height="4" fill="%23aa7953"/><rect x="12" y="12" width="8" height="4" fill="%23435e66"/><rect x="20" y="12" width="32" height="4" fill="%23709a99"/><rect x="52" y="12" width="4" height="4" fill="%23aa7953"/><rect x="8" y="16" width="4" height="4" fill="%23aa7953"/><rect x="12" y="16" width="8" height="4" fill="%23435e66"/><rect x="20" y="16" width="32" height="4" fill="%23709a99"/><rect x="52" y="16" width="4" height="4" fill="%23aa7953"/><rect x="8" y="20" width="4" height="4" fill="%23aa7953"/><rect x="12" y="20" width="8" height="4" fill="%23435e66"/><rect x="20" y="20" width="8" height="4" fill="%23709a99"/><rect x="28" y="20" width="20" height="4" fill="%23eddfba"/><rect x="48" y="20" width="4" height="4" fill="%23709a99"/><rect x="52" y="20" width="4" height="4" fill="%23aa7953"/><rect x="8" y="24" width="4" height="4" fill="%23aa7953"/><rect x="12" y="24" width="8" height="4" fill="%23435e66"/><rect x="20" y="24" width="32" height="4" fill="%23709a99"/><rect x="52" y="24" width="4" height="4" fill="%23aa7953"/><rect x="8" y="28" width="4" height="4" fill="%23aa7953"/><rect x="12" y="28" width="8" height="4" fill="%23435e66"/><rect x="20" y="28" width="32" height="4" fill="%23709a99"/><rect x="52" y="28" width="4" height="4" fill="%23aa7953"/><rect x="8" y="32" width="4" height="4" fill="%23aa7953"/><rect x="12" y="32" width="8" height="4" fill="%23435e66"/><rect x="20" y="32" width="8" height="4" fill="%23709a99"/><rect x="28" y="32" width="16" height="4" fill="%23eddfba"/><rect x="44" y="32" width="8" height="4" fill="%23709a99"/><rect x="52" y="32" width="4" height="4" fill="%23aa7953"/><rect x="8" y="36" width="4" height="4" fill="%23aa7953"/><rect x="12" y="36" width="8" height="4" fill="%23435e66"/><rect x="20" y="36" width="32" height="4" fill="%23709a99"/><rect x="52" y="36" width="4" height="4" fill="%23aa7953"/><rect x="8" y="40" width="4" height="4" fill="%23aa7953"/><rect x="12" y="40" width="8" height="4" fill="%23435e66"/><rect x="20" y="40" width="32" height="4" fill="%23709a99"/><rect x="52" y="40" width="4" height="4" fill="%23aa7953"/><rect x="8" y="44" width="4" height="4" fill="%23aa7953"/><rect x="12" y="44" width="8" height="4" fill="%23435e66"/><rect x="20" y="44" width="32" height="4" fill="%23709a99"/><rect x="52" y="44" width="4" height="4" fill="%23aa7953"/><rect x="8" y="48" width="4" height="4" fill="%23aa7953"/><rect x="12" y="48" width="8" height="4" fill="%23435e66"/><rect x="20" y="48" width="32" height="4" fill="%23709a99"/><rect x="52" y="48" width="4" height="4" fill="%23aa7953"/><rect x="8" y="52" width="4" height="4" fill="%23aa7953"/><rect x="12" y="52" width="8" height="4" fill="%23435e66"/><rect x="20" y="52" width="32" height="4" fill="%23709a99"/><rect x="52" y="52" width="4" height="4" fill="%23aa7953"/><rect x="8" y="56" width="48" height="4" fill="%23aa7953"/></svg>';
+
+  // public/pixel-assets/props/route-map.svg
+  var route_map_default = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" shape-rendering="crispEdges"><rect x="4" y="4" width="56" height="4" fill="%23aa7953"/><rect x="4" y="8" width="4" height="4" fill="%23aa7953"/><rect x="8" y="8" width="48" height="4" fill="%23f6edcf"/><rect x="56" y="8" width="4" height="4" fill="%23aa7953"/><rect x="4" y="12" width="4" height="4" fill="%23aa7953"/><rect x="8" y="12" width="32" height="4" fill="%23f6edcf"/><rect x="40" y="12" width="12" height="4" fill="%2365886d"/><rect x="52" y="12" width="4" height="4" fill="%23f6edcf"/><rect x="56" y="12" width="4" height="4" fill="%23aa7953"/><rect x="4" y="16" width="4" height="4" fill="%23aa7953"/><rect x="8" y="16" width="4" height="4" fill="%23f6edcf"/><rect x="12" y="16" width="24" height="4" fill="%23b46a57"/><rect x="36" y="16" width="4" height="4" fill="%23f6edcf"/><rect x="40" y="16" width="12" height="4" fill="%2365886d"/><rect x="52" y="16" width="4" height="4" fill="%23f6edcf"/><rect x="56" y="16" width="4" height="4" fill="%23aa7953"/><rect x="4" y="20" width="4" height="4" fill="%23aa7953"/><rect x="8" y="20" width="24" height="4" fill="%23f6edcf"/><rect x="32" y="20" width="4" height="4" fill="%23b46a57"/><rect x="36" y="20" width="4" height="4" fill="%23f6edcf"/><rect x="40" y="20" width="12" height="4" fill="%2365886d"/><rect x="52" y="20" width="4" height="4" fill="%23f6edcf"/><rect x="56" y="20" width="4" height="4" fill="%23aa7953"/><rect x="4" y="24" width="4" height="4" fill="%23aa7953"/><rect x="8" y="24" width="24" height="4" fill="%23f6edcf"/><rect x="32" y="24" width="4" height="4" fill="%23b46a57"/><rect x="36" y="24" width="4" height="4" fill="%23f6edcf"/><rect x="40" y="24" width="12" height="4" fill="%2365886d"/><rect x="52" y="24" width="4" height="4" fill="%23f6edcf"/><rect x="56" y="24" width="4" height="4" fill="%23aa7953"/><rect x="4" y="28" width="4" height="4" fill="%23aa7953"/><rect x="8" y="28" width="4" height="4" fill="%23f6edcf"/><rect x="12" y="28" width="12" height="4" fill="%23709a99"/><rect x="24" y="28" width="8" height="4" fill="%23f6edcf"/><rect x="32" y="28" width="4" height="4" fill="%23b46a57"/><rect x="36" y="28" width="4" height="4" fill="%23f6edcf"/><rect x="40" y="28" width="12" height="4" fill="%2365886d"/><rect x="52" y="28" width="4" height="4" fill="%23f6edcf"/><rect x="56" y="28" width="4" height="4" fill="%23aa7953"/><rect x="4" y="32" width="4" height="4" fill="%23aa7953"/><rect x="8" y="32" width="4" height="4" fill="%23f6edcf"/><rect x="12" y="32" width="12" height="4" fill="%23709a99"/><rect x="24" y="32" width="8" height="4" fill="%23f6edcf"/><rect x="32" y="32" width="4" height="4" fill="%23b46a57"/><rect x="36" y="32" width="20" height="4" fill="%23f6edcf"/><rect x="56" y="32" width="4" height="4" fill="%23aa7953"/><rect x="4" y="36" width="4" height="4" fill="%23aa7953"/><rect x="8" y="36" width="4" height="4" fill="%23f6edcf"/><rect x="12" y="36" width="12" height="4" fill="%23709a99"/><rect x="24" y="36" width="8" height="4" fill="%23f6edcf"/><rect x="32" y="36" width="4" height="4" fill="%23b46a57"/><rect x="36" y="36" width="20" height="4" fill="%23f6edcf"/><rect x="56" y="36" width="4" height="4" fill="%23aa7953"/><rect x="4" y="40" width="4" height="4" fill="%23aa7953"/><rect x="8" y="40" width="24" height="4" fill="%23f6edcf"/><rect x="32" y="40" width="4" height="4" fill="%23b46a57"/><rect x="36" y="40" width="20" height="4" fill="%23f6edcf"/><rect x="56" y="40" width="4" height="4" fill="%23aa7953"/><rect x="4" y="44" width="4" height="4" fill="%23aa7953"/><rect x="8" y="44" width="24" height="4" fill="%23f6edcf"/><rect x="32" y="44" width="16" height="4" fill="%23b46a57"/><rect x="48" y="44" width="4" height="4" fill="%23435e66"/><rect x="52" y="44" width="4" height="4" fill="%23f6edcf"/><rect x="56" y="44" width="4" height="4" fill="%23aa7953"/><rect x="4" y="48" width="4" height="4" fill="%23aa7953"/><rect x="8" y="48" width="48" height="4" fill="%23f6edcf"/><rect x="56" y="48" width="4" height="4" fill="%23aa7953"/><rect x="4" y="52" width="4" height="4" fill="%23aa7953"/><rect x="8" y="52" width="48" height="4" fill="%23f6edcf"/><rect x="56" y="52" width="4" height="4" fill="%23aa7953"/><rect x="4" y="56" width="56" height="4" fill="%23aa7953"/></svg>';
+
+  // public/pixel-assets/props/sign-old.svg
+  var sign_old_default = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" shape-rendering="crispEdges"><rect x="0" y="4" width="64" height="4" fill="%23435e66"/><rect x="0" y="8" width="4" height="4" fill="%23435e66"/><rect x="4" y="8" width="56" height="4" fill="%23eddfba"/><rect x="60" y="8" width="4" height="4" fill="%23435e66"/><rect x="0" y="12" width="4" height="4" fill="%23435e66"/><rect x="4" y="12" width="12" height="4" fill="%23eddfba"/><rect x="16" y="12" width="4" height="4" fill="%23b46a57"/><rect x="20" y="12" width="24" height="4" fill="%23eddfba"/><rect x="44" y="12" width="4" height="4" fill="%23b46a57"/><rect x="48" y="12" width="12" height="4" fill="%23eddfba"/><rect x="60" y="12" width="4" height="4" fill="%23435e66"/><rect x="0" y="16" width="4" height="4" fill="%23435e66"/><rect x="4" y="16" width="16" height="4" fill="%23eddfba"/><rect x="20" y="16" width="8" height="4" fill="%23b46a57"/><rect x="28" y="16" width="8" height="4" fill="%23eddfba"/><rect x="36" y="16" width="8" height="4" fill="%23b46a57"/><rect x="44" y="16" width="16" height="4" fill="%23eddfba"/><rect x="60" y="16" width="4" height="4" fill="%23435e66"/><rect x="0" y="20" width="4" height="4" fill="%23435e66"/><rect x="4" y="20" width="24" height="4" fill="%23eddfba"/><rect x="28" y="20" width="8" height="4" fill="%23b46a57"/><rect x="36" y="20" width="24" height="4" fill="%23eddfba"/><rect x="60" y="20" width="4" height="4" fill="%23435e66"/><rect x="0" y="24" width="4" height="4" fill="%23435e66"/><rect x="4" y="24" width="24" height="4" fill="%23eddfba"/><rect x="28" y="24" width="8" height="4" fill="%23b46a57"/><rect x="36" y="24" width="24" height="4" fill="%23eddfba"/><rect x="60" y="24" width="4" height="4" fill="%23435e66"/><rect x="0" y="28" width="4" height="4" fill="%23435e66"/><rect x="4" y="28" width="16" height="4" fill="%23eddfba"/><rect x="20" y="28" width="8" height="4" fill="%23b46a57"/><rect x="28" y="28" width="8" height="4" fill="%23eddfba"/><rect x="36" y="28" width="8" height="4" fill="%23b46a57"/><rect x="44" y="28" width="16" height="4" fill="%23eddfba"/><rect x="60" y="28" width="4" height="4" fill="%23435e66"/><rect x="0" y="32" width="4" height="4" fill="%23435e66"/><rect x="4" y="32" width="12" height="4" fill="%23eddfba"/><rect x="16" y="32" width="4" height="4" fill="%23b46a57"/><rect x="20" y="32" width="24" height="4" fill="%23eddfba"/><rect x="44" y="32" width="4" height="4" fill="%23b46a57"/><rect x="48" y="32" width="12" height="4" fill="%23eddfba"/><rect x="60" y="32" width="4" height="4" fill="%23435e66"/><rect x="0" y="36" width="4" height="4" fill="%23435e66"/><rect x="4" y="36" width="56" height="4" fill="%23eddfba"/><rect x="60" y="36" width="4" height="4" fill="%23435e66"/><rect x="0" y="40" width="64" height="4" fill="%23435e66"/><rect x="28" y="44" width="8" height="4" fill="%23aa7953"/><rect x="28" y="48" width="8" height="4" fill="%23aa7953"/><rect x="28" y="52" width="8" height="4" fill="%23aa7953"/><rect x="28" y="56" width="8" height="4" fill="%23aa7953"/><rect x="28" y="60" width="8" height="4" fill="%23aa7953"/></svg>';
+
+  // public/pixel-assets/props/sign-new.svg
+  var sign_new_default = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" shape-rendering="crispEdges"><rect x="0" y="4" width="64" height="4" fill="%23435e66"/><rect x="0" y="8" width="4" height="4" fill="%23435e66"/><rect x="4" y="8" width="56" height="4" fill="%23eddfba"/><rect x="60" y="8" width="4" height="4" fill="%23435e66"/><rect x="0" y="12" width="4" height="4" fill="%23435e66"/><rect x="4" y="12" width="32" height="4" fill="%23eddfba"/><rect x="36" y="12" width="4" height="4" fill="%23709a99"/><rect x="40" y="12" width="20" height="4" fill="%23eddfba"/><rect x="60" y="12" width="4" height="4" fill="%23435e66"/><rect x="0" y="16" width="4" height="4" fill="%23435e66"/><rect x="4" y="16" width="36" height="4" fill="%23eddfba"/><rect x="40" y="16" width="4" height="4" fill="%23709a99"/><rect x="44" y="16" width="16" height="4" fill="%23eddfba"/><rect x="60" y="16" width="4" height="4" fill="%23435e66"/><rect x="0" y="20" width="4" height="4" fill="%23435e66"/><rect x="4" y="20" width="8" height="4" fill="%23eddfba"/><rect x="12" y="20" width="36" height="4" fill="%23709a99"/><rect x="48" y="20" width="12" height="4" fill="%23eddfba"/><rect x="60" y="20" width="4" height="4" fill="%23435e66"/><rect x="0" y="24" width="4" height="4" fill="%23435e66"/><rect x="4" y="24" width="8" height="4" fill="%23eddfba"/><rect x="12" y="24" width="40" height="4" fill="%23709a99"/><rect x="52" y="24" width="8" height="4" fill="%23eddfba"/><rect x="60" y="24" width="4" height="4" fill="%23435e66"/><rect x="0" y="28" width="4" height="4" fill="%23435e66"/><rect x="4" y="28" width="40" height="4" fill="%23eddfba"/><rect x="44" y="28" width="4" height="4" fill="%23709a99"/><rect x="48" y="28" width="12" height="4" fill="%23eddfba"/><rect x="60" y="28" width="4" height="4" fill="%23435e66"/><rect x="0" y="32" width="4" height="4" fill="%23435e66"/><rect x="4" y="32" width="36" height="4" fill="%23eddfba"/><rect x="40" y="32" width="4" height="4" fill="%23709a99"/><rect x="44" y="32" width="16" height="4" fill="%23eddfba"/><rect x="60" y="32" width="4" height="4" fill="%23435e66"/><rect x="0" y="36" width="4" height="4" fill="%23435e66"/><rect x="4" y="36" width="32" height="4" fill="%23eddfba"/><rect x="36" y="36" width="4" height="4" fill="%23709a99"/><rect x="40" y="36" width="20" height="4" fill="%23eddfba"/><rect x="60" y="36" width="4" height="4" fill="%23435e66"/><rect x="0" y="40" width="64" height="4" fill="%23435e66"/><rect x="28" y="44" width="8" height="4" fill="%23aa7953"/><rect x="28" y="48" width="8" height="4" fill="%23aa7953"/><rect x="28" y="52" width="8" height="4" fill="%23aa7953"/><rect x="28" y="56" width="8" height="4" fill="%23aa7953"/><rect x="28" y="60" width="8" height="4" fill="%23aa7953"/></svg>';
+
+  // public/pixel-assets/props/piano.svg
+  var piano_default = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" shape-rendering="crispEdges"><rect x="4" y="8" width="56" height="4" fill="%23435e66"/><rect x="4" y="12" width="4" height="4" fill="%23435e66"/><rect x="8" y="12" width="48" height="4" fill="%23aa7953"/><rect x="56" y="12" width="4" height="4" fill="%23435e66"/><rect x="4" y="16" width="4" height="4" fill="%23435e66"/><rect x="8" y="16" width="12" height="4" fill="%23aa7953"/><rect x="20" y="16" width="24" height="4" fill="%23eddfba"/><rect x="44" y="16" width="12" height="4" fill="%23aa7953"/><rect x="56" y="16" width="4" height="4" fill="%23435e66"/><rect x="4" y="20" width="4" height="4" fill="%23435e66"/><rect x="8" y="20" width="12" height="4" fill="%23aa7953"/><rect x="20" y="20" width="24" height="4" fill="%23eddfba"/><rect x="44" y="20" width="12" height="4" fill="%23aa7953"/><rect x="56" y="20" width="4" height="4" fill="%23435e66"/><rect x="4" y="24" width="4" height="4" fill="%23435e66"/><rect x="8" y="24" width="12" height="4" fill="%23aa7953"/><rect x="20" y="24" width="24" height="4" fill="%23eddfba"/><rect x="44" y="24" width="12" height="4" fill="%23aa7953"/><rect x="56" y="24" width="4" height="4" fill="%23435e66"/><rect x="4" y="28" width="4" height="4" fill="%23435e66"/><rect x="8" y="28" width="48" height="4" fill="%23aa7953"/><rect x="56" y="28" width="4" height="4" fill="%23435e66"/><rect x="4" y="32" width="4" height="4" fill="%23435e66"/><rect x="8" y="32" width="48" height="4" fill="%23aa7953"/><rect x="56" y="32" width="4" height="4" fill="%23435e66"/><rect x="4" y="36" width="4" height="4" fill="%23435e66"/><rect x="8" y="36" width="4" height="4" fill="%23f6edcf"/><rect x="12" y="36" width="4" height="4" fill="%23435e66"/><rect x="16" y="36" width="4" height="4" fill="%23f6edcf"/><rect x="20" y="36" width="4" height="4" fill="%23435e66"/><rect x="24" y="36" width="4" height="4" fill="%23f6edcf"/><rect x="28" y="36" width="4" height="4" fill="%23435e66"/><rect x="32" y="36" width="4" height="4" fill="%23f6edcf"/><rect x="36" y="36" width="4" height="4" fill="%23435e66"/><rect x="40" y="36" width="4" height="4" fill="%23f6edcf"/><rect x="44" y="36" width="4" height="4" fill="%23435e66"/><rect x="48" y="36" width="4" height="4" fill="%23f6edcf"/><rect x="52" y="36" width="8" height="4" fill="%23435e66"/><rect x="4" y="40" width="4" height="4" fill="%23435e66"/><rect x="8" y="40" width="4" height="4" fill="%23f6edcf"/><rect x="12" y="40" width="4" height="4" fill="%23435e66"/><rect x="16" y="40" width="4" height="4" fill="%23f6edcf"/><rect x="20" y="40" width="4" height="4" fill="%23435e66"/><rect x="24" y="40" width="4" height="4" fill="%23f6edcf"/><rect x="28" y="40" width="4" height="4" fill="%23435e66"/><rect x="32" y="40" width="4" height="4" fill="%23f6edcf"/><rect x="36" y="40" width="4" height="4" fill="%23435e66"/><rect x="40" y="40" width="4" height="4" fill="%23f6edcf"/><rect x="44" y="40" width="4" height="4" fill="%23435e66"/><rect x="48" y="40" width="4" height="4" fill="%23f6edcf"/><rect x="52" y="40" width="8" height="4" fill="%23435e66"/><rect x="4" y="44" width="4" height="4" fill="%23435e66"/><rect x="8" y="44" width="48" height="4" fill="%23f6edcf"/><rect x="56" y="44" width="4" height="4" fill="%23435e66"/><rect x="8" y="48" width="8" height="4" fill="%23435e66"/><rect x="48" y="48" width="8" height="4" fill="%23435e66"/><rect x="8" y="52" width="8" height="4" fill="%23435e66"/><rect x="48" y="52" width="8" height="4" fill="%23435e66"/><rect x="8" y="56" width="8" height="4" fill="%23435e66"/><rect x="48" y="56" width="8" height="4" fill="%23435e66"/><rect x="8" y="60" width="8" height="4" fill="%23435e66"/><rect x="48" y="60" width="8" height="4" fill="%23435e66"/></svg>';
+
+  // public/pixel-assets/props/clock.svg
+  var clock_default = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" shape-rendering="crispEdges"><rect x="12" y="4" width="40" height="4" fill="%23aa7953"/><rect x="12" y="8" width="4" height="4" fill="%23aa7953"/><rect x="16" y="8" width="32" height="4" fill="%23435e66"/><rect x="48" y="8" width="4" height="4" fill="%23aa7953"/><rect x="12" y="12" width="4" height="4" fill="%23aa7953"/><rect x="16" y="12" width="4" height="4" fill="%23435e66"/><rect x="20" y="12" width="12" height="4" fill="%23f6edcf"/><rect x="32" y="12" width="4" height="4" fill="%23435e66"/><rect x="36" y="12" width="8" height="4" fill="%23f6edcf"/><rect x="44" y="12" width="4" height="4" fill="%23435e66"/><rect x="48" y="12" width="4" height="4" fill="%23aa7953"/><rect x="12" y="16" width="4" height="4" fill="%23aa7953"/><rect x="16" y="16" width="4" height="4" fill="%23435e66"/><rect x="20" y="16" width="12" height="4" fill="%23f6edcf"/><rect x="32" y="16" width="4" height="4" fill="%23435e66"/><rect x="36" y="16" width="8" height="4" fill="%23f6edcf"/><rect x="44" y="16" width="4" height="4" fill="%23435e66"/><rect x="48" y="16" width="4" height="4" fill="%23aa7953"/><rect x="12" y="20" width="4" height="4" fill="%23aa7953"/><rect x="16" y="20" width="4" height="4" fill="%23435e66"/><rect x="20" y="20" width="12" height="4" fill="%23f6edcf"/><rect x="32" y="20" width="4" height="4" fill="%23435e66"/><rect x="36" y="20" width="8" height="4" fill="%23f6edcf"/><rect x="44" y="20" width="4" height="4" fill="%23435e66"/><rect x="48" y="20" width="4" height="4" fill="%23aa7953"/><rect x="12" y="24" width="4" height="4" fill="%23aa7953"/><rect x="16" y="24" width="4" height="4" fill="%23435e66"/><rect x="20" y="24" width="12" height="4" fill="%23f6edcf"/><rect x="32" y="24" width="4" height="4" fill="%23435e66"/><rect x="36" y="24" width="8" height="4" fill="%23f6edcf"/><rect x="44" y="24" width="4" height="4" fill="%23435e66"/><rect x="48" y="24" width="4" height="4" fill="%23aa7953"/><rect x="12" y="28" width="4" height="4" fill="%23aa7953"/><rect x="16" y="28" width="4" height="4" fill="%23435e66"/><rect x="20" y="28" width="16" height="4" fill="%23f6edcf"/><rect x="36" y="28" width="12" height="4" fill="%23435e66"/><rect x="48" y="28" width="4" height="4" fill="%23aa7953"/><rect x="12" y="32" width="4" height="4" fill="%23aa7953"/><rect x="16" y="32" width="4" height="4" fill="%23435e66"/><rect x="20" y="32" width="24" height="4" fill="%23f6edcf"/><rect x="44" y="32" width="4" height="4" fill="%23435e66"/><rect x="48" y="32" width="4" height="4" fill="%23aa7953"/><rect x="12" y="36" width="4" height="4" fill="%23aa7953"/><rect x="16" y="36" width="32" height="4" fill="%23435e66"/><rect x="48" y="36" width="4" height="4" fill="%23aa7953"/><rect x="12" y="40" width="4" height="4" fill="%23aa7953"/><rect x="16" y="40" width="12" height="4" fill="%23eddfba"/><rect x="28" y="40" width="8" height="4" fill="%23d8ae59"/><rect x="36" y="40" width="12" height="4" fill="%23eddfba"/><rect x="48" y="40" width="4" height="4" fill="%23aa7953"/><rect x="12" y="44" width="4" height="4" fill="%23aa7953"/><rect x="16" y="44" width="12" height="4" fill="%23eddfba"/><rect x="28" y="44" width="8" height="4" fill="%23d8ae59"/><rect x="36" y="44" width="12" height="4" fill="%23eddfba"/><rect x="48" y="44" width="4" height="4" fill="%23aa7953"/><rect x="12" y="48" width="4" height="4" fill="%23aa7953"/><rect x="16" y="48" width="12" height="4" fill="%23eddfba"/><rect x="28" y="48" width="8" height="4" fill="%23d8ae59"/><rect x="36" y="48" width="12" height="4" fill="%23eddfba"/><rect x="48" y="48" width="4" height="4" fill="%23aa7953"/><rect x="12" y="52" width="40" height="4" fill="%23aa7953"/></svg>';
+
+  // public/pixel-assets/props/clock-hook.svg
+  var clock_hook_default = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" shape-rendering="crispEdges"><rect x="28" y="4" width="8" height="4" fill="%23aa7953"/><rect x="28" y="8" width="8" height="4" fill="%23aa7953"/><rect x="32" y="12" width="4" height="4" fill="%23435e66"/><rect x="32" y="16" width="4" height="4" fill="%23435e66"/><rect x="24" y="20" width="12" height="4" fill="%23435e66"/></svg>';
+
+  // public/pixel-assets/props/quiet-notice.svg
+  var quiet_notice_default = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" shape-rendering="crispEdges"><rect x="4" y="8" width="56" height="4" fill="%23aa7953"/><rect x="4" y="12" width="4" height="4" fill="%23aa7953"/><rect x="8" y="12" width="48" height="4" fill="%23eddfba"/><rect x="56" y="12" width="4" height="4" fill="%23aa7953"/><rect x="4" y="16" width="4" height="4" fill="%23aa7953"/><rect x="8" y="16" width="4" height="4" fill="%23eddfba"/><rect x="12" y="16" width="40" height="4" fill="%23709a99"/><rect x="52" y="16" width="4" height="4" fill="%23eddfba"/><rect x="56" y="16" width="4" height="4" fill="%23aa7953"/><rect x="4" y="20" width="4" height="4" fill="%23aa7953"/><rect x="8" y="20" width="48" height="4" fill="%23eddfba"/><rect x="56" y="20" width="4" height="4" fill="%23aa7953"/><rect x="4" y="24" width="4" height="4" fill="%23aa7953"/><rect x="8" y="24" width="48" height="4" fill="%23eddfba"/><rect x="56" y="24" width="4" height="4" fill="%23aa7953"/><rect x="4" y="28" width="4" height="4" fill="%23aa7953"/><rect x="8" y="28" width="4" height="4" fill="%23eddfba"/><rect x="12" y="28" width="28" height="4" fill="%23aa7953"/><rect x="40" y="28" width="16" height="4" fill="%23eddfba"/><rect x="56" y="28" width="4" height="4" fill="%23aa7953"/><rect x="4" y="32" width="4" height="4" fill="%23aa7953"/><rect x="8" y="32" width="48" height="4" fill="%23eddfba"/><rect x="56" y="32" width="4" height="4" fill="%23aa7953"/><rect x="4" y="36" width="4" height="4" fill="%23aa7953"/><rect x="8" y="36" width="48" height="4" fill="%23eddfba"/><rect x="56" y="36" width="4" height="4" fill="%23aa7953"/><rect x="4" y="40" width="4" height="4" fill="%23aa7953"/><rect x="8" y="40" width="4" height="4" fill="%23eddfba"/><rect x="12" y="40" width="40" height="4" fill="%23aa7953"/><rect x="52" y="40" width="4" height="4" fill="%23eddfba"/><rect x="56" y="40" width="4" height="4" fill="%23aa7953"/><rect x="4" y="44" width="4" height="4" fill="%23aa7953"/><rect x="8" y="44" width="48" height="4" fill="%23eddfba"/><rect x="56" y="44" width="4" height="4" fill="%23aa7953"/><rect x="4" y="48" width="4" height="4" fill="%23aa7953"/><rect x="8" y="48" width="48" height="4" fill="%23eddfba"/><rect x="56" y="48" width="4" height="4" fill="%23aa7953"/><rect x="4" y="52" width="56" height="4" fill="%23aa7953"/></svg>';
+
+  // public/pixel-assets/props/elevator-car.svg
+  var elevator_car_default = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" shape-rendering="crispEdges"><rect x="0" y="0" width="64" height="4" fill="%23435e66"/><rect x="0" y="4" width="4" height="4" fill="%23435e66"/><rect x="4" y="4" width="56" height="4" fill="%23709a99"/><rect x="60" y="4" width="4" height="4" fill="%23435e66"/><rect x="0" y="8" width="4" height="4" fill="%23435e66"/><rect x="4" y="8" width="4" height="4" fill="%23709a99"/><rect x="8" y="8" width="48" height="4" fill="%23f6edcf"/><rect x="56" y="8" width="4" height="4" fill="%23709a99"/><rect x="60" y="8" width="4" height="4" fill="%23435e66"/><rect x="0" y="12" width="4" height="4" fill="%23435e66"/><rect x="4" y="12" width="4" height="4" fill="%23eddfba"/><rect x="8" y="12" width="48" height="4" fill="%23a4bcb5"/><rect x="56" y="12" width="4" height="4" fill="%23eddfba"/><rect x="60" y="12" width="4" height="4" fill="%23435e66"/><rect x="0" y="16" width="4" height="4" fill="%23435e66"/><rect x="4" y="16" width="4" height="4" fill="%23eddfba"/><rect x="8" y="16" width="48" height="4" fill="%23a4bcb5"/><rect x="56" y="16" width="4" height="4" fill="%23eddfba"/><rect x="60" y="16" width="4" height="4" fill="%23435e66"/><rect x="0" y="20" width="4" height="4" fill="%23435e66"/><rect x="4" y="20" width="4" height="4" fill="%23eddfba"/><rect x="8" y="20" width="48" height="4" fill="%23a4bcb5"/><rect x="56" y="20" width="4" height="4" fill="%23eddfba"/><rect x="60" y="20" width="4" height="4" fill="%23435e66"/><rect x="0" y="24" width="4" height="4" fill="%23435e66"/><rect x="4" y="24" width="4" height="4" fill="%23eddfba"/><rect x="8" y="24" width="48" height="4" fill="%23a4bcb5"/><rect x="56" y="24" width="4" height="4" fill="%23eddfba"/><rect x="60" y="24" width="4" height="4" fill="%23435e66"/><rect x="0" y="28" width="4" height="4" fill="%23435e66"/><rect x="4" y="28" width="4" height="4" fill="%23eddfba"/><rect x="8" y="28" width="48" height="4" fill="%23a4bcb5"/><rect x="56" y="28" width="4" height="4" fill="%23eddfba"/><rect x="60" y="28" width="4" height="4" fill="%23435e66"/><rect x="0" y="32" width="4" height="4" fill="%23435e66"/><rect x="4" y="32" width="4" height="4" fill="%23eddfba"/><rect x="8" y="32" width="48" height="4" fill="%23a4bcb5"/><rect x="56" y="32" width="4" height="4" fill="%23eddfba"/><rect x="60" y="32" width="4" height="4" fill="%23435e66"/><rect x="0" y="36" width="4" height="4" fill="%23435e66"/><rect x="4" y="36" width="4" height="4" fill="%23eddfba"/><rect x="8" y="36" width="48" height="4" fill="%23a4bcb5"/><rect x="56" y="36" width="4" height="4" fill="%23eddfba"/><rect x="60" y="36" width="4" height="4" fill="%23435e66"/><rect x="0" y="40" width="4" height="4" fill="%23435e66"/><rect x="4" y="40" width="4" height="4" fill="%23eddfba"/><rect x="8" y="40" width="48" height="4" fill="%23a4bcb5"/><rect x="56" y="40" width="4" height="4" fill="%23eddfba"/><rect x="60" y="40" width="4" height="4" fill="%23435e66"/><rect x="0" y="44" width="4" height="4" fill="%23435e66"/><rect x="4" y="44" width="4" height="4" fill="%23eddfba"/><rect x="8" y="44" width="48" height="4" fill="%23a4bcb5"/><rect x="56" y="44" width="4" height="4" fill="%23eddfba"/><rect x="60" y="44" width="4" height="4" fill="%23435e66"/><rect x="0" y="48" width="4" height="4" fill="%23435e66"/><rect x="4" y="48" width="4" height="4" fill="%23eddfba"/><rect x="8" y="48" width="48" height="4" fill="%23a4bcb5"/><rect x="56" y="48" width="4" height="4" fill="%23eddfba"/><rect x="60" y="48" width="4" height="4" fill="%23435e66"/><rect x="0" y="52" width="4" height="4" fill="%23435e66"/><rect x="4" y="52" width="4" height="4" fill="%23eddfba"/><rect x="8" y="52" width="48" height="4" fill="%23a4bcb5"/><rect x="56" y="52" width="4" height="4" fill="%23eddfba"/><rect x="60" y="52" width="4" height="4" fill="%23435e66"/><rect x="0" y="56" width="64" height="4" fill="%23435e66"/><rect x="0" y="60" width="64" height="4" fill="%23435e66"/></svg>';
+
   // src/game/assets.ts
   var assets = {
     "buildings.apartment-a": { src: apartment_a_default, width: 350, height: 630 },
@@ -2997,12 +3253,22 @@
     "props.mail-bundle": { src: mail_bundle_default, width: 64, height: 64 },
     "props.post-door-closed": { src: post_door_closed_default, width: 64, height: 64 },
     "props.post-door-open": { src: post_door_open_default, width: 64, height: 64 },
-    "props.postal-table": { src: postal_table_default, width: 64, height: 64 }
+    "props.postal-table": { src: postal_table_default, width: 64, height: 64 },
+    "props.watch-lantern": { src: watch_lantern_default, width: 64, height: 64 },
+    "props.watch-book": { src: watch_book_default, width: 64, height: 64 },
+    "props.route-map": { src: route_map_default, width: 64, height: 64 },
+    "props.sign-old": { src: sign_old_default, width: 64, height: 64 },
+    "props.sign-new": { src: sign_new_default, width: 64, height: 64 },
+    "props.piano": { src: piano_default, width: 64, height: 64 },
+    "props.clock": { src: clock_default, width: 64, height: 64 },
+    "props.clock-hook": { src: clock_hook_default, width: 64, height: 64 },
+    "props.quiet-notice": { src: quiet_notice_default, width: 64, height: 64 },
+    "props.elevator-car": { src: elevator_car_default, width: 64, height: 64 }
   };
 
   // src/game/renderer.ts
   function objectArt(id) {
-    const special = { plateA: "plate-a", plateH: "plate-h", addressElias: "address-card", addressIris: "address-card", postalBag: "mailbag", postalBundle: "mail-bundle", abelTools: "toolbag", hughBrush: "toolbag", hesterPillow: "pillow", hesterCoat: "coat", stageCushion: "cushion", nellLetter: "letter", samTools: "toolbag", samLadder: "ladder", cradle: "cradle", irisClothes: "coat", eliasCoat: "coat" };
+    const special = { watchBell: "bell", watchLantern: "watch-lantern", watchBook: "watch-book", calebMap: "route-map", patrolCopy: "route-map", rosePiano: "piano", noahClock: "clock", quietNotice: "quiet-notice", plateA: "plate-a", plateH: "plate-h", addressElias: "address-card", addressIris: "address-card", postalBag: "mailbag", postalBundle: "mail-bundle", abelTools: "toolbag", hughBrush: "toolbag", hesterPillow: "pillow", hesterCoat: "coat", stageCushion: "cushion", nellLetter: "letter", samTools: "toolbag", samLadder: "ladder", cradle: "cradle", irisClothes: "coat", eliasCoat: "coat" };
     const lower = id.toLowerCase();
     return special[id] ?? (lower.includes("puppet") ? "puppet" : lower.includes("loan") ? "loanShoes" : lower.includes("pot") ? "pot" : lower.includes("package") ? "package" : lower.includes("shoes") ? "shoes" : lower.includes("key") ? "key" : void 0);
   }
@@ -3221,15 +3487,16 @@
     }
     position(id, s, subtick) {
       const a = s.actors[id], p2 = blockPlaceById.get(a.locationId);
-      const movement = s.actions.find((a2) => this.definitions.get(a2.definitionId)?.movement?.actorId === id);
+      const movement = s.actions.find((a2) => this.definitions.get(a2.definitionId)?.movement && this.definitions.get(a2.definitionId).actorIds.includes(id));
       let x = p2.x, y = p2.y;
       if (movement) {
         const def = this.definitions.get(movement.definitionId), q = blockPlaceById.get(def.movement.to);
         const f = Math.min(1, (movement.elapsedTicks + subtick) / def.durationTicks);
         x += (q.x - x) * f;
         y += (q.y - y) * f;
+        if (def.actorIds.length > 1) x += (def.actorIds.indexOf(id) - (def.actorIds.length - 1) / 2) * 20;
       } else {
-        const locals = dinnerContent.actors.filter((a2) => s.actors[a2.id].locationId === p2.id && !s.actions.some((r) => this.definitions.get(r.definitionId)?.movement?.actorId === a2.id));
+        const locals = dinnerContent.actors.filter((a2) => s.actors[a2.id].locationId === p2.id && !s.actions.some((r) => this.definitions.get(r.definitionId)?.movement && this.definitions.get(r.definitionId).actorIds.includes(a2.id)));
         x += (locals.findIndex((a2) => a2.id === id) - (locals.length - 1) / 2) * 23;
         if ((id === D || id === B) && p2.id === "yard" && s.facts["ben.chasing"]) {
           const t = (s.tick + subtick) / 12 + (id === D ? 0 : 1.3);
@@ -3299,7 +3566,24 @@
       prop2("return-box", "shoe", 52, 10, 0.55);
       for (const [id, obj] of Object.entries(s.objects)) {
         const asset = objectArt(id);
-        if (asset && obj.quantity > 0 && obj.custody.kind === "place" && blockPlaceById.has(obj.custody.id)) prop2(asset, obj.custody.id, id === "cradle" ? 12 : -35, id === "cradle" ? 8 : -22, id === "cradle" ? 0.85 : 0.48);
+        if (asset && obj.quantity > 0 && obj.custody.kind === "place" && blockPlaceById.has(obj.custody.id)) prop2(asset, obj.custody.id, id === "cradle" ? 12 : -35, id === "cradle" ? 8 : id === "noahClock" && s.facts["noah.clockMounted"] ? -70 : -22, id === "cradle" ? 0.85 : 0.48);
+      }
+      prop2(s.facts["lift.signposted"] ? "sign-new" : "sign-old", "liftOld", -36, -45, 0.6);
+      prop2("sign-new", "liftGround", 45, -45, 0.5);
+      if (s.actions.some((a) => a.definitionId === "alf.ring")) prop2("bell", "inn", 22, -25, 0.5);
+      if (s.facts["rose.sounding"]) for (const id of ["basil", "martha"]) {
+        const p2 = blockPlaceById.get(id);
+        c2.fillStyle = "#a77953";
+        for (let i = 0; i < 3; i++) c2.fillRect(p2.x - 51 + i * 6, p2.y - 62 - i * 4, 3, 7);
+      }
+      if (!s.facts["noah.clockMounted"]) prop2("clock-hook", "martha", -35, -70, 0.5);
+      for (const run of s.actions) {
+        const d = this.definitions.get(run.definitionId);
+        if (d.movement && [d.movement.from, d.movement.to].includes("liftGround") && [d.movement.from, d.movement.to].includes("liftUpper")) {
+          const pos = this.position(d.movement.actorId, s, subtick);
+          const groupOffset = (d.actorIds.indexOf(d.movement.actorId) - (d.actorIds.length - 1) / 2) * 20;
+          this.asset("props.elevator-car", pos.x - groupOffset - 32, pos.y - 53, 1);
+        }
       }
       for (const actor2 of dinnerContent.actors) {
         const pos = this.position(actor2.id, s, subtick), im = this.images.get(`residents.${actor2.id === D ? "dog" : actor2.id}`);
@@ -3334,8 +3618,8 @@
           c2.fillRect(pos.x - 6, pos.y - 52, 12, 4);
           c2.fillRect(pos.x - 3, pos.y - 48, 6, 4);
         }
-        if (actor2.id === "C017" && s.facts["hester.lying"] && !pos.moving) {
-          const bed = blockPlaceById.get("hester");
+        if (!pos.moving && (actor2.id === "C017" && s.facts["hester.lying"] || actor2.id === "C018" && s.facts["alf.lying"] || actor2.id === "C024" && s.facts["noah.lying"])) {
+          const bed = blockPlaceById.get(actor2.id === "C017" ? "hester" : actor2.id === "C018" ? "alfRoom" : "martha");
           c2.save();
           c2.translate(bed.x - 22, bed.y - 30);
           c2.rotate(-Math.PI / 2);
@@ -3343,7 +3627,7 @@
           c2.restore();
         } else c2.drawImage(im, frame2 * 64, 0, 64, h, pos.x - 32 * scale, pos.y - (h - 7) * scale, 64 * scale, h * scale);
         if (actor2.id !== D) {
-          const priority = ["plateA", "plateH", "postalBundle", "postalBag"];
+          const priority = ["watchLantern", "watchBook", "calebMap", "patrolCopy", "noahClock", "plateA", "plateH", "postalBundle", "postalBag"];
           const carried = Object.entries(s.objects).sort(([a], [b2]) => (priority.includes(a) ? priority.indexOf(a) : 9) - (priority.includes(b2) ? priority.indexOf(b2) : 9)).find(([id, o]) => objectArt(id) && o.quantity > 0 && o.custody.kind === "actor" && o.custody.id === actor2.id);
           if (carried) {
             const kind = objectArt(carried[0]);
@@ -3383,7 +3667,7 @@
   var body = $("modal-body");
   var sim = new Simulation(dinnerContent);
   var clock = new FixedClock();
-  var saves = new Saves({ getItem: (key) => localStorage.getItem(key), setItem: (key, value) => localStorage.setItem(key, value) }, "roadonden:town:v6:");
+  var saves = new Saves({ getItem: (key) => localStorage.getItem(key), setItem: (key, value) => localStorage.setItem(key, value) }, "roadonden:town:v7:");
   var state = sim.snapshot();
   var paused = false;
   var fast = false;
@@ -3395,7 +3679,7 @@
   var uiSignature = "";
   var definitions = new Map(dinnerContent.actions.map((a) => [a.id, a]));
   var places = new Map(dinnerContent.places.map((p2) => [p2.id, p2]));
-  var completionWords = { C012: "\u300C\u4E8C\u68DF\u306E\u672D\u3092\u672C\u4EBA\u306E\u4F4F\u6240\u3068\u7167\u5408\u3067\u304D\u305F\u3002\u78BA\u8A8D\u672D\u306F\u305D\u308C\u305E\u308C\u306E\u5ECA\u4E0B\u306B\u6B8B\u3057\u305F\u3088\u300D", C016: "\u300C\u672C\u4EBA\u304C\u81EA\u5206\u3067\u958B\u3051\u3066\u901A\u308C\u305F\u3002\u3053\u308C\u306A\u3089\u666E\u6BB5\u306E\u5165\u9928\u3067\u3082\u4F7F\u3048\u308B\u306D\u300D", C090: "\u300C\u81EA\u5206\u306E\u62C5\u5F53\u3092\u4ED5\u5206\u3051\u3066\u9001\u308A\u51FA\u305B\u305F\u308F\u3002\u3044\u3064\u3082\u306E\u53D7\u6E21\u3057\u78BA\u8A8D\u306B\u623B\u308A\u307E\u3059\u306D\u300D", C013: "\u300C\u4FBF\u308A\u3092\u8AAD\u3081\u305F\u308F\u3002\u8FD4\u4E8B\u306B\u6DFB\u3048\u308B\u523A\u7E4D\u3092\u7E2B\u3063\u3066\u3044\u308B\u3068\u3053\u308D\u3088\u300D", C014: "\u300C\u9053\u5177\u3082\u68AF\u5B50\u3082\u8FD4\u305B\u305F\u3002\u8FD4\u5374\u68DA\u306F\u3053\u308C\u304B\u3089\u3082\u4F7F\u3048\u308B\u3088\u300D", C015: "\u300C\u843D\u3061\u7740\u3044\u3066\u7740\u66FF\u3048\u3066\u3001\u3084\u3063\u3068\u5916\u3078\u51FA\u3089\u308C\u305F\u308F\u300D", C017: "\u30D8\u30B9\u30BF\u30FC\u306F\u9759\u304B\u306B\u7720\u3063\u3066\u3044\u308B\u3002\u623B\u3063\u305F\u54C1\u306F\u30D9\u30C3\u30C9\u8107\u3078\u7F6E\u3051\u308B\u3002", C020: "\u30D5\u30A3\u30F3\u306F\u5B89\u5B9A\u3057\u3066\u7720\u3063\u3066\u3044\u308B\u3002\u30D3\u30FC\u304C\u305D\u3070\u3067\u898B\u5B88\u3063\u3066\u3044\u308B\u3002", C021: "\u300C\u7720\u308A\u304C\u843D\u3061\u7740\u3044\u305F\u306E\u3067\u3001\u79C1\u3082\u6E29\u304B\u3044\u8336\u3092\u98F2\u3093\u3067\u4F11\u3081\u305F\u308F\u300D", C075: "\u300C\u821E\u53F0\u306E\u4EE3\u308F\u308A\u3082\u3001\u6301\u3061\u4E3B\u3078\u306E\u8FD4\u5374\u5148\u3082\u6574\u3063\u305F\u3002\u501F\u7528\u54C1\u306F\u8FD4\u5374\u68DA\u304B\u3089\u904B\u3079\u308B\u3088\u300D", C084: "\u300C\u5185\u5074\u307E\u3067\u78BA\u304B\u3081\u3066\u76F4\u305B\u305F\u3002\u9ED9\u3063\u3066\u5E30\u3089\u305A\u3001\u81EA\u5206\u3067\u8B1D\u308C\u3066\u3088\u304B\u3063\u305F\u300D", C009: "\u300C\u81EA\u5206\u306E\u6905\u5B50\u306F\u843D\u3061\u7740\u304F\u306D\u3002\u9375\u304C\u3042\u3068\u304B\u3089\u623B\u3063\u305F\u3089\u3001\u7384\u95A2\u306E\u53D7\u53D6\u53E3\u3067\u5927\u4E08\u592B\u3060\u3088\u300D", C010: "\u300C\u5E30\u5B85\u304C\u78BA\u304B\u3081\u3089\u308C\u305F\u306E\u3067\u3001\u79C1\u3082\u4F11\u3081\u307E\u3059\u3002\u4E88\u5099\u9375\u306F301\u53F7\u5BA4\u306E\u8FD4\u5374\u53E3\u3078\u300D", C011: "\u300C\u53D7\u53D6\u7BB1\u3068\u8A18\u9332\u3092\u6B8B\u3057\u3066\u304A\u3044\u3066\u3088\u304B\u3063\u305F\u3002\u6BCD\u3068\u3086\u3063\u304F\u308A\u8A71\u305B\u305F\u308F\u300D", C025: "\u300C\u9854\u3092\u898B\u3066\u8336\u3092\u98F2\u3081\u3066\u3001\u3046\u308C\u3057\u3044\u308F\u3002\u79C1\u305F\u3061\u306F\u3053\u3053\u3067\u5C11\u3057\u4F11\u307F\u307E\u3059\u306D\u300D", C001: "\u300C\u4E09\u4EBA\u306E\u8A71\u304C\u805E\u3051\u3066\u3088\u304B\u3063\u305F\u3002\u8FD4\u3059\u3082\u306E\u306F\u3001\u3044\u3064\u3082\u306E\u68DA\u3067\u3082\u53D7\u3051\u53D6\u308C\u308B\u308F\u300D", C002: "\u300C\u3088\u3046\u3084\u304F\u5BB6\u65CF\u3068\u98DF\u3079\u3089\u308C\u305F\u3088\u300D", C003: "\u300C\u7D19\u4EBA\u5F62\u306E\u304A\u8A71\u3001\u4E8C\u4EBA\u3068\u3082\u805E\u3044\u3066\u304F\u308C\u305F\uFF01\u300D", C004: "\u300C\u8FFD\u308F\u305A\u306B\u5F85\u3066\u3070\u3088\u304B\u3063\u305F\u3093\u3060\u306D\u3002\u5171\u7528\u56F2\u3044\u3067\u843D\u3061\u7740\u3044\u305F\u3088\u300D", C005: "\u300C\u5305\u307F\u3082\u5C4A\u3044\u305F\u3057\u3001\u4ECA\u65E5\u306E\u5E97\u3058\u307E\u3044\u306F\u304A\u3057\u307E\u3044\u3002\u68DA\u306E\u53D7\u6E21\u3057\u53E3\u306F\u305D\u306E\u307E\u307E\u3088\u300D", C006: "\u300C\u8FD4\u3057\u3066\u3001\u3061\u3083\u3093\u3068\u8A71\u305B\u305F\u3002\u78E8\u3044\u3066\u3044\u308B\u3060\u3051\u3067\u306F\u4F1D\u308F\u3089\u306A\u304B\u3063\u305F\u306D\u300D", C007: "\u300C\u843D\u3061\u7740\u3044\u3066\u98DF\u3079\u3089\u308C\u305F\u308F\u3002\u3042\u308A\u304C\u3068\u3046\u300D", C008: "\u300C\u3053\u308C\u3067\u8E0A\u308A\u306E\u7DF4\u7FD2\u304C\u3067\u304D\u308B\u3002\u8FD4\u5374\u7BB1\u306F\u3044\u3064\u3067\u3082\u4F7F\u3063\u3066\u306D\u300D", C045: "\u300C\u8377\u3082\u4E0B\u308A\u305F\u3002\u6A5F\u69CB\u306F\u7A7A\u3051\u305F\u3057\u3001\u6B21\u306E\u4EBA\u306B\u3082\u5408\u56F3\u304C\u898B\u3048\u308B\u300D", C054: "\u300C\u53F0\u306F\u5B89\u5B9A\u3057\u3066\u3044\u308B\u3002\u88DC\u52A9\u5177\u3082\u7247\u4ED8\u3044\u305F\u3088\u300D", C064: "\u300C\u898B\u672C\u3068\u9055\u3063\u3066\u3044\u3066\u3082\u3001\u50D5\u306E\u8A71\u306F\u4F1D\u308F\u308B\u3093\u3060\u306D\u300D" };
+  var completionWords = { C018: "\u30A2\u30EB\u30D5\u306F\u52E4\u52D9\u3092\u5F15\u304D\u7D99\u304E\u3001\u81EA\u5206\u306E\u5BDD\u5E8A\u3067\u9759\u304B\u306B\u7720\u3063\u3066\u3044\u308B\u3002", C019: "\u300C\u4E00\u5DE1\u3057\u3066\u5E33\u9762\u306B\u8A18\u3057\u307E\u3057\u305F\u3002\u3053\u306E\u9053\u9806\u3067\u3001\u3044\u3064\u3082\u306E\u591C\u56DE\u308A\u3092\u7D9A\u3051\u307E\u3059\u300D", C022: "\u300C\u81EA\u5206\u3067\u6B69\u3044\u305F\u76EE\u5370\u3092\u56F3\u3078\u8DB3\u3057\u305F\u3088\u3002\u63B2\u793A\u3068\u5F53\u756A\u7528\u306E\u5199\u3057\u3092\u4F7F\u3063\u3066\u306D\u300D", C023: "\u300C\u4E00\u66F2\u3092\u901A\u305B\u305F\u3057\u3001\u96A3\u306E\u4F11\u606F\u3082\u78BA\u304B\u3081\u3089\u308C\u305F\u3002\u4ECA\u306F\u7DF4\u7FD2\u3092\u4F11\u3080\u6642\u9593\u3088\u300D", C024: "\u30CE\u30A2\u306F\u639B\u3051\u76F4\u3057\u305F\u6642\u8A08\u306E\u97F3\u3092\u805E\u304D\u306A\u304C\u3089\u3001\u843D\u3061\u7740\u3044\u3066\u4F11\u3093\u3067\u3044\u308B\u3002", C044: "\u300C\u5E0C\u671B\u306E\u5F85\u5408\u307E\u3067\u4ED8\u304D\u6DFB\u3063\u3066\u623B\u308C\u307E\u3057\u305F\u3002\u666E\u6BB5\u306E\u4E57\u308A\u964D\u308A\u306B\u3082\u4F7F\u3048\u307E\u3059\u3088\u300D", C012: "\u300C\u4E8C\u68DF\u306E\u672D\u3092\u672C\u4EBA\u306E\u4F4F\u6240\u3068\u7167\u5408\u3067\u304D\u305F\u3002\u78BA\u8A8D\u672D\u306F\u305D\u308C\u305E\u308C\u306E\u5ECA\u4E0B\u306B\u6B8B\u3057\u305F\u3088\u300D", C016: "\u300C\u672C\u4EBA\u304C\u81EA\u5206\u3067\u958B\u3051\u3066\u901A\u308C\u305F\u3002\u3053\u308C\u306A\u3089\u666E\u6BB5\u306E\u5165\u9928\u3067\u3082\u4F7F\u3048\u308B\u306D\u300D", C090: "\u300C\u81EA\u5206\u306E\u62C5\u5F53\u3092\u4ED5\u5206\u3051\u3066\u9001\u308A\u51FA\u305B\u305F\u308F\u3002\u3044\u3064\u3082\u306E\u53D7\u6E21\u3057\u78BA\u8A8D\u306B\u623B\u308A\u307E\u3059\u306D\u300D", C013: "\u300C\u4FBF\u308A\u3092\u8AAD\u3081\u305F\u308F\u3002\u8FD4\u4E8B\u306B\u6DFB\u3048\u308B\u523A\u7E4D\u3092\u7E2B\u3063\u3066\u3044\u308B\u3068\u3053\u308D\u3088\u300D", C014: "\u300C\u9053\u5177\u3082\u68AF\u5B50\u3082\u8FD4\u305B\u305F\u3002\u8FD4\u5374\u68DA\u306F\u3053\u308C\u304B\u3089\u3082\u4F7F\u3048\u308B\u3088\u300D", C015: "\u300C\u843D\u3061\u7740\u3044\u3066\u7740\u66FF\u3048\u3066\u3001\u3084\u3063\u3068\u5916\u3078\u51FA\u3089\u308C\u305F\u308F\u300D", C017: "\u30D8\u30B9\u30BF\u30FC\u306F\u9759\u304B\u306B\u7720\u3063\u3066\u3044\u308B\u3002\u623B\u3063\u305F\u54C1\u306F\u30D9\u30C3\u30C9\u8107\u3078\u7F6E\u3051\u308B\u3002", C020: "\u30D5\u30A3\u30F3\u306F\u5B89\u5B9A\u3057\u3066\u7720\u3063\u3066\u3044\u308B\u3002\u30D3\u30FC\u304C\u305D\u3070\u3067\u898B\u5B88\u3063\u3066\u3044\u308B\u3002", C021: "\u300C\u7720\u308A\u304C\u843D\u3061\u7740\u3044\u305F\u306E\u3067\u3001\u79C1\u3082\u6E29\u304B\u3044\u8336\u3092\u98F2\u3093\u3067\u4F11\u3081\u305F\u308F\u300D", C075: "\u300C\u821E\u53F0\u306E\u4EE3\u308F\u308A\u3082\u3001\u6301\u3061\u4E3B\u3078\u306E\u8FD4\u5374\u5148\u3082\u6574\u3063\u305F\u3002\u501F\u7528\u54C1\u306F\u8FD4\u5374\u68DA\u304B\u3089\u904B\u3079\u308B\u3088\u300D", C084: "\u300C\u5185\u5074\u307E\u3067\u78BA\u304B\u3081\u3066\u76F4\u305B\u305F\u3002\u9ED9\u3063\u3066\u5E30\u3089\u305A\u3001\u81EA\u5206\u3067\u8B1D\u308C\u3066\u3088\u304B\u3063\u305F\u300D", C009: "\u300C\u81EA\u5206\u306E\u6905\u5B50\u306F\u843D\u3061\u7740\u304F\u306D\u3002\u9375\u304C\u3042\u3068\u304B\u3089\u623B\u3063\u305F\u3089\u3001\u7384\u95A2\u306E\u53D7\u53D6\u53E3\u3067\u5927\u4E08\u592B\u3060\u3088\u300D", C010: "\u300C\u5E30\u5B85\u304C\u78BA\u304B\u3081\u3089\u308C\u305F\u306E\u3067\u3001\u79C1\u3082\u4F11\u3081\u307E\u3059\u3002\u4E88\u5099\u9375\u306F301\u53F7\u5BA4\u306E\u8FD4\u5374\u53E3\u3078\u300D", C011: "\u300C\u53D7\u53D6\u7BB1\u3068\u8A18\u9332\u3092\u6B8B\u3057\u3066\u304A\u3044\u3066\u3088\u304B\u3063\u305F\u3002\u6BCD\u3068\u3086\u3063\u304F\u308A\u8A71\u305B\u305F\u308F\u300D", C025: "\u300C\u9854\u3092\u898B\u3066\u8336\u3092\u98F2\u3081\u3066\u3001\u3046\u308C\u3057\u3044\u308F\u3002\u79C1\u305F\u3061\u306F\u3053\u3053\u3067\u5C11\u3057\u4F11\u307F\u307E\u3059\u306D\u300D", C001: "\u300C\u4E09\u4EBA\u306E\u8A71\u304C\u805E\u3051\u3066\u3088\u304B\u3063\u305F\u3002\u8FD4\u3059\u3082\u306E\u306F\u3001\u3044\u3064\u3082\u306E\u68DA\u3067\u3082\u53D7\u3051\u53D6\u308C\u308B\u308F\u300D", C002: "\u300C\u3088\u3046\u3084\u304F\u5BB6\u65CF\u3068\u98DF\u3079\u3089\u308C\u305F\u3088\u300D", C003: "\u300C\u7D19\u4EBA\u5F62\u306E\u304A\u8A71\u3001\u4E8C\u4EBA\u3068\u3082\u805E\u3044\u3066\u304F\u308C\u305F\uFF01\u300D", C004: "\u300C\u8FFD\u308F\u305A\u306B\u5F85\u3066\u3070\u3088\u304B\u3063\u305F\u3093\u3060\u306D\u3002\u5171\u7528\u56F2\u3044\u3067\u843D\u3061\u7740\u3044\u305F\u3088\u300D", C005: "\u300C\u5305\u307F\u3082\u5C4A\u3044\u305F\u3057\u3001\u4ECA\u65E5\u306E\u5E97\u3058\u307E\u3044\u306F\u304A\u3057\u307E\u3044\u3002\u68DA\u306E\u53D7\u6E21\u3057\u53E3\u306F\u305D\u306E\u307E\u307E\u3088\u300D", C006: "\u300C\u8FD4\u3057\u3066\u3001\u3061\u3083\u3093\u3068\u8A71\u305B\u305F\u3002\u78E8\u3044\u3066\u3044\u308B\u3060\u3051\u3067\u306F\u4F1D\u308F\u3089\u306A\u304B\u3063\u305F\u306D\u300D", C007: "\u300C\u843D\u3061\u7740\u3044\u3066\u98DF\u3079\u3089\u308C\u305F\u308F\u3002\u3042\u308A\u304C\u3068\u3046\u300D", C008: "\u300C\u3053\u308C\u3067\u8E0A\u308A\u306E\u7DF4\u7FD2\u304C\u3067\u304D\u308B\u3002\u8FD4\u5374\u7BB1\u306F\u3044\u3064\u3067\u3082\u4F7F\u3063\u3066\u306D\u300D", C045: "\u300C\u8377\u3082\u4E0B\u308A\u305F\u3002\u6A5F\u69CB\u306F\u7A7A\u3051\u305F\u3057\u3001\u6B21\u306E\u4EBA\u306B\u3082\u5408\u56F3\u304C\u898B\u3048\u308B\u300D", C054: "\u300C\u53F0\u306F\u5B89\u5B9A\u3057\u3066\u3044\u308B\u3002\u88DC\u52A9\u5177\u3082\u7247\u4ED8\u3044\u305F\u3088\u300D", C064: "\u300C\u898B\u672C\u3068\u9055\u3063\u3066\u3044\u3066\u3082\u3001\u50D5\u306E\u8A71\u306F\u4F1D\u308F\u308B\u3093\u3060\u306D\u300D" };
   function toast(text, error = false) {
     const el = $("toast");
     el.textContent = text;
@@ -3423,7 +3707,7 @@
     return e;
   }
   function moving(who, s = state) {
-    return s.actions.find((a) => definitions.get(a.definitionId)?.movement?.actorId === who);
+    return s.actions.find((a) => definitions.get(a.definitionId)?.movement && definitions.get(a.definitionId).actorIds.includes(who));
   }
   function occupied() {
     return state.actions.find((a) => !definitions.get(a.definitionId).concurrent && definitions.get(a.definitionId).actorIds.includes(P));
@@ -3453,6 +3737,9 @@
     e.preventDefault();
     close();
   });
+  function usable(i) {
+    return check(i.visible, state) && actionResources(definitions.get(i.id)).every((r) => state.reservations[r] === void 0);
+  }
   function act(i) {
     close();
     fast = false;
@@ -3465,12 +3752,12 @@
       return;
     }
     const person2 = dinnerContent.actors.find((a) => a.id === who);
-    open(person2.displayName, who === "C020" || who === "C017" && state.completions[who] ? "\u69D8\u5B50\u3092\u898B\u308B" : "\u58F0\u3092\u304B\u3051\u308B");
+    open(person2.displayName, who === "C020" || ["C017", "C018", "C024"].includes(who) && state.completions[who] ? "\u69D8\u5B50\u3092\u898B\u308B" : "\u58F0\u3092\u304B\u3051\u308B");
     paragraph(state.completions[who] ? completionWords[who] ?? greetings[who] : greetings[who] ?? person2.normalLife);
     if (state.completions[who] && !state.knownCompletions[who]) sim.enqueue({ kind: person2.completionObservation ? "observeCompletion" : "askCompletion", actorId: P, recipientId: who });
     const options = document.createElement("div");
     options.className = "stack";
-    for (const i of interactions.filter((i2) => i2.who === who && check(i2.visible, state) && !(who === "C017" && state.completions[who]))) options.append(button(i.label, () => act(i)));
+    for (const i of interactions.filter((i2) => i2.who === who && usable(i2) && !(["C017", "C018", "C024"].includes(who) && state.completions[who]))) options.append(button(i.label, () => act(i)));
     if (!options.children.length) paragraph("\u4ECA\u306F\u3001\u69D8\u5B50\u3092\u898B\u5B88\u308D\u3046\u3002");
     body.append(options, button("\u8A71\u3092\u7D42\u3048\u308B", close, "subtle"));
   }
@@ -3496,12 +3783,14 @@
   }
   function startNextWalk() {
     if (!path.length || occupied()) return;
-    const from = state.actors[P].locationId, to = path.shift(), id = walkId(P, from, to), a = definitions.get(id);
+    const from = state.actors[P].locationId, to = path[0], id = walkId(P, from, to), a = definitions.get(id);
+    if (a.resources.some((r) => state.reservations[r] !== void 0)) return;
     if (!check(a.startGuard, state)) {
       path = [];
       toast("\u6238\u304C\u9589\u3058\u3066\u3044\u308B\u3002\u5165\u53E3\u3067\u3067\u304D\u308B\u3053\u3068\u3092\u63A2\u3057\u3066\u307F\u3088\u3046\u3002");
       return;
     }
+    path.shift();
     sim.enqueue({ kind: "start", actorId: P, actionId: id });
   }
   function inventory() {
@@ -3636,7 +3925,10 @@
     const previousTown = document.createElement("a");
     previousTown.href = "legacy/town-0.5.0.html";
     previousTown.textContent = "\u524D\u306E\u5168\u4F53\u30DE\u30C3\u30D7\u7248\u3092\u958B\u304F\uFF08town-0.5.0\u306E\u30BB\u30FC\u30D6\u7528\uFF09";
-    body.append(previousTown, document.createElement("br"), townLegacy, document.createElement("br"), blockLegacy, document.createElement("br"));
+    const v6Town = document.createElement("a");
+    v6Town.href = "legacy/town-0.6.0.html";
+    v6Town.textContent = "\u524D\u306E\u5168\u4F53\u30DE\u30C3\u30D7\u7248\u3092\u958B\u304F\uFF08town-0.6.0\u306E\u30BB\u30FC\u30D6\u7528\uFF09";
+    body.append(v6Town, document.createElement("br"), previousTown, document.createElement("br"), townLegacy, document.createElement("br"), blockLegacy, document.createElement("br"));
     const legacy = document.createElement("a");
     legacy.href = "legacy/dinner-0.2.0.html";
     legacy.textContent = "\u65E7\u30FB\u8857\u6B69\u304D\u7248\u3092\u958B\u304F\uFF08\u65E7\u30BB\u30FC\u30D6\u7528\uFF09";
@@ -3664,7 +3956,7 @@
     open(welcome ? "\u5546\u5E97\u8857\u306E\u5411\u3053\u3046\u3078" : "\u6B69\u304D\u65B9", "\u30ED\u30FC\u30C9\u30F3\u30C7\u30F3 \xB7 \u8857\u306E\u5168\u4F53\u30DE\u30C3\u30D7");
     paragraph("\u77ED\u671F\u5165\u5C45\u3067\u8A2A\u308C\u305F\u3001\u5546\u5E97\u8857\u3068\u30A2\u30D1\u30FC\u30C8\u306E\u8857\u3002\u897F\u53E3\u306E\u4E09\u68DF\u304B\u3089\u6771\u53E3\u306E\u9001\u8FCE\u5F85\u5408\u307E\u3067\u300130\u68DF\u3092\u901A\u308A\u3068\u88CF\u9053\u304C\u3064\u306A\u3044\u3067\u3044\u307E\u3059\u3002\u5171\u7528\u5ECA\u4E0B\u3084\u968E\u6BB5\u3092\u6B69\u304D\u3001\u4F4F\u6C11\u3084\u5E97\u306E\u4EBA\u306B\u58F0\u3092\u304B\u3051\u3066\u307F\u3066\u304F\u3060\u3055\u3044\u3002\u8AB0\u304B\u3092\u52A9\u3051\u3066\u3082\u3001\u305D\u306E\u4EBA\u304C\u81EA\u5206\u3067\u884C\u52D5\u3059\u308B\u307E\u3067\u3001\u66AE\u3089\u3057\u306F\u5148\u3078\u9032\u307F\u307E\u305B\u3093\u3002");
     paragraph("\u90E8\u5C4B\u3084\u9053\u3092\u30AF\u30EA\u30C3\u30AF\u3001\u307E\u305F\u306F\u77E2\u5370 / WASD \u3067\u79FB\u52D5\u3057\u307E\u3059\u3002E \u3067\u8FD1\u304F\u306E\u4EBA\u3068\u4F1A\u8A71\u3002\u6301\u3061\u7269\u306F I\u3001\u624B\u5E33\u306F J\u3002\u30C9\u30E9\u30C3\u30B0\u3067\u5730\u56F3\u3092\u52D5\u304B\u3057\u3001\u30DB\u30A4\u30FC\u30EB\u3084\uFF0B\u2212\u3067\u62E1\u7E2E\u3067\u304D\u307E\u3059\u3002\u300C\u5168\u4F53\u300D\u3067\u8857\u3092\u898B\u6E21\u3057\u3001\u300C\u3042\u306A\u305F\u3078\u300D\u3067\u8FFD\u5F93\u306B\u623B\u308A\u307E\u3059\u3002\u4E0B\u306E\u5C0F\u5730\u56F3\u3084\u533A\u9593\u540D\u304B\u3089\u898B\u305F\u3044\u5834\u6240\u3092\u9078\u3079\u307E\u3059\u3002\u4F1A\u8A71\u3084\u624B\u5E33\u3092\u958B\u3044\u3066\u3044\u308B\u9593\u306F\u6642\u9593\u304C\u6B62\u307E\u308A\u307E\u3059\u3002");
-    paragraph("\u73FE\u5728\u306F26\u4EBA\u3068\u72AC\u306E\u7269\u8A9E\u3092\u904A\u3079\u307E\u3059\u3002\u5915\u98DF\u3001\u9375\u3068\u6BCD\u5A18\u306E\u8336\u306B\u52A0\u3048\u3001\u624B\u7D19\u3068\u547C\u9234\u3001\u5DE5\u4E8B\u306E\u5E30\u8DEF\u3068\u7740\u66FF\u3048\u3001\u6795\u306E\u8FD4\u5374\u3001\u89AA\u5B50\u306E\u5BDD\u304B\u3057\u3064\u3051\u3001\u68DF\u540D\u672D\u306E\u4EA4\u63DB\u3001\u90F5\u4FBF\u5BA4\u306E\u6249\u3068\u4ED5\u5206\u3051\u304C\u9032\u307F\u307E\u3059\u3002\u6B8B\u308B74\u4EBA\u306E\u52D5\u4F5C\u3068\u7D50\u672B\u3001\u30A8\u30EA\u30A2\u5225\u306E\u63A2\u7D22\u753B\u9762\u306F\u5236\u4F5C\u4E2D\u3067\u3059\u3002");
+    paragraph("\u73FE\u5728\u306F32\u4EBA\u3068\u72AC\u306E\u7269\u8A9E\u3092\u904A\u3079\u307E\u3059\u3002\u5915\u98DF\u3001\u9375\u3068\u6BCD\u5A18\u306E\u8336\u306B\u52A0\u3048\u3001\u624B\u7D19\u3068\u547C\u9234\u3001\u5DE5\u4E8B\u306E\u5E30\u8DEF\u3068\u7740\u66FF\u3048\u3001\u6795\u306E\u8FD4\u5374\u3001\u89AA\u5B50\u306E\u5BDD\u304B\u3057\u3064\u3051\u3001\u68DF\u540D\u672D\u306E\u4EA4\u63DB\u3001\u90F5\u4FBF\u5BA4\u306E\u6249\u3068\u4ED5\u5206\u3051\u3001\u591C\u56DE\u308A\u306E\u5F15\u7D99\u304E\u3001\u8A02\u6B63\u56F3\u3001\u96A3\u5BA4\u3068\u306E\u7DF4\u7FD2\u6642\u9593\u306E\u7D04\u675F\u304C\u9032\u307F\u307E\u3059\u3002\u6B8B\u308B68\u4EBA\u306E\u52D5\u4F5C\u3068\u7D50\u672B\u3001\u30A8\u30EA\u30A2\u5225\u306E\u63A2\u7D22\u753B\u9762\u306F\u5236\u4F5C\u4E2D\u3067\u3059\u3002");
     const note = paragraph("A\u68DF201\u306E\u5915\u98DF\u3001H\u68DF\u306E\u5074\u7A93\u3001\u3053\u3082\u308C\u3073\u8358\u306E\u5BDD\u5BA4\u3001\u3042\u304B\u308A\u8358\u306E\u89AA\u5B50\u3002\u6C17\u306B\u306A\u3063\u305F\u66AE\u3089\u3057\u304B\u3089\u95A2\u308F\u3063\u3066\u307F\u3066\u304F\u3060\u3055\u3044\u3002");
     note.className = "welcome-note";
     body.append(button("\u8857\u3092\u6B69\u304F", close, "primary"));
@@ -3673,9 +3965,9 @@
     const where = state.actors[P].locationId, location = places.get(where);
     const task = occupied();
     const people = dinnerContent.actors.filter((a) => a.id !== P && state.actors[a.id].locationId === where && !moving(a.id));
-    const available = interactions.filter((i) => !i.who && check(i.visible, state));
+    const available = interactions.filter((i) => !i.who && usable(i));
     const observed = dinnerContent.clues.filter((clue2) => clue2.locationId === where && check(clue2.visible, state) && state.actors[P].beliefs[clue2.propositionId]?.stance === "believe" && state.facts[clue2.propositionId] === true);
-    const signature = JSON.stringify([where, people.map((a) => a.id), available.map((a) => a.id), task?.definitionId, fast, !!moving(P), state.actions.map((a) => a.definitionId), observed.map((c2) => c2.id)]);
+    const signature = JSON.stringify([where, people.map((a) => a.id), available.map((a) => a.id), task?.definitionId, fast, !!moving(P), state.actions.filter((a) => definitions.get(a.definitionId).actorIds.some((id) => id === P || people.some((p2) => p2.id === id))).map((a) => a.definitionId), observed.map((c2) => c2.id)]);
     $("time").textContent = `${String((16 + Math.floor(state.tick % 14400 / 600)) % 24).padStart(2, "0")}:${String(Math.floor(state.tick % 600 / 10)).padStart(2, "0")}`;
     $("day").textContent = `\u7B2C${Math.floor((state.tick + 9600) / 14400) + 1}\u65E5`;
     if (signature === uiSignature) return;

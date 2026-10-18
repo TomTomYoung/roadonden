@@ -1,5 +1,5 @@
 {
-  "version": "town-pixel-0.6.0",
+  "version": "town-pixel-0.7.0",
   "notes": "Integer-grid original pixel art; source SVGs in public/assets are preserved. 100 resident sheets do not imply 100 implemented scenarios.",
   "assets": [
     {
@@ -3294,6 +3294,156 @@
       "pixelHeight": 16,
       "pixelScale": 4,
       "usage": "ドット絵の小道具: postal-table",
+      "states": [
+        "static"
+      ],
+      "source": "scripts/make-town-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.watch-lantern",
+      "file": "props/watch-lantern.svg",
+      "width": 64,
+      "height": 64,
+      "pixelWidth": 16,
+      "pixelHeight": 16,
+      "pixelScale": 4,
+      "usage": "ドット絵の小道具: watch-lantern",
+      "states": [
+        "static"
+      ],
+      "source": "scripts/make-town-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.watch-book",
+      "file": "props/watch-book.svg",
+      "width": 64,
+      "height": 64,
+      "pixelWidth": 16,
+      "pixelHeight": 16,
+      "pixelScale": 4,
+      "usage": "ドット絵の小道具: watch-book",
+      "states": [
+        "static"
+      ],
+      "source": "scripts/make-town-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.route-map",
+      "file": "props/route-map.svg",
+      "width": 64,
+      "height": 64,
+      "pixelWidth": 16,
+      "pixelHeight": 16,
+      "pixelScale": 4,
+      "usage": "ドット絵の小道具: route-map",
+      "states": [
+        "static"
+      ],
+      "source": "scripts/make-town-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.sign-old",
+      "file": "props/sign-old.svg",
+      "width": 64,
+      "height": 64,
+      "pixelWidth": 16,
+      "pixelHeight": 16,
+      "pixelScale": 4,
+      "usage": "ドット絵の小道具: sign-old",
+      "states": [
+        "static"
+      ],
+      "source": "scripts/make-town-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.sign-new",
+      "file": "props/sign-new.svg",
+      "width": 64,
+      "height": 64,
+      "pixelWidth": 16,
+      "pixelHeight": 16,
+      "pixelScale": 4,
+      "usage": "ドット絵の小道具: sign-new",
+      "states": [
+        "static"
+      ],
+      "source": "scripts/make-town-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.piano",
+      "file": "props/piano.svg",
+      "width": 64,
+      "height": 64,
+      "pixelWidth": 16,
+      "pixelHeight": 16,
+      "pixelScale": 4,
+      "usage": "ドット絵の小道具: piano",
+      "states": [
+        "static"
+      ],
+      "source": "scripts/make-town-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.clock",
+      "file": "props/clock.svg",
+      "width": 64,
+      "height": 64,
+      "pixelWidth": 16,
+      "pixelHeight": 16,
+      "pixelScale": 4,
+      "usage": "ドット絵の小道具: clock",
+      "states": [
+        "static"
+      ],
+      "source": "scripts/make-town-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.clock-hook",
+      "file": "props/clock-hook.svg",
+      "width": 64,
+      "height": 64,
+      "pixelWidth": 16,
+      "pixelHeight": 16,
+      "pixelScale": 4,
+      "usage": "ドット絵の小道具: clock-hook",
+      "states": [
+        "static"
+      ],
+      "source": "scripts/make-town-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.quiet-notice",
+      "file": "props/quiet-notice.svg",
+      "width": 64,
+      "height": 64,
+      "pixelWidth": 16,
+      "pixelHeight": 16,
+      "pixelScale": 4,
+      "usage": "ドット絵の小道具: quiet-notice",
+      "states": [
+        "static"
+      ],
+      "source": "scripts/make-town-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.elevator-car",
+      "file": "props/elevator-car.svg",
+      "width": 64,
+      "height": 64,
+      "pixelWidth": 16,
+      "pixelHeight": 16,
+      "pixelScale": 4,
+      "usage": "ドット絵の小道具: elevator-car",
       "states": [
         "static"
       ],
