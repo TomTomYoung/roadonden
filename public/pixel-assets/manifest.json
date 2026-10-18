@@ -1,5 +1,5 @@
 {
-  "version": "town-pixel-0.5.0",
+  "version": "town-pixel-0.6.0",
   "notes": "Integer-grid original pixel art; source SVGs in public/assets are preserved. 100 resident sheets do not imply 100 implemented scenarios.",
   "assets": [
     {
@@ -626,6 +626,21 @@
       "pixelHeight": 30,
       "pixelScale": 4,
       "usage": "ドット絵の内装: bus",
+      "states": [
+        "static"
+      ],
+      "source": "scripts/make-town-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "interiors.postalEntrance",
+      "file": "interiors/postalEntrance.svg",
+      "width": 128,
+      "height": 120,
+      "pixelWidth": 32,
+      "pixelHeight": 30,
+      "pixelScale": 4,
+      "usage": "ドット絵の内装: postalEntrance",
       "states": [
         "static"
       ],
@@ -2443,11 +2458,11 @@
       "usage": "人物。個別の配色・髪・服装と6姿勢。シナリオ実装人数とは別。",
       "states": [
         "idle",
-        "walk-a",
-        "walk-b",
-        "work",
-        "sit",
-        "dance"
+        "roll-a",
+        "roll-b",
+        "sort",
+        "rest",
+        "reach"
       ],
       "source": "scripts/make-town-assets.mjs",
       "license": "Project original"
@@ -3159,6 +3174,126 @@
       "pixelHeight": 16,
       "pixelScale": 4,
       "usage": "ドット絵の小道具: bell",
+      "states": [
+        "static"
+      ],
+      "source": "scripts/make-town-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.plate-a",
+      "file": "props/plate-a.svg",
+      "width": 64,
+      "height": 64,
+      "pixelWidth": 16,
+      "pixelHeight": 16,
+      "pixelScale": 4,
+      "usage": "ドット絵の小道具: plate-a",
+      "states": [
+        "static"
+      ],
+      "source": "scripts/make-town-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.plate-h",
+      "file": "props/plate-h.svg",
+      "width": 64,
+      "height": 64,
+      "pixelWidth": 16,
+      "pixelHeight": 16,
+      "pixelScale": 4,
+      "usage": "ドット絵の小道具: plate-h",
+      "states": [
+        "static"
+      ],
+      "source": "scripts/make-town-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.address-card",
+      "file": "props/address-card.svg",
+      "width": 64,
+      "height": 64,
+      "pixelWidth": 16,
+      "pixelHeight": 16,
+      "pixelScale": 4,
+      "usage": "ドット絵の小道具: address-card",
+      "states": [
+        "static"
+      ],
+      "source": "scripts/make-town-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.mailbag",
+      "file": "props/mailbag.svg",
+      "width": 64,
+      "height": 64,
+      "pixelWidth": 16,
+      "pixelHeight": 16,
+      "pixelScale": 4,
+      "usage": "ドット絵の小道具: mailbag",
+      "states": [
+        "static"
+      ],
+      "source": "scripts/make-town-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.mail-bundle",
+      "file": "props/mail-bundle.svg",
+      "width": 64,
+      "height": 64,
+      "pixelWidth": 16,
+      "pixelHeight": 16,
+      "pixelScale": 4,
+      "usage": "ドット絵の小道具: mail-bundle",
+      "states": [
+        "static"
+      ],
+      "source": "scripts/make-town-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.post-door-closed",
+      "file": "props/post-door-closed.svg",
+      "width": 64,
+      "height": 64,
+      "pixelWidth": 16,
+      "pixelHeight": 16,
+      "pixelScale": 4,
+      "usage": "ドット絵の小道具: post-door-closed",
+      "states": [
+        "static"
+      ],
+      "source": "scripts/make-town-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.post-door-open",
+      "file": "props/post-door-open.svg",
+      "width": 64,
+      "height": 64,
+      "pixelWidth": 16,
+      "pixelHeight": 16,
+      "pixelScale": 4,
+      "usage": "ドット絵の小道具: post-door-open",
+      "states": [
+        "static"
+      ],
+      "source": "scripts/make-town-assets.mjs",
+      "license": "Project original"
+    },
+    {
+      "id": "props.postal-table",
+      "file": "props/postal-table.svg",
+      "width": 64,
+      "height": 64,
+      "pixelWidth": 16,
+      "pixelHeight": 16,
+      "pixelScale": 4,
+      "usage": "ドット絵の小道具: postal-table",
       "states": [
         "static"
       ],

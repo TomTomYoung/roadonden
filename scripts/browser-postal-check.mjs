@@ -1,0 +1,29 @@
+import assert from 'node:assert/strict';
+import {mkdir,readFile} from 'node:fs/promises';
+import {pathToFileURL} from 'node:url';
+import path from 'node:path';
+const {chromium}=await import(process.env.PLAYWRIGHT_MODULE??path.join(process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES,'playwright/index.mjs'));
+const browser=await chromium.launch({headless:true,...(process.env.CHROMIUM_EXECUTABLE?{executablePath:process.env.CHROMIUM_EXECUTABLE}:{})});
+const context=await browser.newContext({viewport:{width:1440,height:1100},acceptDownloads:true});
+const page=await context.newPage(),errors=[],requests=[];page.on('pageerror',e=>errors.push(String(e)));page.on('request',r=>requests.push(r.url()));
+await mkdir('test-results',{recursive:true});const url=pathToFileURL(path.resolve('index.html')).href;
+async function idle(){await page.waitForFunction(()=>document.querySelector('#activity').textContent.includes('足を止め'));}
+async function destination(term,id){await page.click('#map');await page.getByRole('searchbox',{name:'場所を検索'}).fill(term);await page.locator('#modal-body .stack button').first().click();await page.waitForFunction(id=>document.querySelector('#town').dataset.location===id,id,{timeout:60000});await idle();}
+async function person(who,label){await page.locator('#people button').filter({hasText:who}).click();await page.getByRole('button',{name:label,exact:true}).click();await page.waitForTimeout(400);await idle();await page.waitForTimeout(600);}
+async function nearby(label){await page.getByRole('button',{name:label,exact:true}).click();await page.getByRole('button',{name:'やってみる',exact:true}).click();await page.waitForTimeout(400);await idle();await page.waitForTimeout(350);}
+async function save(name){await page.click('#save-menu');const pending=page.waitForEvent('download');await page.getByRole('button',{name:'セーブをJSONファイルで持ち出す',exact:true}).click();const download=await pending,file=`test-results/${name}.json`;await download.saveAs(file);const data=JSON.parse(await readFile(file,'utf8'));await page.click('#close-modal');return data;}
+try{
+ await page.goto(url);await page.getByRole('button',{name:'街を歩く',exact:true}).click();
+ await destination('郵便と宅配のセンター・正面入口','postDoor');await page.click('#zoom-in');await page.click('#zoom-in');await page.screenshot({path:'test-results/town-postal-before.png',fullPage:true});
+ await person('ベアトリス バッグ','本人の仕事と作業しやすい配置を聞く');await person('ベアトリス バッグ','段差のない別入口を本人と選ぶ');
+ await destination('仕分け台','sorting');await page.locator('#people button').filter({hasText:'ベアトリス バッグ'}).waitFor({timeout:20000});await person('ベアトリス バッグ','本人と仕分け台・袋の配置を相談する');
+ await destination('封入の机','envelopes');await nearby('青い受持ち札を照合し、郵便袋を預かる');await destination('仕分け台','sorting');await nearby('郵便袋を本人の仕分け台へ届ける');
+ const waiting=await save('postal-before-table');assert.ok(!waiting.state.completions.C090);assert.equal(waiting.state.objects.postalBundle.custody.kind,'object');assert.ok(!waiting.state.facts['post.repaired']);console.log('PASS side entrance and real bag delivery precede the repair and desk adjustment');
+ await person('ベアトリス バッグ','本人と台の高さを合わせ、足元を空ける');await page.click('#wait');await page.waitForTimeout(2200);await page.screenshot({path:'test-results/town-postal-work.png',fullPage:true});await destination('配達と受渡しの棚','mailShelf');
+ await page.locator('#people button').filter({hasText:'ベアトリス バッグ'}).waitFor({timeout:20000});await page.waitForTimeout(8500);const completed=await save('postal-sorting-complete');assert.ok(completed.state.completions.C090);assert.ok(!completed.state.completions.C016);assert.equal(completed.state.objects.postalBundle.custody.id,'mailShelf');assert.equal(completed.state.objects.nellLetter.custody.id,'mailShelf');console.log('PASS the employee adjusts reach, sorts her own mail and delivers exactly her bundle');
+ await destination('郵便と宅配のセンター・正面入口','postDoor');await page.click('#wait');await page.locator('#people button').filter({hasText:'ベアトリス バッグ'}).waitFor({timeout:40000});await person('ベアトリス バッグ','本人の仕事と作業しやすい配置を聞く');await nearby('二人と、本人の開け方で扉を試す');
+ await page.getByRole('button',{name:'引いた軌跡と扉の下端の擦れを見る',exact:true}).waitFor({timeout:20000});await nearby('引いた軌跡と扉の下端の擦れを見る');await person('エイベル ロック','扉の下端と床の擦れ跡を伝える');await page.click('#wait');await page.waitForFunction(()=>document.querySelector('#observations').textContent.includes('本人の通行を見届け'),null,{timeout:40000});
+ const repaired=await save('postal-late-repair');assert.ok(repaired.state.completions.C016);assert.deepEqual(repaired.state.completions.C090,completed.state.completions.C090);assert.equal(repaired.state.events.filter(e=>e.type==='life.C090').length,1);assert.ok(repaired.state.events.some(e=>e.type==='post.selfEntry'));assert.equal(repaired.contentVersion,'town-0.6.0');console.log('PASS later repair is confirmed on a real normal entry without resetting completed work');await page.screenshot({path:'test-results/town-postal-after.png',fullPage:true});
+ await page.click('#save-menu');const link=await page.getByRole('link',{name:'前の全体マップ版を開く（town-0.5.0のセーブ用）'}).getAttribute('href');const old=await context.newPage();await old.goto(new URL(link,url).href);await old.getByRole('button',{name:'街を歩く',exact:true}).click();assert.equal(await old.locator('#town').getAttribute('data-assets-ready'),'177');await old.close();await page.click('#close-modal');await page.setViewportSize({width:390,height:844});await page.screenshot({path:'test-results/town-postal-mobile.png',fullPage:true});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth));assert.deepEqual(errors,[]);assert.equal(requests.filter(x=>/^https?:/.test(x)).length,0);console.log('PASS prior town build, mobile layout and embedded assets remain usable');
+ console.log('4 postal browser checks passed.');
+}finally{await browser.close();}

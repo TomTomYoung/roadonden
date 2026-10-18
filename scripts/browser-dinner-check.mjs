@@ -17,7 +17,7 @@ async function go(id){const from=await page.locator('#town').getAttribute('data-
 async function talkNora(){await page.getByRole('button',{name:'ノラ フィンチ',exact:true}).click();}
 try{
  await page.goto(url);await page.getByRole('button',{name:'街を歩く',exact:true}).click();
- assert.equal(requests.filter(url=>/^https?:/.test(url)).length,0);assert.equal(errors.length,0);assert.equal(await page.locator('#town').getAttribute('data-assets-ready'),'177');pass('standalone town loads every embedded pixel asset without external requests');await page.click('#follow');await page.click('#zoom-in');await page.click('#zoom-in');await page.screenshot({path:'test-results/block-zoom.png',fullPage:true});
+ assert.equal(requests.filter(url=>/^https?:/.test(url)).length,0);assert.equal(errors.length,0);assert.equal(await page.locator('#town').getAttribute('data-assets-ready'),'186');pass('standalone town loads every embedded pixel asset without external requests');await page.click('#follow');await page.click('#zoom-in');await page.click('#zoom-in');await page.screenshot({path:'test-results/block-zoom.png',fullPage:true});
  const bounds=await page.locator('#town').boundingBox();const scale=bounds.width/1300;
  const camera=JSON.parse(await page.locator('#town').getAttribute('data-camera'));
  await page.mouse.click(bounds.x+(332*camera.zoom+camera.x)*scale,bounds.y+(650*camera.zoom+camera.y)*scale);

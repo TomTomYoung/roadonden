@@ -80,9 +80,9 @@ export const residentPlacements = [
   {
     "id": "C012",
     "name": "ヒュー ペイント",
-    "initialLocation": "a301",
-    "destination": "b301",
-    "implemented": false
+    "initialLocation": "a3",
+    "destination": "H.hall3",
+    "implemented": true
   },
   {
     "id": "C013",
@@ -109,8 +109,8 @@ export const residentPlacements = [
     "id": "C016",
     "name": "エイベル ロック",
     "initialLocation": "postDoor",
-    "destination": "postSide",
-    "implemented": false
+    "destination": "postDoor",
+    "implemented": true
   },
   {
     "id": "C017",
@@ -626,9 +626,9 @@ export const residentPlacements = [
   {
     "id": "C090",
     "name": "ベアトリス バッグ",
-    "initialLocation": "postSide",
-    "destination": "sorting",
-    "implemented": false
+    "initialLocation": "postDoor",
+    "destination": "mailShelf",
+    "implemented": true
   },
   {
     "id": "C091",

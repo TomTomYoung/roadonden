@@ -23,7 +23,7 @@ for(const [id,width,skin]of [['apartment-a',350,0],['mixed-use',430,1],['apartme
 }
 let p=new Pixels(12,38);p.rect(0,0,12,38,'#8d9f99');for(let y=2;y<38;y+=3)p.rect(1,y,10,1,'#d3cfaf');p.line(1,36,10,1,'#506d70');p.line(10,36,1,1,'#506d70');await save('buildings','stairs',p,'階段');
 p=new Pixels(325,38);p.rect(0,0,325,38,'#bdc6aa');for(let y=0;y<38;y+=8)p.rect(0,y,325,1,'#adb99d');for(let x=0;x<325;x+=12)p.rect(x,0,1,38,'#b1bda0');for(let x=12;x<320;x+=45)p.rect(x,3,20,5,'#7b8c64').rect(x+2,1,6,5,'#9bac7a').rect(x+9,0,8,6,'#829d66');await save('buildings','courtyard',p,'中庭の舗装と植栽');
-const kinds=['reception','kitchen','workKitchen','grocer','shoeShop','club','studio','dining','bedroom','lounge','mailroom','laundry','workshop','theatre','roof','roofGarden','petGarden','courtyard','loading','stairs','pawn','storage','bakery','mill','loom','kiln','elevator','stage','library','printing','bus'];
+const kinds=['reception','kitchen','workKitchen','grocer','shoeShop','club','studio','dining','bedroom','lounge','mailroom','laundry','workshop','theatre','roof','roofGarden','petGarden','courtyard','loading','stairs','pawn','storage','bakery','mill','loom','kiln','elevator','stage','library','printing','bus','postalEntrance'];
 function window(p){p.box(2,2,11,7,palette.dark,palette.teal).rect(7,3,1,5,palette.light).rect(3,5,9,1,palette.light).rect(2,9,11,1,palette.wood);}
 function shelf(p){p.box(22,2,8,11,palette.wood,palette.dark);for(let y=4;y<12;y+=4){p.rect(23,y,6,1,palette.woodLight);p.rect(24,y-2,2,2,palette.cream).rect(27,y-2,2,2,palette.red);}}
 function table(p){p.rect(4,17,24,2,palette.woodLight).rect(4,19,24,4,palette.wood).rect(5,23,2,5,palette.wood).rect(25,23,2,5,palette.wood);}
@@ -52,6 +52,7 @@ for(const kind of kinds){const p=new Pixels(32,30);p.rect(0,0,32,30,'#e8d8b5').r
  if(kind==='elevator'){p.box(6,2,20,26,palette.dark,palette.teal).box(8,4,16,23,palette.light,'#98aeab').rect(15,4,1,23,palette.dark).rect(28,12,2,3,palette.gold);}
  if(kind==='printing'){p.box(8,8,16,10,palette.dark,palette.teal).rect(10,6,12,5,palette.light).rect(10,15,12,3,palette.dark).rect(11,18,10,5,palette.light);}
  if(kind==='bus'){p.rect(3,9,27,14,palette.teal).rect(5,7,21,3,palette.light);for(let x=6;x<27;x+=7)p.rect(x,11,5,5,palette.dark);p.rect(3,20,27,2,palette.gold).rect(7,23,4,3,palette.dark).rect(24,23,4,3,palette.dark);}
+ if(kind==='postalEntrance'){p.rect(0,0,32,30,'#bcc7a9').rect(0,20,32,10,'#a3ada2').rect(1,20,30,2,palette.cream).rect(7,1,18,19,'#d1b589').rect(8,20,16,2,'#a3ada2');}
  await save('interiors',kind,p,`ドット絵の内装: ${kind}`);}
 const shirts=['#658d85','#b5745c','#7c87a4','#b39857','#a07c91','#71875e','#6c99a8','#a48466'];
 const skins=['#d7ab80','#bd8e69','#e5bf95','#b67f5d','#d0a789'];
@@ -66,10 +67,14 @@ for(const [index,id]of ['player',...Array.from({length:100},(_,i)=>`C${String(i+
   p.rows=Array.from({length:20},()=>Array(96).fill(null));
   for(let f=0;f<6;f++){const x=f*16;p.rect(x+3,11,10,6,palette.cream).rect(x+6,10,6,7,palette.teal).rect(x+8,12,5,3,palette.light).rect(x+2,10,5,5,skin).rect(x+3,9,3,1,hair).rect(x+4,12,f===4?2:1,1,palette.dark);if(f<3)p.dot(x+4,14,palette.red);p.rect(x+11,15,3,1,palette.cream);}
  }
- await save('residents',id,p,'人物。個別の配色・髪・服装と6姿勢。シナリオ実装人数とは別。',id==='C020'?['cry','unsettled','quiet','held','asleep','rest']:['idle','walk-a','walk-b','work','sit','dance']);
+ if(id==='C090'){
+  p.rows=Array.from({length:20},()=>Array(96).fill(null));
+  for(let f=0;f<6;f++){const x=f*16;p.rect(x+3,19,12,1,'#52665b55').rect(x+3,9,2,7,palette.dark).rect(x+4,13,8,2,palette.blue).rect(x+9,15,4,2,palette.dark).rect(x+12,16,3,1,palette.dark);p.box(x+2,13,7,6,palette.dark,palette.light).rect(x+4,12,3,1,palette.dark).rect(x+4,19,3,1,palette.dark).rect(x+13,17,2,2,palette.dark).dot(x+5+(f===1?1:0),15+(f===2?1:0),palette.teal);p.rect(x+6,8,5,5,top).rect(x+7,4,5,4,skin).rect(x+6,3,7,2,hair).dot(x+11,6,palette.dark).rect(x+5,8,2,4,top);if(f===3||f===5)p.rect(x+9,10,5,2,skin).rect(x+12,9,3,1,palette.light);else p.line(x+7,10,x+5+(f%2),14,skin);}
+ }
+ await save('residents',id,p,'人物。個別の配色・髪・服装と6姿勢。シナリオ実装人数とは別。',id==='C020'?['cry','unsettled','quiet','held','asleep','rest']:id==='C090'?['idle','roll-a','roll-b','sort','rest','reach']:['idle','walk-a','walk-b','work','sit','dance']);
 }
 p=new Pixels(64,12);for(let f=0;f<4;f++){const x=f*16;p.rect(x+3,6,9,4,'#b18d64').rect(x+10,4,4,4,'#caab7b').rect(x+10,3,2,3,'#87694f').dot(x+13,5,palette.dark).rect(x+4,10,2,2,'#87694f').rect(x+10,10,2,2,'#87694f').line(x+3,7,x+1,f%2?3:5,'#87694f');if(f===3)p.rect(x+12,8,4,2,palette.dark);}await save('residents','dog',p,'犬の4姿勢',['idle','walk','look','carry-shoe']);
-const props=['cargo','stand','flag','gate-open','gate-closed','toy','meal','curtain-closed','shutter-closed','return-box','loanShoes','shoes','pot','package','puppet','key','coat','tea','chair','mail','bicycle','tree','lamp','flower','pillow','cushion','letter','ladder','rope','toolbag','cradle','rug','bell'];
+const props=['cargo','stand','flag','gate-open','gate-closed','toy','meal','curtain-closed','shutter-closed','return-box','loanShoes','shoes','pot','package','puppet','key','coat','tea','chair','mail','bicycle','tree','lamp','flower','pillow','cushion','letter','ladder','rope','toolbag','cradle','rug','bell','plate-a','plate-h','address-card','mailbag','mail-bundle','post-door-closed','post-door-open','postal-table'];
 for(const id of props){const p=new Pixels(16,16);
  if(['cargo','package','return-box','mail'].includes(id)){p.box(2,5,12,10,palette.wood,palette.woodLight).rect(7,6,2,8,palette.cream).rect(3,9,10,1,palette.cream);if(id==='return-box')p.rect(4,7,8,2,palette.dark);}
  else if(id==='stand'||id==='chair'){p.rect(2,8,12,3,palette.woodLight).rect(3,11,2,5,palette.wood).rect(11,11,2,5,palette.wood);if(id==='chair')p.rect(3,3,10,4,palette.wood);}
@@ -92,13 +97,19 @@ for(const id of props){const p=new Pixels(16,16);
  else if(id==='cradle'){p.rect(1,6,14,7,palette.wood).rect(2,7,12,4,palette.light);for(let x=2;x<15;x+=3)p.rect(x,4,1,9,palette.woodLight);p.rect(1,14,14,1,palette.wood).rect(2,13,2,1,palette.wood).rect(12,13,2,1,palette.wood);}
  else if(id==='rug'){p.rect(0,7,16,8,palette.red).rect(1,8,14,1,palette.cream).rect(1,13,14,1,palette.cream);for(let x=2;x<15;x+=3)p.rect(x,10,1,2,palette.gold);}
  else if(id==='bell')p.rect(5,3,6,6,palette.gold).rect(3,8,10,2,palette.gold).rect(7,10,2,2,palette.wood).rect(7,0,1,3,palette.wood).rect(7,12,1,4,palette.cream);
+ else if(id.startsWith('plate-')){p.box(1,3,14,10,palette.dark,palette.cream).dot(2,4,palette.wood).dot(13,11,palette.wood);if(id==='plate-a')p.line(4,10,7,5,palette.red).line(7,5,10,10,palette.red).rect(5,8,4,1,palette.red);else p.rect(4,5,1,6,palette.teal).rect(9,5,1,6,palette.teal).rect(5,7,4,1,palette.teal);}
+ else if(id==='address-card')p.box(2,2,12,13,palette.wood,palette.light).rect(4,4,7,1,palette.teal).rect(4,7,8,1,palette.woodLight).rect(4,9,5,1,palette.woodLight).line(7,12,11,11,palette.dark);
+ else if(id==='mailbag')p.box(2,5,12,10,palette.dark,palette.woodLight).rect(3,4,10,2,palette.cream).rect(5,2,6,2,palette.wood).rect(6,6,5,4,palette.blue).rect(7,7,3,1,palette.light);
+ else if(id==='mail-bundle')p.rect(1,7,14,8,palette.cream).box(2,4,12,9,palette.wood,palette.light).line(3,5,8,9,palette.woodLight).line(8,9,12,5,palette.woodLight).rect(7,4,2,11,palette.blue);
+ else if(id.startsWith('post-door-')){p.box(1,0,14,16,palette.dark,'#bdd1bf').rect(2,14,12,2,palette.cream);if(id==='post-door-closed')p.rect(3,1,10,13,palette.teal).rect(4,2,8,6,palette.light).rect(11,10,1,2,palette.gold);else p.rect(2,1,3,13,palette.teal).rect(3,2,1,6,palette.light).dot(4,10,palette.gold);}
+ else if(id==='postal-table')p.rect(0,4,16,2,palette.woodLight).rect(1,6,2,10,palette.dark).rect(13,6,2,10,palette.dark).box(3,0,10,4,palette.wood,palette.cream).rect(6,0,1,4,palette.wood).rect(10,0,1,4,palette.wood);
  else if(id==='tree')p.rect(7,9,2,7,palette.wood).rect(3,3,10,7,palette.green).rect(5,1,6,3,palette.leaf).rect(1,5,14,3,palette.green);
  else if(id==='lamp')p.rect(7,3,1,13,palette.dark).rect(4,2,7,2,palette.dark).rect(5,0,5,2,palette.gold);
  else if(id==='flower')p.rect(3,10,10,6,palette.wood).rect(5,6,1,4,palette.green).rect(10,5,1,5,palette.green).rect(4,4,3,3,palette.pink).rect(9,3,3,3,palette.gold);
  else if(id==='bicycle')p.box(0,10,6,5,palette.dark,'#b9c8ac').box(10,10,6,5,palette.dark,'#b9c8ac').line(3,12,7,7,palette.red).line(7,7,13,12,palette.red).line(3,12,13,12,palette.red).rect(10,4,1,5,palette.dark).rect(9,4,4,1,palette.dark);
  await save('props',id,p,`ドット絵の小道具: ${id}`);
 }
-await writeFile(`${root}/manifest.json`,JSON.stringify({version:'town-pixel-0.5.0',notes:'Integer-grid original pixel art; source SVGs in public/assets are preserved. 100 resident sheets do not imply 100 implemented scenarios.',assets:entries},null,2)+'\n');
+await writeFile(`${root}/manifest.json`,JSON.stringify({version:'town-pixel-0.6.0',notes:'Integer-grid original pixel art; source SVGs in public/assets are preserved. 100 resident sheets do not imply 100 implemented scenarios.',assets:entries},null,2)+'\n');
 let imports='',mapping='';for(const [i,e]of entries.entries()){imports+=`import asset${i} from '../../${root}/${e.file}';\n`;mapping+=`  '${e.id}': {src:asset${i},width:${e.width},height:${e.height}},\n`;}
 await writeFile('src/game/assets.ts',imports+`\nexport const assets:Record<string,{src:string;width:number;height:number}> = {\n${mapping}};\n`);
 console.log(`Generated ${entries.length} pixel assets.`);

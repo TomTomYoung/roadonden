@@ -36,12 +36,14 @@ test('old block and dinner saves keep separate slots and fail import without rep
  data.set('roadonden:dinner:v2:manual:1',JSON.stringify(old));
  const oldBlock={...old,contentVersion:'block-0.3.0'};data.set('roadonden:block:v3:manual:1',JSON.stringify(oldBlock));
  const oldTown={...old,contentVersion:'town-0.4.0'};data.set('roadonden:town:v4:manual:1',JSON.stringify(oldTown));
- const saves=new Saves(store,'roadonden:town:v5:');saves.write(s,1);const before=s.save();
+ const v5={...old,contentVersion:'town-0.5.0'};data.set('roadonden:town:v5:manual:1',JSON.stringify(v5));
+ const saves=new Saves(store,'roadonden:town:v6:');saves.write(s,1);const before=s.save();
+ assert.throws(()=>saves.import(s,JSON.stringify(v5)));assert.equal(JSON.parse(data.get('roadonden:town:v5:manual:1')).contentVersion,'town-0.5.0');assert.match(readFileSync('legacy/town-0.5.0.html','utf8'),/roadonden:town:v5:/);
  assert.throws(()=>saves.import(s,JSON.stringify(oldTown)));assert.equal(JSON.parse(data.get('roadonden:town:v4:manual:1')).contentVersion,'town-0.4.0');assert.match(readFileSync('legacy/town-0.4.0.html','utf8'),/roadonden:town:v4:/);
  assert.throws(()=>saves.import(s,JSON.stringify(oldBlock)));assert.throws(()=>saves.import(s,JSON.stringify(old)));assert.deepEqual(s.save(),before);
  assert.equal(JSON.parse(data.get('roadonden:dinner:v2:manual:1')).contentVersion,'dinner-0.2.0');
  assert.equal(JSON.parse(data.get('roadonden:block:v3:manual:1')).contentVersion,'block-0.3.0');
- assert.equal(JSON.parse(data.get('roadonden:town:v5:manual:1')).contentVersion,'town-0.5.0');
+ assert.equal(JSON.parse(data.get('roadonden:town:v6:manual:1')).contentVersion,'town-0.6.0');
  assert.match(readFileSync('legacy/block-0.3.0.html','utf8'),/roadonden:block:v3:/);
  assert.match(readFileSync('legacy/dinner-0.2.0.html','utf8'),/roadonden:dinner:v2:/);
 });

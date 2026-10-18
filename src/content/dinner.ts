@@ -1,5 +1,6 @@
-import { blockPlaces, travelTicks } from './block.ts';
+import { blockPlaces, blockPlaceById, travelTicks } from './block.ts';
 import { registerRoomsAndSleep, installRoomsAndSleep, FINN, SAM, OSCAR } from './rooms-and-sleep.ts';
+import { registerPostalAndPlates, installPostalAndPlates, BEATRICE } from './postal-and-plates.ts';
 import { check } from '../core/conditions.ts';
 import type { WorldState } from '../core/types.ts';
 import type { ActionDefinition, ActionEffect, ChoiceGuard, Condition, Content, Custody, ResidentDefinition } from '../core/types.ts';
@@ -28,7 +29,7 @@ const accepted = (agreementId: string): ChoiceGuard => ({ op: 'accepted', agreem
 const agreement = (agreementId: string, actorIds: string[]): Condition => ({ op: 'agreement', agreementId, version: 1, actorIds });
 
 export const dinnerContent: Content = {
-  version: 'town-0.5.0', namespace: 'redesign-v1', tickMs: 100, ticksPerDay: 14400,
+  version: 'town-0.6.0', namespace: 'redesign-v1', tickMs: 100, ticksPerDay: 14400,
   places: blockPlaces, propositions: [], actors: [], objects: [], resources: ['table:home','work:quay'], services: ['home.receipt','market.shelf','shoe.box'], clues: [], loans: [], agreements: [], actions: [],
 };
 const c = dinnerContent;
@@ -161,6 +162,7 @@ c.actors.find(a=>a.id===E)!.postGoalContract.serviceIds.push('elias.keyReturn');
 c.loans!.push({id:'spareKey',objectId:'spareKey',lenderId:DA,borrowerId:E,returnLocationId:'a301',policy:'入室後、A棟301の施錠された返却口へ。管理当番を休息から呼び戻さない。'});
 
 registerRoomsAndSleep({person,object,c,actor,place});
+registerPostalAndPlates({person,object,c,actor,place});
 c.resources.push(...c.actors.map(a=>`presence:${a.id}`));
 // Walks reserve the moving person. No teleporting, no other actor controlled by the UI.
 export function walkId(who:string,from:string,to:string) { return `walk.${who}.${from}.${to}`; }
@@ -170,8 +172,14 @@ for(const who of c.actors.map(a=>a.id).filter(id=>id!==FINN)) for(const from of 
   const guard=all(at(who,from.id),who===P?fact('quay.playerHolding',false):yes,who===O?fact('quay.owenHolding',false):yes,gate?any(fact('garden.open'),fact('dog.settled')):yes,
     [from.id,toId].includes('scaffold')&&[from.id,toId].includes('iris')?fact('iris.returnOpen'):yes,
     who===SAM&&from.id==='scaffold'?fact(toId==='iris'?'iris.returnOpen':'sam.externalReady'):yes,
-    toId==='nell'&&(who===P||who===OSCAR)?any(fact('bell.fixed'),agreement('bell.entry',[P,'C013',OSCAR])):yes);
-  action(walkId(who,from.id,toId),`${to.name}へ歩く`,[who],guard,[{op:'move',actorId:who,to:toId}],travelTicks(from.id,toId),{movement:{actorId:who,from:from.id,to:toId},resources:[`presence:${who}`]});
+    toId==='nell'&&(who===P||who===OSCAR)?any(fact('bell.fixed'),agreement('bell.entry',[P,'C013',OSCAR])):yes,
+    who===BEATRICE&&!(blockPlaceById.get(from.id)!.floor<=1&&blockPlaceById.get(toId)!.floor<=1)?not(yes):yes,
+    who===BEATRICE&&from.id==='postDoor'&&toId==='sorting'?all(fact('post.repaired'),fact('post.open')):yes,
+    who===BEATRICE&&from.id==='postSide'&&toId==='sorting'?agreement('post.side',[P,BEATRICE]):yes);
+  const effects:ActionEffect[]=[{op:'move',actorId:who,to:toId}];
+  if(who===BEATRICE&&toId==='sorting'&&(from.id==='postDoor'||from.id==='postSide'))effects.push(set('post.admitted'));
+  if(who===BEATRICE&&from.id==='postDoor'&&toId==='sorting')effects.push(set('post.passed'),set('post.open',false),emit('post.selfEntry',[BEATRICE],'sorting'));
+  action(walkId(who,from.id,toId),`${to.name}へ${who===BEATRICE?'車椅子で進む':'歩く'}`,[who],guard,effects,travelTicks(from.id,toId),{movement:{actorId:who,from:from.id,to:toId},resources:[`presence:${who}`]});
 }
 const placeIndex=new Map(c.places.map(p=>[p.id,p]));
 const pathsTo=new Map<string,Map<string,string>>();
@@ -397,7 +405,7 @@ function searchLoop(who:string,points:string[],stop:ChoiceGuard){
   travel(who,location,ca(b(pid),cn(stop)),10);
  }
 }
-searchLoop(E,['a1','street','quay'],{op:'any',conditions:[accepted('elias.wait'),accepted('elias.key'),b('elias.hasKey'),b('elias.entered')]});
+searchLoop(E,['a1','street','quay'],{op:'any',conditions:[accepted('elias.wait'),accepted('elias.key'),b('elias.hasKey'),b('elias.entered'),ca(accepted('address.elias'),cn(b('address.signed.elias')))]});
 searchLoop(DA,['inn','quay','street'],{op:'any',conditions:[b('front.agreed'),b('elias.entered')]});
 Object.assign(greetings,{
  [E]:'「鍵が見つからない。表でドーラさんを探すと、今度は裏へ回ったって……」',
@@ -407,7 +415,8 @@ Object.assign(greetings,{
 });
 
 // Chapter modules use the same evidence, ownership and path machinery as dinner.
-export const chapterTools={person,object,c,P,yes,all,any,not,fact,at,held,actor,place,set,transfer,emit,together,knows,b,ca,cn,here,accepted,agreement,prop,clue,local,action,rule,auto,interaction,talk,tell,propose,travel,searchLoop,greetings};
+export const chapterTools={person,object,c,P,yes,all,any,not,fact,at,held,actor,place,set,transfer,emit,together,knows,b,ca,cn,here,accepted,agreement,prop,clue,local,action,rule,auto,interaction,talk,tell,propose,travel,searchLoop,greetings,route,walkId};
+installPostalAndPlates(chapterTools);
 installRoomsAndSleep(chapterTools);
 const movementDefinitions=new Map(c.actions.filter(a=>a.movement?.actorId===P).map(a=>[a.id,a]));
 // Route preview respects today's doors. Every edge is checked again when walked.

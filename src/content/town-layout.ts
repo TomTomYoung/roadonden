@@ -81,6 +81,19 @@ export function extendTown(places:BlockPlace[],names:Record<string,string>){
  link('back.1','pawn');link('back.1','bakery');link('back.2','freightLow');link('back.3','theatreDoor');link('back.4','postDoor');link('back.4','postSide');link('back.5','shuttle');
  // The passenger lift exists independently of the goods lift and is usable from day one.
  link('liftGround','liftUpper');
+ // Postal work is on the ground floor, reachable through either actual entrance.
+ // Keep stable place IDs for letters and later postal scenarios.
+ const postal=(id:string)=>places.find(p=>p.id===id)!;
+ const unlink=(a:string,b:string)=>{postal(a).links=postal(a).links.filter(id=>id!==b);postal(b).links=postal(b).links.filter(id=>id!==a);};
+ for(const [a,b]of [['postDoor','V.hall1'],['postSide','V.hall1'],['sorting','V.hall2'],['mailShelf','V.hall3'],['V.hall1','back.4']])unlink(a!,b!);
+ for(const [id,entrance,label]of [['sorting','postDoor','仕分け台'],['mailShelf','postSide','配達と受渡しの棚']]){
+  const room=postal(id!),door=postal(entrance!);room.x=door.x;room.y=door.y;room.floor=1;room.room=door.room;room.name=`郵便と宅配のセンター ${room.room}・${label}`;
+  room.description=id==='sorting'?'1階の仕分け室。車椅子で台へ寄れる空間と高さ、本人の郵便袋を確かめる。':'1階の受渡し棚。仕分け室から段差なく運べる。ネルの便りと、職員が仕分けた束は別の現物。';
+  door.y+=150;door.kind='outside';door.room=id==='sorting'?'正面入口':'別入口';door.name=`郵便と宅配のセンター・${door.room}`;door.interior='postalEntrance';
+ }
+ postal('postDoor').description='郵便室の正面入口。錠は動くが、引く扉の下端が床に擦れている。開け方は本人と一緒に確かめる。';
+ postal('postSide').description='1階の仕分け室へ通じる段差のない別入口。本人と入口を相談すれば、正面扉の修理を待たず仕事へ進める。';
+ link('postDoor','sorting');link('postSide','sorting');link('sorting','mailShelf');link('mailShelf','V.hall1');
  // The scaffold has a resident-controlled window and a separate outside descent.
  const scaffold=places.find(p=>p.id==='scaffold')!,hall=places.find(p=>p.id==='H.hall3')!;
  scaffold.links=scaffold.links.filter(id=>id!==hall.id);hall.links=hall.links.filter(id=>id!==scaffold.id);

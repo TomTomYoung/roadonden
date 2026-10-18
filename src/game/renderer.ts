@@ -5,7 +5,7 @@ import { WORLD_WIDTH, WORLD_HEIGHT, districts, townBuildings } from '../content/
 import type { WorldState } from '../core/types.ts';
 
 function objectArt(id:string){
- const special:Record<string,string>={hesterPillow:'pillow',hesterCoat:'coat',stageCushion:'cushion',nellLetter:'letter',samTools:'toolbag',samLadder:'ladder',cradle:'cradle',irisClothes:'coat',eliasCoat:'coat'};
+ const special:Record<string,string>={plateA:'plate-a',plateH:'plate-h',addressElias:'address-card',addressIris:'address-card',postalBag:'mailbag',postalBundle:'mail-bundle',abelTools:'toolbag',hughBrush:'toolbag',hesterPillow:'pillow',hesterCoat:'coat',stageCushion:'cushion',nellLetter:'letter',samTools:'toolbag',samLadder:'ladder',cradle:'cradle',irisClothes:'coat',eliasCoat:'coat'};
  const lower=id.toLowerCase();return special[id]??(lower.includes('puppet')?'puppet':lower.includes('loan')?'loanShoes':lower.includes('pot')?'pot':lower.includes('package')?'package':lower.includes('shoes')?'shoes':lower.includes('key')?'key':undefined);
 }
 
@@ -46,15 +46,17 @@ export class BlockRenderer {
   for(const b of townBuildings){
    const kind=b.id==='A'?'apartment-a':b.id==='M'?'mixed-use':b.id==='B'?'apartment-b':`town-${b.skin}`;
    this.asset(`buildings.${kind}`,b.x,b.y);
+   if(b.id==='V')for(const id of ['postDoor','postSide']){const door=blockPlaceById.get(id)!;this.line([[door.x,door.y+30],[door.x,940]],'#a3ada2',24);}
    for(const place of blockPlaces.filter(p=>p.building===b.id)){
     if(place.kind==='hall'){if(place.floor>1)this.asset('buildings.stairs',place.x-24,place.y+15);this.label(`${place.floor}F`,place.x,place.y+22,11);continue;}
-    if(place.kind==='roof')this.asset(`interiors.${place.interior}`,place.x-32,place.y-72,.5);
+    if(place.interior==='postalEntrance')this.asset(`interiors.${place.interior}`,place.x-40,place.y-70,.625);
+    else if(place.kind==='roof')this.asset(`interiors.${place.interior}`,place.x-32,place.y-72,.5);
     else this.asset(`interiors.${place.interior}`,place.x-64,place.y-112);
     const title=place.name.split('・').at(-1)!;
-    this.label(place.kind==='roof'?'屋上':`${place.room} ${title.length>10?title.slice(0,9)+'…':title}`,place.x,place.y+24,11);
+    this.label(place.kind==='roof'?'屋上':place.interior==='postalEntrance'?title:`${place.room} ${title.length>10?title.slice(0,9)+'…':title}`,place.x,place.y+24,11);
    }
    const entrance=blockPlaces.find(p=>p.building===b.id&&p.floor===1&&p.kind==='hall')!;
-   if(!b.original){this.line([[entrance.x,entrance.y+30],[entrance.x,b.y>1000?2260:940]],'#a3ada2',24);}
+   if(!b.original&&b.id!=='V'){this.line([[entrance.x,entrance.y+30],[entrance.x,b.y>1000?2260:940]],'#a3ada2',24);}
    this.label(b.name,b.x+b.width/2,b.y-44,17);
   }
   this.asset('interiors.petGarden',1126,706);this.label('ペット用の囲い',1190,842,12);this.label('共用中庭',650,885,14);
@@ -98,6 +100,12 @@ export class BlockRenderer {
   if(s.facts['meal.ready'])prop('meal','home',37,-22,.5);
   if(s.facts['tea.done'])prop('tea','agnes',24,-20,.5);
   if(s.facts['bee.tea'])prop('tea','vera',42,-24,.45);
+  prop(s.facts['post.open']?'post-door-open':'post-door-closed','postDoor',-6,-31,.75);
+  prop('post-door-open','postSide',-6,-31,.75);
+  if(s.facts['post.repaired'])prop('flag','postDoor',32,-28,.3);
+  const desk=blockPlaceById.get('sorting')!;c.fillStyle='#d1b589';c.fillRect(desk.x-56,desk.y-40,112,48);c.fillStyle='#c3a57c';for(let y=desk.y-38;y<desk.y+8;y+=16)c.fillRect(desk.x-56,y,112,4);
+  prop('postal-table','sorting',18,s.facts['post.tableMoved']?0:-18,.85);
+  if(!s.facts['post.tableMoved'])prop('cargo','sorting',18,12,.4);
   prop('rug','vera',s.facts['cradle.level']?-40:2,10,.75);
   prop('bell','H.hall2',-14,-44,.5);
   if(s.facts['bell.fixed'])prop('rope','H.hall2',-14,-25,.45);
@@ -134,7 +142,7 @@ export class BlockRenderer {
    if(actor.id===P){c.fillStyle='#ad5f3d';c.fillRect(pos.x-17,pos.y+3,34,4);c.fillStyle='#fff1c9';c.fillRect(pos.x-6,pos.y-52,12,4);c.fillRect(pos.x-3,pos.y-48,6,4);}
    if(actor.id==='C017'&&s.facts['hester.lying']&&!pos.moving){const bed=blockPlaceById.get('hester')!;c.save();c.translate(bed.x-22,bed.y-30);c.rotate(-Math.PI/2);c.drawImage(im,0,0,64,80,-16,-20,32,40);c.restore();}
    else c.drawImage(im,frame*64,0,64,h,pos.x-32*scale,pos.y-(h-7)*scale,64*scale,h*scale);
-   if(actor.id!==D){const carried=Object.entries(s.objects).find(([id,o])=>objectArt(id)&&o.quantity>0&&o.custody.kind==='actor'&&o.custody.id===actor.id);if(carried){const kind=objectArt(carried[0]);if(kind)this.asset(`props.${kind}`,pos.x-10,pos.y-24,.42);}}
+   if(actor.id!==D){const priority=['plateA','plateH','postalBundle','postalBag'];const carried=Object.entries(s.objects).sort(([a],[b])=>(priority.includes(a)?priority.indexOf(a):9)-(priority.includes(b)?priority.indexOf(b):9)).find(([id,o])=>objectArt(id)&&o.quantity>0&&o.custody.kind==='actor'&&o.custody.id===actor.id);if(carried){const kind=objectArt(carried[0]);if(kind)this.asset(`props.${kind}`,pos.x-10,pos.y-24,.42);}}
   }
   c.restore();
  }
